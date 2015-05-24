@@ -13,7 +13,7 @@ To run firefly (after installing or building Omegalib) type
 To use firefly, install Omegalib with point cloud support. You can enable this in the installer or using the omegalib maintenance tools (see https://github.com/uic-evl/omegalib/wiki/Building#installing-modules)
 
 ### Data Preparation ###
-firefly reads point cloud data from binary point cloud files (extension `.xyzb`). FIRE generated HDF5 files. To convert the HDF5 file to binary point cloud files you can use the included preprocess.py script. To run it, you will need ** h5py installed ** to read the HDF5 file in python.
+firefly reads point cloud data from binary point cloud files (extension `.xyzb`). FIRE generated HDF5 files. To convert the HDF5 file to binary point cloud files you can use the included preprocess.py script. To run it, you will need **h5py installed** to read the HDF5 file in python.
 
 #### Installing H5PY ####
 Instructions for each operating system can be found here: http://docs.h5py.org/en/latest/build.html
