@@ -14,5 +14,5 @@ void main(void)
     float ps = pointScale * projSize.x;
     gl_FrontColor = color;
     gl_FrontColor.a = ps * gl_Color.g;
-    gl_PointSize =  ps * gl_Color.r * 10;
+    gl_PointSize =  ps * gl_Color.r;
 }
