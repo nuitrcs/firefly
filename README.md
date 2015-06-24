@@ -33,7 +33,13 @@ Copy your file in the firefly directory and edit preprocess.py line 48:
 ```
 f = h5py.File('FILE NAME HERE,'r')
 ```
-You can optionally the `extractPart` lines to change what data is extracted from the file. At the end of the preprocessing step (it will take a few minutes) you should have a set of files (`data_0.xyzb`, `data_1.xyzb` etc.) in the firefly directory. 
+You can optionally the `extractPart` lines to change what data is extracted from the file. 
+
+To start the preprocessign step do
+```
+>python preprocess.py
+```
+At the end of the preprocessing step (it will take a few minutes) you should have a set of files (`data_0.xyzb`, `data_1.xyzb` etc.) in the firefly directory. 
 
 You can now run firefly with `orun firefly.py`
 
