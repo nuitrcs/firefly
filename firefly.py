@@ -9,10 +9,10 @@ import Manipulator
 #--------------------------------------------------------------------------------
 # Dataset
 galaxy = [
-          PointSet.PointSet('data_0.xyzb', Color(0.05, 0.05, 0.05, 1), 0.2),
-          PointSet.PointSet('data_1.xyzb', Color(1, 0.1, 0.1, 1), 0.2),
+          PointSet.PointSet('data_0.xyzb', Color(0.02, 0.02, 0.06, 1), 0.2),
+          PointSet.PointSet('data_1.xyzb', Color(0.5, 0.5, 0.0, 1), 0.2),
           PointSet.PointSet('data_2.xyzb', Color(0.5, 0.5, 0.0, 1), 2),
-          PointSet.PointSet('data_4.xyzb', Color(0, 0, 0.2, 1), 2)
+          PointSet.PointSet('data_4.xyzb', Color(1, 0.1, 0.1, 1), 2)
           ]
 
 # Point set 0 is rendered with a 'gas' renderer, but right now this is the same
