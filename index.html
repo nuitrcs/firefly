@@ -38,7 +38,7 @@
 <h3>
 <a id="data-preparation" class="anchor" href="#data-preparation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data Preparation</h3>
 
-<p>firefly reads point cloud data from binary point cloud files (extension <code>.xyzb</code>). FIRE generated HDF5 files. To convert the HDF5 file to binary point cloud files you can use the included preprocess.py script. To run it, you will need <b>h5py installed</b> to read the HDF5 file in python.</p>
+<p>firefly reads point cloud data from binary point cloud files (extension <code>.xyzb</code>). FIRE generated HDF5 files. To convert the HDF5 file to binary point cloud files you can use the included preprocess.py script. To run it, you will need <strong>h5py installed</strong> to read the HDF5 file in python.</p>
 
 <h4>
 <a id="installing-h5py" class="anchor" href="#installing-h5py" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing H5PY</h4>
@@ -63,7 +63,14 @@
 <pre><code>f = h5py.File('FILE NAME HERE,'r')
 </code></pre>
 
-<p>You can optionally the <code>extractPart</code> lines to change what data is extracted from the file. At the end of the preprocessing step (it will take a few minutes) you should have a set of files (<code>data_0.xyzb</code>, <code>data_1.xyzb</code> etc.) in the firefly directory. </p>
+<p>You can optionally the <code>extractPart</code> lines to change what data is extracted from the file. </p>
+
+<p>To start the preprocessign step do</p>
+
+<pre><code>&gt;python preprocess.py
+</code></pre>
+
+<p>At the end of the preprocessing step (it will take a few minutes) you should have a set of files (<code>data_0.xyzb</code>, <code>data_1.xyzb</code> etc.) in the firefly directory. </p>
 
 <p>You can now run firefly with <code>orun firefly.py</code></p>
 
