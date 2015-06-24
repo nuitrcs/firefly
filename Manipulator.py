@@ -45,13 +45,13 @@ def onEvent():
     elif(e.isKeyUp(ord('a'))): panVector.x = 0
     if(e.isKeyDown(ord('d'))): panVector.x += ps
     elif(e.isKeyUp(ord('d'))): panVector.x = 0
-    if(e.isKeyDown(ord('s'))): panVector.z -= ps
+    if(e.isKeyDown(ord('s'))): panVector.z += ps
     elif(e.isKeyUp(ord('s'))): panVector.z = 0
-    if(e.isKeyDown(ord('w'))): panVector.z += ps
+    if(e.isKeyDown(ord('w'))): panVector.z -= ps
     elif(e.isKeyUp(ord('w'))): panVector.z = 0
-    if(e.isKeyDown(ord('r'))): panVector.y -= ps
+    if(e.isKeyDown(ord('r'))): panVector.y += ps
     elif(e.isKeyUp(ord('r'))): panVector.y = 0
-    if(e.isKeyDown(ord('f'))): panVector.y += ps
+    if(e.isKeyDown(ord('f'))): panVector.y -= ps
     elif(e.isKeyUp(ord('f'))): panVector.y = 0
 
 
