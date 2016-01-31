@@ -32,7 +32,7 @@ class PointSet:
         self.model = ModelInfo()
         self.model.name = file
         self.model.path = file
-        self.model.options = "200000 500:1000000:20 200:500:8 50:200:4 0:50:1"
+        self.model.options = "100000 10000:10000000:10 1000:10000:5 0:1000:1"
         scene.loadModel(self.model)
 
         self.object = StaticObject.create(self.model.name)

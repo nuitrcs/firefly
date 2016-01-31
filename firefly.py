@@ -30,13 +30,17 @@ windowSize = Uniform.create('windowSize', UniformType.Vector2f, 1)
 # Add the window size unform to the point set materials
 # and all all of them to the pivot node
 pivot = SceneNode.create('pivot')
+scaler = SceneNode.create('scaler')
+manip = SceneNode.create('manipulator')
 for ps in galaxy:
     ps.material.attachUniform(windowSize)
-    pivot.addChild(ps.object)
+    scaler.addChild(ps.object)
     ps.object.setFlag(SceneNodeHitPointsFlag)
 
-pivot.setScale(0.4,0.4,0.4)
-Manipulator.root = pivot
+pivot.addChild(scaler)
+manip.addChild(pivot)
+scaler.setScale(0.4,0.4,0.4)
+Manipulator.root = manip
 
 # Set the camera background and default movement speed.
 c = getDefaultCamera()
@@ -105,10 +109,8 @@ windowResized()
 
 # Center the datasets on a common pivot node, to ease rotation around the dataset
 def center():
-    global s, zf, k
-    for ps in galaxy:
-        ps.object.setPosition(-437, -148, -579)
-    getDefaultCamera().setPosition(0,0,200)
+    pivot.setPosition(-scaler.getBoundCenter())
+    getDefaultCamera().setPosition(Vector3(0, 0, 200))
 
 # Utility shortcut function to recompile shaders
 def rs():
@@ -119,6 +121,11 @@ def ps(v):
     for ps in galaxy:
         ps.pointScale.setFloat(v)
 
-center()
-queueCommand(':autonearfar on')
+#queueCommand("queueCommand('center()')")
+camera = getDefaultCamera()
+camera.setNearFarZ(1, 10000000)
 ps(0.1)
+
+def onUpdate(frame, time, dt):
+	if frame == 100: center()
+setUpdateFunction(onUpdate)

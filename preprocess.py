@@ -45,16 +45,16 @@ def extractPart(h5file, partName, outfile, useSmoothing, useDensity = False):
 
 
 #open the file
-f = h5py.File('snapshot_140.hdf5','r')
+f = h5py.File('snapshot_600.hdf5','r')
 
 # scale factor for coordinates and smoothing length
 scale = 0.1
 densityScale = 1000000000
 # Extract parts data to binary point cloud files
-extractPart(f, 'PartType0', 'data_0.xyzb', True, True)
-extractPart(f, 'PartType1', 'data_1.xyzb', False)
-extractPart(f, 'PartType2', 'data_2.xyzb', False)
-extractPart(f, 'PartType4', 'data_4.xyzb', False)
+extractPart(f, 'PartType0', 'adata_0.xyzb', True, True)
+extractPart(f, 'PartType1', 'adata_1.xyzb', False)
+extractPart(f, 'PartType2', 'adata_2.xyzb', False)
+extractPart(f, 'PartType4', 'adata_4.xyzb', False)
 
 print("Done!")
 
