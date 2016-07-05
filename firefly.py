@@ -1,131 +1,106 @@
-from cyclops import *
-from pointCloud import *
-from omegaToolkit import *
-from math import *
-import sys
-import PointSet
-import Manipulator
+from signac import *
+import Navigator
 
-#--------------------------------------------------------------------------------
-# Dataset
-galaxy = [
-          PointSet.PointSet('data_0.xyzb', Color(0.02, 0.02, 0.06, 1), 0.2),
-          PointSet.PointSet('data_1.xyzb', Color(0.5, 0.5, 0.0, 1), 0.2),
-          PointSet.PointSet('data_2.xyzb', Color(0.5, 0.5, 0.0, 1), 2),
-          PointSet.PointSet('data_4.xyzb', Color(1, 0.1, 0.1, 1), 2)
-          ]
+sig = Signac.getInstance()
 
-# Point set 0 is rendered with a 'gas' renderer, but right now this is the same
-# as the star renderer. Also use a different texture for the points
-galaxy[0].material.setProgram(PointSet.gasProgram.name)
-galaxy[0].material.setDiffuseTexture('gas.png')
+prog = sig.addProgram('points')
+prog.setVertexShader('shaders/point.vert')
+prog.setGeometryShader('shaders/point.geom')
+prog.setFragmentShader('shaders/point.frag')
+prog.setColormapShader('shaders/colormaps.frag')
 
-#--------------------------------------------------------------------------------
-# Scene setup
-scene = getSceneManager()
-SceneNodeHitPointsFlag = 1 << 16;
-# This uniform stores the window size. Needed for the star rendering shader.
-windowSize = Uniform.create('windowSize', UniformType.Vector2f, 1)
+prog.define('colormap', 'colormap_default');
 
-# Add the window size unform to the point set materials
-# and all all of them to the pivot node
-pivot = SceneNode.create('pivot')
-scaler = SceneNode.create('scaler')
-manip = SceneNode.create('manipulator')
-for ps in galaxy:
-    ps.material.attachUniform(windowSize)
-    scaler.addChild(ps.object)
-    ps.object.setFlag(SceneNodeHitPointsFlag)
+l = BinaryLoader()
+l.open('data_0.xyzb')
 
-pivot.addChild(scaler)
-manip.addChild(pivot)
-scaler.setScale(0.4,0.4,0.4)
-Manipulator.root = manip
+ds = Dataset.create('darkMatter')
+ds.setDoublePrecision(True)
+ds.setLoader(l)
 
-# Set the camera background and default movement speed.
-c = getDefaultCamera()
-c.setBackgroundColor(Color('black'))
-c.getController().setSpeed(50)
+x = ds.addDimension('X', DimensionType.Float)
+y = ds.addDimension('Y', DimensionType.Float)
+z = ds.addDimension('Z', DimensionType.Float)
+smoothingLength = ds.addDimension('SmoothingLength', DimensionType.Float)
+density = ds.addDimension('Density', DimensionType.Float)
+energy = ds.addDimension('InternalEnergy', DimensionType.Float)
+sfr = ds.addDimension('StarFormationRate', DimensionType.Float)
+
+pc = PointCloud()
+pc.setOptions('100000 0:100000:10')
+pc.setDimensions(x, y, z)
+pc.setData(0, smoothingLength)
+pc.setProgram(prog)
 
 
-#--------------------------------------------------------------------------------
-# User interface
-uim = UiModule.createAndInitialize()
-panel = Container.create(ContainerLayout.LayoutVertical, uim.getUi())
-panel.setStyle('fill: #303030a0')
-headerRow = Container.create(ContainerLayout.LayoutHorizontal, panel)
-l1 = Label.create(headerRow)
-l1.setText('Dataset Name')
-l1.setAutosize(False)
-l1.setWidth(120)
-l2 = Label.create(headerRow)
-l2.setText('Visible')
-l2.setStyle('align: middle-left')
-l2.setAutosize(False)
-l2.setWidth(100)
-l3 = Label.create(headerRow)
-l3.setText('Intensity')
-i = 0
-for ps in galaxy:
-    psRow = Container.create(ContainerLayout.LayoutHorizontal, panel)
-    psl = Label.create(psRow)
-    psl.setText(ps.model.name)
-    psl.setWidth(150)
-    psl.setAutosize(False)
-    vb = Button.create(psRow)
-    vb.setCheckable(True)
-    vb.setChecked(True)
-    vb.getLabel().setVisible(False)
-    sld = Slider.create(psRow)
-    # Remove horizontal navigation so we can use left/right arrow to set
-    # the slider value
-    sld.setHorizontalPrevWidget(None)
+sn = SceneNode.create('galaxy')
+sn.addComponent(pc)
+
+scale = 0.1
+sn.setScale(scale, scale, scale)
+#sn.setPosition(-5, 1, -10)
+
+p = prog.getParams()
+p.pointScale = 0.05
+
+# set camera near / far z to some reasonable value
+# this is needed to make slicing work.
+getDefaultCamera().setNearFarZ(1, 100000)
+
+# Hardcoded initial pivot.
+Navigator.pivotPosition = Vector3(47, 17, 62)
+Navigator.focus()
+
+filterStart = 0.0
+filterEnd = 1.0
+colormap = 'colormap_default'
+
     
-    # Hook events
-    vb.setUIEventCommand('toggle({0})'.format(i))
-    sld.setUIEventCommand('setPointSize({0}, %value%)'.format(i))
-    i = i + 1
+def onEvent():
+    global colormap
+    
+    e = getEvent()
+    if(e.isKeyDown(ord('p'))): prog.reload()
+    if(e.isKeyDown(ord('c'))): 
+        if(colormap == 'colormap_default'): colormap = 'colormap_div'
+        else: colormap = 'colormap_default'
+        print('colormap set to ' + colormap)
+        prog.define('colormap', colormap)
+    if(e.isKeyDown(ord('l'))): 
+        if(e.isFlagSet(EventFlags.Shift)): p.pointScale /= 1.5
+        else: p.pointScale *= 1.5
+    if(e.isKeyDown(ord('l'))): 
+        if(e.isFlagSet(EventFlags.Shift)): p.pointScale /= 1.5
+        else: p.pointScale *= 1.5
+setEventFunction(onEvent)
 
-def setPointSize(id, i):
-    galaxy[id].pointScale.setFloat(float(i) / 100 )
+#-------------------------------------------------------------------------------
+# UI
+from omium import *
+import porthole
+from omegaToolkit import *
 
-def toggle(id):
-    galaxy[id].object.setVisible(not galaxy[id].object.isVisible())
-    print(galaxy[id].object.isVisible())
+o = Omium.getInstance()
+ui = UiModule.createAndInitialize().getUi()
 
-#--------------------------------------------------------------------------------
-# Add a window resized callback (and call it once when the program starts)
-def windowResized():
-    dc = getDisplayConfig()
-    cr = dc.getCanvasRect()
-    windowSize.setVector2f(Vector2(cr[2], cr[3]))
-    #print('[windowResized] <{0}>x<{1}>'.format(cr[2], cr[3]))
-getDisplayConfig().canvasChangedCommand = 'windowResized()'
-windowResized()
+porthole.initialize(4080, './fireflyUi.html')
+ps = porthole.getService()
+ps.setServerStartedCommand('loadUi()')
 
+def loadUi():
+    global img
+    global p
+    img = Image.create(ui)
+    p = o.getPixels()
+    img.setData(p)
+    o.setZoom(3)
+    o.open('http://localhost:4080')
+    onResize()
 
-#--------------------------------------------------------------------------------
-# Utility functions and program start
-
-# Center the datasets on a common pivot node, to ease rotation around the dataset
-def center():
-    pivot.setPosition(-scaler.getBoundCenter())
-    getDefaultCamera().setPosition(Vector3(0, 0, 200))
-
-# Utility shortcut function to recompile shaders
-def rs():
-    scene.reloadAndRecompileShaders()
-
-# Utility shortcut function to resize all points
-def ps(v):
-    for ps in galaxy:
-        ps.pointScale.setFloat(v)
-
-#queueCommand("queueCommand('center()')")
-camera = getDefaultCamera()
-camera.setNearFarZ(1, 10000000)
-ps(0.1)
-
-def onUpdate(frame, time, dt):
-	if frame == 100: center()
-setUpdateFunction(onUpdate)
+getDisplayConfig().canvasChangedCommand = 'onResize()'
+def onResize():
+    r = getDisplayConfig().getCanvasRect()
+    o.resize(r[2], r[3])
+    img.setSize(Vector2(r[2], r[3]))
+    # flip image Y
+    img.setSourceRect(0, r[3], r[2], -r[3])
