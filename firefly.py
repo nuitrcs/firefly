@@ -12,7 +12,7 @@ prog.setColormapShader('shaders/colormaps.frag')
 prog.define('colormap', 'colormap_default');
 
 l = BinaryLoader()
-l.open('data_0.xyzb')
+l.open('C:/dev/omegalib/apps/firefly/data_0.xyzb')
 
 ds = Dataset.create('darkMatter')
 ds.setDoublePrecision(True)
