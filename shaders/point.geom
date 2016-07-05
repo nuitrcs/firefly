@@ -10,7 +10,7 @@ uniform mat4 projection;
 uniform mat4 modelViewProjection;
 
 // Data attributes
-in double attrib_data0[];
+in float attrib_data0[];
 flat out float d0;
 uniform vec2 d0Filter;
 

@@ -1,10 +1,10 @@
-in double x;
-in double y;
-in double z;
+in float x;
+in float y;
+in float z;
 
 // Data attributes
-in double data0;
-out double attrib_data0;
+in float data0;
+out float attrib_data0;
 
 uniform mat4 modelView;
 uniform mat4 projection;
