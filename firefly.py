@@ -15,7 +15,7 @@ l = BinaryLoader()
 l.open('C:/dev/omegalib/apps/firefly/data_0.xyzb')
 
 ds = Dataset.create('darkMatter')
-ds.setDoublePrecision(True)
+ds.setDoublePrecision(False)
 ds.setLoader(l)
 
 x = ds.addDimension('X', DimensionType.Float)
