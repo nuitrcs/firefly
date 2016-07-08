@@ -1,4 +1,4 @@
-#line 2 "colormaps.frag"
+//#line 2 "colormaps.frag"
 
 vec4 colormap_default(float v)
 {

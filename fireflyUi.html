@@ -1,36 +1,204 @@
-<html>
+<html lang="en">
 <head>
-    <title>Firefly</title>
-    <script src="d3.min.js" charset="utf-8"></script>
-    
-    <script src="jquery-1.11.1.min.js"></script>
-    <script src="jqwidgets/jqxcore.js"></script>
-    <script src="jqwidgets/jqxbuttons.js"></script>
-    <script src="jqwidgets/jqxtoolbar.js"></script>
-    <script src="jqwidgets/jqxlayout.js"></script>
-    <script src="jqwidgets/jqxribbon.js"></script>
-    <script src="jqwidgets/jqxwindow.js"></script>
-    <script src="jqwidgets/jqxdragdrop.js"></script>
-    <script src="jqwidgets/jqxdocking.js"></script>
-    <script src="jqwidgets/jqxdockinglayout.js"></script>
-    <script src="jqwidgets/jqxslider.js"></script>
-    <link href="jqwidgets/styles/jqx.base.css" rel="stylesheet">
-    
+    <title>Drag Sync</title>
+    <script src="controlKit.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="porthole/res/porthole.js"></script>
 </head>
+
 <body>
-    <link href="fireflyUi.css" rel="stylesheet">
-
-    <div style="color: white">Hello World! Heheheh</div>
-    <input type="button" value="Hello"></input>
-    <input type="range" value="Hello"></input>
-
-    <div id="layout" style="right: 8px; left: 8px; position:absolute; top:42px; bottom:0px;">
-        <div data-container="FieldsPanel">
-            <div id="FieldsPanel"></div>
-        </div>
-    </div> 
     
-    <script src="fireflyUi.js"></script>
+    <style>
+        #box {
+            width: 200px; 
+            height: 200px; 
+            position: absolute; 
+            background-color: yellow
+        };
+    </style>
+    
+    <div id="box"></div>
+    
+    <script>
+    var viewPanel
+    var starArray = new Array()
+    var controlKit
+    porthole.connected = function() {
+        {{py print "started porthole connected function"}}
+        $("#box").draggable({
+            drag: function(){
+                var offset = $(this).offset();
+                xPos = offset.left;
+                yPos = offset.top;
+                
+                // Save the current position on the server, so new clients 
+                // can retrieve it
+                {{py savedX=%xPos%; savedY=%yPos% }}
+                
+                // Update the box position on other clients
+                {{js o = $('#box').offset({ left:%xPos%, top:%yPos%}) }}
+            }
+        });
+
+        controlKit = new ControlKit();
+
+        controlKit.addPanel({label: 'Star Group Settings' , fixed: false, width: 320});
+        console.log(controlKit)
+        viewPanel = controlKit._panels[0]
+        console.log(viewPanel)
+    }
+
+    var numStarPanels = 0
+    // function addStarPanel(name) {
+    //     numStarPanels = numStarPanels + 1
+    //     {{py print "In star panel function"}}
+    //     console.log(obj.testArray)
+    //     obj.testArray.push("testtesttest")
+    //     viewPanel.addGroup({label: name})
+    //         .addSubGroup({label: 'Color Settings'})
+    //             .addSelect(obj, 'select', {label: 'Variable', onChange: function (index) {
+    //                 // obj.funcTarget = obj.funcs[index];
+    //             }})
+    //             .addSelect(obj, 'select', {label: 'Colors', onChange: function (index) {
+    //                 // obj.funcTarget = obj.funcs[index];
+    //             }})
+    //             .addRange(obj,'valueRange',{label : 'Range'})
+    //             .addCheckbox(obj, 'bool', {label: 'Log Scale'})
+    //         .addSubGroup({label: 'Filter Settings'})
+    //             .addSelect(obj, 'select', {label: 'Variable', onChange: function (index) {
+    //                 // obj.funcTarget = obj.funcs[index];
+    //             }})
+    //             .addCheckbox(obj, 'bool2', {label: 'Filter On'})
+    //             .addRange(obj,'valueRange',{label : 'Range:'})
+    //     {{py print "Now done"}}
+    // }
+
+    var currentColors = new Array()
+    var currentFilterSettings = new Array()
+    var currentColorSettings = new Array()
+    var currentVariableColor = new Array(10)
+    var currentVariableFilter = new Array(10)
+    var refresh = false
+    function addStarPanel(name) {
+        {{py print "In star panel function"}}
+        var obj = {
+            colorRange : [0,1],
+            filterRange : [-1,1],
+            minVal : 0.2,
+            maxVal : 0.8,
+            filterOn: false,
+            isLog: false,
+            variables : ['mass', 'size', 'speed'],
+            colors : ["redgreen", "blueyellow"],
+            xPos : 0,
+            yPos : 0
+        };
+        starArray.push(obj)
+
+        currentFilterSettings[numStarPanels] = new Array(10)
+        currentFilterSettings[numStarPanels].fill(0)
+        currentColorSettings[numStarPanels] = new Array(10)
+        currentColorSettings[numStarPanels].fill(0)
+
+        var currIndex = numStarPanels
+        viewPanel.addGroup({label: name, enable: false})
+            .addSubGroup({label: 'Color Settings', enable: false})
+                .addSelect(starArray[numStarPanels], 'variables' , {label: 'Variable', onChange: function (index) {
+                    updateTables()
+                    currentVariableColor[currIndex] = index
+                     if (currentColorSettings[currIndex][index] == 0) {
+                        currentColorSettings[currIndex][index]= {
+                            on : false,
+                            min : -1.0,
+                            max : 1.0
+                        }
+                    } else {
+                        console.log(currentColorSettings[currIndex])
+                        starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
+                        starArray[numStarPanels].colorRange = [currentColorSettings[currIndex][index].min, currentFilterSettings[currIndex][index].max]
+                    }
+
+                }})
+                .addSelect(starArray[numStarPanels], 'colors', {label: 'Colors', onChange: function (index) {
+                    // currentColors[numStarPanels] = index
+                    // obj.funcTarget = obj.funcs[index];
+                }})
+                .addSlider(starArray[numStarPanels],'minVal','colorRange',{label :'Min'})
+                .addSlider(starArray[numStarPanels],'maxVal','colorRange',{label :'Max'})
+                .addCheckbox(starArray[numStarPanels], 'isLog', {label: 'Log Scale'})
+            .addSubGroup({label: 'Filter Settings', enable: false})
+                .addSelect(starArray[numStarPanels], 'variables', {label: 'Variable', onChange: function (index) {
+                    updateTables()
+                    currentVariableFilter[currIndex] = index
+                    if (currentFilterSettings[currIndex][index] == 0) {
+                        console.log('new')
+                        currentFilterSettings[currIndex][index]= {
+                            on : false,
+                            min : -1.0,
+                            max : 1.0
+                        }
+                        starArray[currIndex].filterOn
+                    } else {
+                        console.log('old')
+                        console.log(currentFilterSettings[currIndex])
+                        console.log('saved Value: ' ,currentFilterSettings[currIndex][index].on)
+                        console.log(starArray[currIndex].filterOn)
+                        starArray[currIndex].filterOn = currentFilterSettings[currIndex][index].on
+                        starArray[currIndex].filterRange = [currentFilterSettings[currIndex][index].min, currentFilterSettings[currIndex][index].max]
+                        console.log(starArray[currIndex].filterOn)
+                    }
+                    // obj.funcTarget = obj.funcs[index];
+                    controlKit.update();
+                }})
+                .addCheckbox(starArray[numStarPanels], 'filterOn', {label: 'Filter On'})
+                .addRange(starArray[numStarPanels],'filterRange',{label : 'Range:'})
+            .addSubGroup({label: 'Information'})
+                .addNumberOutput(starArray[numStarPanels], 'xPos', {label: 'Val 1:'})
+                .addNumberOutput(starArray[numStarPanels], 'yPos', {label: 'Val 2:'})
+        {{py print "Now done"}}
+        numStarPanels = numStarPanels + 1
+    }
+    // controlKit.update();
+    // function update(){
+    //     // updateTables()
+    //     if (controlKit && starArray[0]) {
+    //         // console.log("updating control kit")
+    //         // updateTables()
+    //         console.log("CurrentValue:" , starArray[0].filterOn)
+    //         //controlKit.update();
+    //     }
+    //     refresh = true
+    //     //{{py updateStars(%currentColorSettings%)}}
+    //     requestAnimationFrame(update);
+    // }
+    // update()
+
+    function updateTables() {
+        for (var i = currentFilterSettings.length - 1; i >= 0; i--) {
+            // console.log(currentVariableColor)
+            var j = currentVariableColor[i]
+            // console.log(j)
+            // console.log(currentFilterSettings[i][j])
+            if (currentColorSettings[i][j]){
+                currentColorSettings[i][j].on = starArray[i].isLog
+                currentColorSettings[i][j].min = starArray[i].colorRange[0]
+                currentColorSettings[i][j].max = starArray[i].colorRange[1]
+            }
+            j = currentVariableFilter[i]
+            if (currentFilterSettings[i][j]) {
+
+                currentFilterSettings[i][j].on = starArray[i].filterOn
+                console.log("saving value", currentFilterSettings[i][j].on)
+                currentFilterSettings[i][j].min = starArray[i].filterRange[0]
+                currentFilterSettings[i][j].max = starArray[i].filterRange[1]
+            }
+        }
+    }
+    // function printSomething() {
+    //     console.log("something has printed")
+    //     {{py print "Yay this has finally worked!!"}}
+    // }
+</script>
 </body>
 </html>

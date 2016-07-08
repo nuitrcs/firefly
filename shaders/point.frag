@@ -1,4 +1,4 @@
-#line 2 "point.frag"
+//#line 2 "point.frag"
 
 layout(location = 0) out vec4 color;
 
