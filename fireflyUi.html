@@ -31,18 +31,14 @@
                 var offset = $(this).offset();
                 xPos = offset.left;
                 yPos = offset.top;
-                
                 // Save the current position on the server, so new clients 
                 // can retrieve it
                 {{py savedX=%xPos%; savedY=%yPos% }}
-                
                 // Update the box position on other clients
                 {{js o = $('#box').offset({ left:%xPos%, top:%yPos%}) }}
             }
         });
-
         controlKit = new ControlKit();
-
         controlKit.addPanel({label: 'Star Group Settings' , fixed: false, width: 320});
         console.log(controlKit)
         viewPanel = controlKit._panels[0]

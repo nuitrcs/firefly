@@ -216,7 +216,7 @@ ControlKit.prototype.update = function () {
                 //     component instanceof StringOutput ||
                 //     component instanceof NumberOutput) {
                 
-                //component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
+                component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
 
                 if (component.update) {
                     component.update();

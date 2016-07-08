@@ -94,7 +94,6 @@ ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
 
 def loadUi():
-    print "loading Ui"
     global img
     global p
     img = Image.create(ui)
@@ -107,7 +106,6 @@ def loadUi():
 getDisplayConfig().canvasChangedCommand = 'onResize()'
 
 def onResize():
-    print "on resize"
     r = getDisplayConfig().getCanvasRect()
     o.resize(r[2], r[3])
     img.setSize(Vector2(r[2], r[3]))
@@ -115,11 +113,11 @@ def onResize():
     img.setSourceRect(0, r[3], r[2], -r[3])
 
 def onClientConnected():
-    print "about to print"
-    #ps.broadcastjs('printSomething()', '')
+    print "Client has connected"
+    # ps.broadcastjs('printSomething()', '')
     ps.broadcastjs('addStarPanel(\'Gases\')', '')
     ps.broadcastjs('addStarPanel(\'Dark Matter\')', '')
-    ps.broadcastjs('addStarPanel(\'Stars\')', '')
+    ps.broadcastjs('addStarPanel(\'Star Cluster\')', '')
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 
