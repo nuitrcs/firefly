@@ -115,6 +115,8 @@ def onResize():
 def onClientConnected():
     print "Client has connected"
     # ps.broadcastjs('printSomething()', '')
+    # ps.broadcastjs('setColorMap(' + str() + ')', '')
+
     ps.broadcastjs('addStarPanel(\'Gases\')', '')
     ps.broadcastjs('addStarPanel(\'Dark Matter\')', '')
     ps.broadcastjs('addStarPanel(\'Star Cluster\')', '')
@@ -122,4 +124,24 @@ def onClientConnected():
     print "finished broadcasting some commands"
 
 def updateStars():
+    return False
+
+def setColorMap(colorName, setName):
+    global colormap
+    colormap = 'colormap_div'
+    prog.define('colormap', colormap)
+
+def setPointSize(size, setName):
+    return False
+
+def setFilter(min, max, filterName,setName):
+    return False
+
+def setColorRange(min, max, setName):
+    return False
+
+def setLog(isLog, setName):
+    return False
+
+def setFilter(isOn, variable, setName):
     return False

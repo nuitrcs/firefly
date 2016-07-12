@@ -208,15 +208,17 @@ ControlKit.prototype.update = function () {
 
             while (++k < n) {
                 component = components[k];
-                console.log(component)
-                if (component.isDisabled()){
-                    continue;
-                }
-                // if (component instanceof ValuePlotter ||
-                //     component instanceof StringOutput ||
-                //     component instanceof NumberOutput) {
+                //console.log(component)
+                // if (component.isDisabled()){
+                //     continue;
+                // }
+                if (component instanceof ValuePlotter ||
+                    component instanceof StringOutput ||
+                    component instanceof NumberOutput) {
                 
-                component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
+                    console.log('updateValue')
+                    component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
+                }   
 
                 if (component.update) {
                     component.update();
