@@ -65,6 +65,14 @@
     var currentVariableFilter = new Array(10)
     var groupNames = new Array(10)
     var refresh = false
+    var colorMapLabels = new Array(10)
+    var colorMapArray = new Array(10)
+
+    function setColorMapArrays( cm, cml) {
+        colorMapArray = cm
+        colorMapLabels = cml
+    }
+
     function addStarPanel(name) {
         {{py print "In star panel function"}}
         var obj = {
@@ -74,8 +82,8 @@
             maxVal : 0.8,
             filterOn: false,
             isLog: false,
-            variables : ['mass', 'size', 'speed'],
-            colors : ["redgreen", "blueyellow"],
+            variables : ['Smoothing Length', 'Density', 'Internal Energy', 'Formation Rate'],
+            colors : colorMapLabels,
             xPos : 0,
             yPos : 0
         };
@@ -112,10 +120,13 @@
                         starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
                     }
                     controlKit.update();
+                    {{py setColorVariable("%starArray[currIndex].variables[index]%","%groupNames[currIndex]%")}}
                 }})
                 .addSelect(starArray[numStarPanels], 'colors', {label: 'Colors', onChange: function (index) {
                     // currentColors[numStarPanels] = index
                     // obj.funcTarget = obj.funcs[index];
+                    console.log('color map changed')
+                    {{py setColorMap("%colorMapArray[index]%","%groupNames[currIndex]%")}}
                 }})
                 .addRange(starArray[numStarPanels],'colorRange',{label : 'Range:'})
                 .addCheckbox(starArray[numStarPanels], 'isLog', {label: 'Log Scale'})
@@ -161,7 +172,7 @@
         }
         requestAnimationFrame(update);
     }
-    update()
+    //update()
 
     function updateTables() {
         for (var i = currentFilterSettings.length - 1; i >= 0; i--) {

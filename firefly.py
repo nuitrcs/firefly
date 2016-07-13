@@ -21,10 +21,15 @@ ds.setLoader(l)
 x = ds.addDimension('X', DimensionType.Float)
 y = ds.addDimension('Y', DimensionType.Float)
 z = ds.addDimension('Z', DimensionType.Float)
+variableDict = {}
 smoothingLength = ds.addDimension('SmoothingLength', DimensionType.Float)
+variableDict["Smoothing Length"] = smoothingLength
 density = ds.addDimension('Density', DimensionType.Float)
+variableDict["Density"] = density
 energy = ds.addDimension('InternalEnergy', DimensionType.Float)
+variableDict["Internal Energy"] = energy
 sfr = ds.addDimension('StarFormationRate', DimensionType.Float)
+variableDict["Formation Rate"] = sfr
 
 pc = PointCloud()
 pc.setOptions('100000 0:100000:10')
@@ -114,9 +119,11 @@ def onResize():
 
 def onClientConnected():
     print "Client has connected"
+    colorMapArray = ["colormap_default","colormap_div","colormap_div2","colormap_div3"]
+    colorMapLabels = ["Single Color","Division 1","Division 2","Division 3"]
     # ps.broadcastjs('printSomething()', '')
     # ps.broadcastjs('setColorMap(' + str() + ')', '')
-
+    ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ')','')
     ps.broadcastjs('addStarPanel(\'Gases\')', '')
     ps.broadcastjs('addStarPanel(\'Dark Matter\')', '')
     ps.broadcastjs('addStarPanel(\'Star Cluster\')', '')
@@ -128,8 +135,11 @@ def updateStars():
 
 def setColorMap(colorName, setName):
     global colormap
-    colormap = 'colormap_div'
+    colormap = colorName
     prog.define('colormap', colormap)
+
+def setColorVariable(variable, setName):
+    pc.setData(0, variableDict[variable])
 
 def setPointSize(size, setName):
     return False
