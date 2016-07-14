@@ -60,12 +60,6 @@ filterStart = 0.0
 filterEnd = 1.0
 colormap = 'colormap_default'
 
-
-def calljs(methodname, data):
-    mc = getMissionControlClient()
-    if(mc != None):
-        mc.postCommand('@server::calljs ' + methodname + ' ' + str(data))
-
 def onEvent():
     global colormap
     
