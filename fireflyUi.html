@@ -67,14 +67,24 @@
     var refresh = false
     var colorMapLabels = new Array(10)
     var colorMapArray = new Array(10)
+    var variableArray = new Array(10)
+    var variableRanges = new Array(10)
 
     function setColorMapArrays( cm, cml) {
         colorMapArray = cm
         colorMapLabels = cml
     }
+    function setVariables( variables, ranges) {
+        console.log("Variables Set")
+        variableArray = variables
+        variableRanges = ranges
+    }
 
-    function addStarPanel(name) {
+    function addStarPanel(name, variables, ranges ) {
         {{py print "In star panel function"}}
+        console.log(variables)
+        console.log(ranges)
+        console.log(name)
         var obj = {
             colorRange : [0,1],
             filterRange : [-1,1],
@@ -82,7 +92,7 @@
             maxVal : 0.8,
             filterOn: false,
             isLog: false,
-            variables : ['Smoothing Length', 'Density', 'Internal Energy', 'Formation Rate'],
+            variables : variables,
             colors : colorMapLabels,
             xPos : 0,
             yPos : 0
@@ -104,8 +114,8 @@
                     if (currentColorSettings[currIndex][index] == 0) {
                         currentColorSettings[currIndex][index]= {
                             on : false,
-                            min : 0.0,
-                            max : 1.0
+                            min : ranges[index][0],
+                            max : ranges[index][1]
                         }
                         starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
                         starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
@@ -149,6 +159,7 @@
                         console.log(starArray[currIndex].filterOn)
                     }
                     // obj.funcTarget = obj.funcs[index];
+                    starArray[currIndex].filterRange = variableRanges[index]
                     controlKit.update();
                 }})
                 .addCheckbox(starArray[numStarPanels], 'filterOn', {label: 'Filter On'})
@@ -168,11 +179,15 @@
                     {{py setFilter(%currentFilterSettings[i][j].min%,%currentFilterSettings[i][j].max%, %starArray[i].variables[j]%, "%groupNames[i]%")}}
                 }
             }
-            {{setLog(%starArray[i].isLog%,"%groupNames[i]%")}}
+            if (starArray[i].isLog  ){
+                {{py setLogColor(True,"%groupNames[i]%")}}
+            } else {
+                {{py setLogColor(False,"%groupNames[i]%")}}
+            }
         }
         requestAnimationFrame(update);
     }
-    //update()
+    update()
 
     function updateTables() {
         for (var i = currentFilterSettings.length - 1; i >= 0; i--) {

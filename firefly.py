@@ -10,6 +10,7 @@ prog.setFragmentShader('shaders/point.frag')
 prog.setColormapShader('shaders/colormaps.frag')
 
 prog.define('colormap', 'colormap_default');
+prog.define('scale', 'scale_linear')
 
 l = BinaryLoader()
 l.open('C:/Users/Larry/data_0.xyzb')
@@ -37,6 +38,8 @@ pc.setDimensions(x, y, z)
 pc.setData(0, smoothingLength)
 pc.setProgram(prog)
 
+isLogArray = {}
+isLogArray[1] = "False"
 
 sn = SceneNode.create('galaxy')
 sn.addComponent(pc)
@@ -98,6 +101,7 @@ ps = porthole.getService()
 ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
 
+
 def loadUi():
     global img
     global p
@@ -121,12 +125,15 @@ def onClientConnected():
     print "Client has connected"
     colorMapArray = ["colormap_default","colormap_div","colormap_div2","colormap_div3"]
     colorMapLabels = ["Single Color","Division 1","Division 2","Division 3"]
+    variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
+    variableRanges = [[0.5,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
     # ps.broadcastjs('printSomething()', '')
     # ps.broadcastjs('setColorMap(' + str() + ')', '')
+    ps.broadcastjs('setVariables(' + str(variables) + ',' + str(variableRanges) + ')','')
     ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ')','')
-    ps.broadcastjs('addStarPanel(\'Gases\')', '')
-    ps.broadcastjs('addStarPanel(\'Dark Matter\')', '')
-    ps.broadcastjs('addStarPanel(\'Star Cluster\')', '')
+    ps.broadcastjs('addStarPanel(\'Gases\',' + str(variables) + ',' + str(variableRanges) + ')', '')
+    ps.broadcastjs('addStarPanel(\'Dark Matter\',' + str(variables) + ',' + str(variableRanges) + ')', '')
+    ps.broadcastjs('addStarPanel(\'Star Cluster\',' + str(variables) + ',' + str(variableRanges) + ')', '')
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 
@@ -150,8 +157,16 @@ def setFilter(min, max, filterName,setName):
 def setColorRange(min, max, setName):
     return False
 
-def setLog(isLog, setName):
-    return False
+def setLogColor(isLog, setName):
+    if isLog != isLogArray[1] and setName == 'Gases':
+        print setName
+        if isLog == True:
+            prog.define('scale', 'scale_log')
+            print 'setting scale to log'
+        else:
+            prog.define('scale', 'scale_linear')
+            print 'setting scale to linear'
+        isLogArray[1] = isLog
 
 def setFilter(isOn, variable, setName):
     return False
