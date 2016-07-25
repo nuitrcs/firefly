@@ -10,7 +10,7 @@ prog.setFragmentShader('shaders/point.frag')
 prog.setColormapShader('shaders/colormaps.frag')
 
 prog.define('colormap', 'colormap_default');
-prog.define('scale', 'scale_linear')
+prog.define('scale', 'scale_log')
 
 l = BinaryLoader()
 l.open('C:/Users/Larry/data_0.xyzb')
@@ -34,8 +34,8 @@ variableDict["Formation Rate"] = sfr
 
 pc = PointCloud()
 pc.setOptions('100000 0:100000:10')
-pc.setDimensions(x, y, z)
-pc.setData(0, smoothingLength)
+#pc.setDimensions(x, y, z)
+#pc.setData(0, smoothingLength)
 pc.setProgram(prog)
 
 isLogArray = {}
@@ -50,7 +50,9 @@ sn.setScale(scale, scale, scale)
 
 p = prog.getParams()
 p.pointScale = 0.05
-
+#print "Is Log: " , p.isLog
+p.isLog = 1
+#print "Is Log" , p.isLog
 # set camera near / far z to some reasonable value
 # this is needed to make slicing work.
 getDefaultCamera().setNearFarZ(1, 100000)
@@ -152,15 +154,18 @@ def setColorRange(min, max, setName):
     return False
 
 def setLogColor(isLog, setName):
+    p = prog.getParams()
     if isLog != isLogArray[1] and setName == 'Gases':
-        print setName
+        print "SetName: " , setName
+        #print "before: " , p.isLog
         if isLog == True:
-            prog.define('scale', 'scale_log')
+            p.isLog = 1
             print 'setting scale to log'
         else:
-            prog.define('scale', 'scale_linear')
+            p.isLog = 0
             print 'setting scale to linear'
         isLogArray[1] = isLog
+        print "after: " , p.isLog
 
 def setFilter(isOn, variable, setName):
     return False

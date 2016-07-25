@@ -198,8 +198,13 @@
                 currentFilterSettings[i][j].min = starArray[i].filterRange[0]
                 currentFilterSettings[i][j].max = starArray[i].filterRange[1]
             }
+            if (starArray[i].isLog) {
+                {{py setLogColor("True",%i%)}}
+            } else {
+                {{py setLogColor("False",%i%)}}
+            }
         }
-    }
+    } 
     // function printSomething() {
     //     console.log("something has printed")
     //     {{py print "Yay this has finally worked!!"}}
