@@ -3,56 +3,59 @@ import Navigator
 
 sig = Signac.getInstance()
 
+#-------------------------------------------------------------------------------
+# GPU Program Setup
 prog = sig.addProgram('points')
 prog.setVertexShader('shaders/point.vert')
 prog.setGeometryShader('shaders/point.geom')
 prog.setFragmentShader('shaders/point.frag')
 prog.setColormapShader('shaders/colormaps.frag')
 
-prog.define('colormap', 'colormap_default');
-prog.define('scale', 'scale_log')
+colormaps = [
+    loadImage('colormaps/bu-og.png'),
+    loadImage('colormaps/bu-wh-og.png'),
+    loadImage('colormaps/bk-gr.png'),
+    loadImage('colormaps/bu-gr-wh-yl-rd.png')
+]
 
-l = BinaryLoader()
-l.open('C:/Users/Larry/data_0.xyzb')
+#-------------------------------------------------------------------------------
+# Data Setup
+l = FireLoader()
+l.open('C:/dev/omegalib/apps/firefly/snapshot_140.hdf5')
 
-ds = Dataset.create('darkMatter')
-ds.setDoublePrecision(False)
+ds = Dataset.create('PartType0')
 ds.setLoader(l)
 
-x = ds.addDimension('X', DimensionType.Float)
-y = ds.addDimension('Y', DimensionType.Float)
-z = ds.addDimension('Z', DimensionType.Float)
+x = ds.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+y = ds.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+z = ds.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+smoothingLength = ds.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
+density = ds.addDimension('Density', DimensionType.Float, 0, 'Density')
 variableDict = {}
-smoothingLength = ds.addDimension('SmoothingLength', DimensionType.Float)
 variableDict["Smoothing Length"] = smoothingLength
-density = ds.addDimension('Density', DimensionType.Float)
 variableDict["Density"] = density
-energy = ds.addDimension('InternalEnergy', DimensionType.Float)
-variableDict["Internal Energy"] = energy
-sfr = ds.addDimension('StarFormationRate', DimensionType.Float)
-variableDict["Formation Rate"] = sfr
 
 pc = PointCloud()
 pc.setOptions('100000 0:100000:10')
-#pc.setDimensions(x, y, z)
-#pc.setData(0, smoothingLength)
+
+pc.setDimensions(x, y, z)
+pc.setData(smoothingLength)
+pc.setSize(smoothingLength)
 pc.setProgram(prog)
-
-isLogArray = {}
-isLogArray[1] = "False"
-
+pc.normalizeFilterBounds(True)
+pc.setFilterBounds(0, 1)
+pc.setColormap(colormaps[0])
+#-------------------------------------------------------------------------------
+# Scene Setup
 sn = SceneNode.create('galaxy')
 sn.addComponent(pc)
 
-scale = 0.1
+scale = 0.01
 sn.setScale(scale, scale, scale)
 #sn.setPosition(-5, 1, -10)
 
-p = prog.getParams()
-p.pointScale = 0.05
-#print "Is Log: " , p.isLog
-p.isLog = 1
-#print "Is Log" , p.isLog
+pc.setPointScale(scale)
+
 # set camera near / far z to some reasonable value
 # this is needed to make slicing work.
 getDefaultCamera().setNearFarZ(1, 100000)
@@ -63,34 +66,16 @@ Navigator.focus()
 
 filterStart = 0.0
 filterEnd = 1.0
-colormap = 'colormap_default'
-
-def onEvent():
-    global colormap
-    
-    e = getEvent()
-    if(e.isKeyDown(ord('p'))): prog.reload()
-    if(e.isKeyDown(ord('c'))): 
-        if(colormap == 'colormap_default'): colormap = 'colormap_div'
-        else: colormap = 'colormap_default'
-        print('colormap set to ' + colormap)
-        prog.define('colormap', colormap)
-    if(e.isKeyDown(ord('l'))): 
-        if(e.isFlagSet(EventFlags.Shift)): p.pointScale /= 1.5
-        else: p.pointScale *= 1.5
-    if(e.isKeyDown(ord('l'))): 
-        if(e.isFlagSet(EventFlags.Shift)): p.pointScale /= 1.5
-        else: p.pointScale *= 1.5
-setEventFunction(onEvent)
+# Initialize an array with false
+isLogArray = [False] * 10
 
 #-------------------------------------------------------------------------------
 # UI
 from omium import *
 import porthole
-from omegaToolkit import *
+from overlay import *
 
 o = Omium.getInstance()
-ui = UiModule.createAndInitialize().getUi()
 
 porthole.initialize(4080, './fireflyUi.html')
 ps = porthole.getService()
@@ -99,11 +84,12 @@ ps.setConnectedCommand('onClientConnected()')
 
 
 def loadUi():
-    global img
+    global gui
     global p
-    img = Image.create(ui)
+    gui = Overlay()
     p = o.getPixels()
-    img.setData(p)
+    gui.setTexture(p)
+    gui.setAutosize(True)
     o.setZoom(3)
     o.open('http://localhost:4080')
     onResize()
@@ -113,13 +99,10 @@ getDisplayConfig().canvasChangedCommand = 'onResize()'
 def onResize():
     r = getDisplayConfig().getCanvasRect()
     o.resize(r[2], r[3])
-    img.setSize(Vector2(r[2], r[3]))
-    # flip image Y
-    img.setSourceRect(0, r[3], r[2], -r[3])
 
 def onClientConnected():
     print "Client has connected"
-    colorMapArray = ["colormap_default","colormap_div","colormap_div2","colormap_div3"]
+    colorMapArray = [0,1,2,3]
     colorMapLabels = ["Single Color","Division 1","Division 2","Division 3"]
     variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
     variableRanges = [[0.5,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
@@ -138,11 +121,15 @@ def updateStars():
 
 def setColorMap(colorName, setName):
     global colormap
+    print "Setting a new Color Map: " , colorName, " For Set: ", setName
     colormap = colorName
-    prog.define('colormap', colormap)
+    print setName
+    print colorName
+    print colormaps[int(colorName)]
+    pc.setColormap(colormaps[int(colorName)])
 
 def setColorVariable(variable, setName):
-    pc.setData(0, variableDict[variable])
+    pc.setData(variableDict[variable])
 
 def setPointSize(size, setName):
     return False
@@ -154,6 +141,7 @@ def setColorRange(min, max, setName):
     return False
 
 def setLogColor(isLog, setName):
+    # return False
     p = prog.getParams()
     if isLog != isLogArray[1] and setName == 'Gases':
         print "SetName: " , setName

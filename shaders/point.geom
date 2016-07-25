@@ -1,29 +1,40 @@
 layout(points) in;
 layout(triangle_strip, max_vertices=4) out;
 
-flat out float sphere_radius;
-
-out vec2 texCoord;
-
 uniform mat4 modelView;
 uniform mat4 projection;
 uniform mat4 modelViewProjection;
 
 // Data attributes
-in float attrib_data0[];
-flat out float d0;
-uniform vec2 d0Filter;
+//Inputs
+in float attrib_data[];
+in float attrib_size[];
+in float attrib_filter[];
 
-// Visualization parameters
+// Outputs
+flat out float data;
+out vec2 texCoord;
+
+// Uniforms
+uniform vec2 filterBounds;
 uniform float pointScale;
 
 void main(void)
-{
-    d0 = float(attrib_data0[0]);
-    if(d0 < d0Filter[0] || d0 > d0Filter[1]) return;
+{    
+#if (FILTER_MODE == 1)
+    if(attrib_filter[0] < filterBounds[0] || attrib_filter[0] > filterBounds[1]) return;
+#endif
 
-    sphere_radius =  pointScale * 2.0;
-    float halfsize = sphere_radius * 0.5;
+#if (SIZE_MODE == 1)
+    float radius =  attrib_size[0] * pointScale;
+    float v = 4.188 * pow(radius * 0.5, 3);
+    data = attrib_data[0] / v;
+#else
+    float radius =  pointScale * 2.0;
+    data = attrib_data[0];
+#endif
+
+    float halfsize = radius * 0.5;
     
     texCoord = vec2(1.0,-1.0);
     gl_Position = gl_in[0].gl_Position;

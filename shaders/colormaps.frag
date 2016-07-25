@@ -1,5 +1,12 @@
 //#line 2 "colormaps.frag"
 
+uniform sampler2D colormap;
+
+vec4 mapToColor(float v)
+{
+    return texture2D(colormap, vec2(v, 0.5)) * 0.2;
+}
+
 vec4 colormap_default(float v)
 {
     vec4 c1 = vec4(0.1, 0.01, 0.01, 1);
