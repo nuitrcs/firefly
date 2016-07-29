@@ -3182,11 +3182,13 @@ Range.prototype = Object.create(ObjectComponent.prototype);
 Range.prototype.constructor = Range;
 
 Range.prototype._onInputChange = function () {
+    {{py print "ControlKit on Input change"}}
     this.dispatchEvent(new Event_(this, ComponentEvent.VALUE_UPDATED, null));
     this._onChange();
 };
 
 Range.prototype._updateValueMin = function () {
+    {{py print "ControlKit update Value Min"}}
     var values = this._obj[this._key];
 
     var inputMin = this._inputMin,
@@ -3201,6 +3203,7 @@ Range.prototype._updateValueMin = function () {
 };
 
 Range.prototype._updateValueMax = function () {
+    {{py print "ControlKit update Value Max"}}
     var values = this._obj[this._key];
 
     var inputMax = this._inputMax,

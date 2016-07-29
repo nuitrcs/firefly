@@ -21,7 +21,7 @@ colormaps = [
 #-------------------------------------------------------------------------------
 # Data Setup
 l = FireLoader()
-l.open('C:/dev/omegalib/apps/firefly/snapshot_140.hdf5')
+l.open('snapshot_140.hdf5')
 
 ds = Dataset.create('PartType0')
 ds.setLoader(l)
@@ -34,6 +34,7 @@ density = ds.addDimension('Density', DimensionType.Float, 0, 'Density')
 variableDict = {}
 variableDict["Smoothing Length"] = smoothingLength
 variableDict["Density"] = density
+variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
 
 pc = PointCloud()
 pc.setOptions('100000 0:100000:10')
@@ -42,8 +43,9 @@ pc.setDimensions(x, y, z)
 pc.setData(smoothingLength)
 pc.setSize(smoothingLength)
 pc.setProgram(prog)
+pc.setFilter(smoothingLength)
 pc.normalizeFilterBounds(True)
-pc.setFilterBounds(0, 1)
+pc.setFilterBounds(0, 1.0)
 pc.setColormap(colormaps[0])
 #-------------------------------------------------------------------------------
 # Scene Setup
@@ -82,7 +84,7 @@ ps = porthole.getService()
 ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
 
-
+print "KEYMAP: " ,Keyboard.KEY_A
 def loadUi():
     global gui
     global p
@@ -103,21 +105,21 @@ def onResize():
 def onClientConnected():
     print "Client has connected"
     colorMapArray = [0,1,2,3]
-    colorMapLabels = ["Single Color","Division 1","Division 2","Division 3"]
-    variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
-    variableRanges = [[0.5,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
+    colorMapLabels = ["Blue-Orange","Blue-White-Orange","Black-Green","Full Spectrum"]
+    filterRanges = [[0.0,100.0],[0.0,100.0],[0.0,100.0],[0.0,100.0]]
+    variableRanges = [[0.0,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
     # ps.broadcastjs('printSomething()', '')
     # ps.broadcastjs('setColorMap(' + str() + ')', '')
-    ps.broadcastjs('setVariables(' + str(variables) + ',' + str(variableRanges) + ')','')
+    ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
     ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ')','')
-    ps.broadcastjs('addStarPanel(\'Gases\',' + str(variables) + ',' + str(variableRanges) + ')', '')
-    ps.broadcastjs('addStarPanel(\'Dark Matter\',' + str(variables) + ',' + str(variableRanges) + ')', '')
-    ps.broadcastjs('addStarPanel(\'Star Cluster\',' + str(variables) + ',' + str(variableRanges) + ')', '')
+    ps.broadcastjs('addStarPanel(\'Gases\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+    ps.broadcastjs('addStarPanel(\'Dark Matter\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+    ps.broadcastjs('addStarPanel(\'Star Cluster\',' + str(variables) + ',' + str(filterRanges) + ')', '')
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 
 def updateStars():
-    return False
+    return Falsed
 
 def setColorMap(colorName, setName):
     global colormap
@@ -131,13 +133,21 @@ def setColorMap(colorName, setName):
 def setColorVariable(variable, setName):
     pc.setData(variableDict[variable])
 
-def setPointSize(size, setName):
+def setPointSize(size, setName): 
     return False
 
-def setFilter(min, max, filterName,setName):
+def setFilterBounds(minRange, maxRange, filterName,setName):
+    #print "filterrangemin: " , minRange
+    #print "filterrangemax: " , maxRange
+    #print "filterName: " , filterName
+    #print "setName: " , setName 
+    #print filterName
+    #print variableDict[variables[int(filterName)]]
+    pc.setFilter(variableDict[variables[int(filterName)]])
+    pc.setFilterBounds(minRange/100.0, maxRange/100.0)
     return False
 
-def setColorRange(min, max, setName):
+def setColorRange(minRange, maxRange, setName):
     return False
 
 def setLogColor(isLog, setName):

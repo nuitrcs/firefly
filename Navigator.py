@@ -103,20 +103,20 @@ def onEvent():
 
     # Panning control
     ps = panSpeed
-    if(e.isKeyDown(ord('a'))): panVector.x -= ps
-    elif(e.isKeyUp(ord('a'))): panVector.x = 0
-    if(e.isKeyDown(ord('d'))): panVector.x += ps
-    elif(e.isKeyUp(ord('d'))): panVector.x = 0
-    if(e.isKeyDown(ord('s'))): panVector.z += ps
-    elif(e.isKeyUp(ord('s'))): panVector.z = 0
-    if(e.isKeyDown(ord('w'))): panVector.z -= ps
-    elif(e.isKeyUp(ord('w'))): panVector.z = 0
-    if(e.isKeyDown(ord('r'))): panVector.y += ps
-    elif(e.isKeyUp(ord('r'))): panVector.y = 0
-    if(e.isKeyDown(ord('f'))): panVector.y -= ps
-    elif(e.isKeyUp(ord('f'))): panVector.y = 0
-
-
+    #print "Source is: ", e.getSourceId()
+    #print "Keyboard A : " , int(Keyboard.KEY_A)
+    if(e.isKeyDown(Keyboard.KEY_A)): panVector.x -= ps
+    elif(e.isKeyUp(Keyboard.KEY_A)): panVector.x = 0
+    if(e.isKeyDown(Keyboard.KEY_D)): panVector.x += ps
+    elif(e.isKeyUp(Keyboard.KEY_D)): panVector.x = 0
+    if(e.isKeyDown(Keyboard.KEY_S)): panVector.z += ps
+    elif(e.isKeyUp(Keyboard.KEY_S)): panVector.z = 0
+    if(e.isKeyDown(Keyboard.KEY_W)): panVector.z -= ps
+    elif(e.isKeyUp(Keyboard.KEY_W)): panVector.z = 0
+    if(e.isKeyDown(Keyboard.KEY_R)): panVector.y += ps
+    elif(e.isKeyUp(Keyboard.KEY_R)): panVector.y = 0
+    if(e.isKeyDown(Keyboard.KEY_F)): panVector.y -= ps
+    elif(e.isKeyUp(Keyboard.KEY_F)): panVector.y = 0
 
 def onUpdate(frame, time, dt):
     global pivotPosition

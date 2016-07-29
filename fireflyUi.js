@@ -64,7 +64,7 @@ function addStarPanel(name, variables, ranges ) {
     console.log(name)
     var obj = {
         colorRange : [0,1],
-        filterRange : [-1,1],
+        filterRange : [0,1],
         minVal : 0.2,
         maxVal : 0.8,
         filterOn: false,
@@ -125,7 +125,7 @@ function addStarPanel(name, variables, ranges ) {
                     console.log('new')
                     currentFilterSettings[currIndex][index]= {
                         on : false,
-                        min : -1.0,
+                        min : 0.0,
                         max : 1.0
                     }
                     starArray[currIndex].filterOn = currentFilterSettings[currIndex][index].on
@@ -133,7 +133,7 @@ function addStarPanel(name, variables, ranges ) {
                 } else {
                     starArray[currIndex].filterOn = currentFilterSettings[currIndex][index].on
                     starArray[currIndex].filterRange = [currentFilterSettings[currIndex][index].min, currentFilterSettings[currIndex][index].max]
-                    console.log(starArray[currIndex].filterOn)
+                    //console.log(starArray[currIndex].filterOn)
                 }
                 // obj.funcTarget = obj.funcs[index];
                 starArray[currIndex].filterRange = variableRanges[index]
@@ -149,13 +149,16 @@ function addStarPanel(name, variables, ranges ) {
 }
 // controlKit.update();
 function update(){
-    for (var i = currentFilterSettings.length - 1; i >= 0; i--) {    
-        {{py setColorRange(%starArray[i].filterRange[0]%, %starArray[i].filterRange[1]%,"%groupNames[i]%")}}
-        for (var j = starArray[i].variables.length - 1; j >= 0; j--) {
-            if (currentFilterSettings[i][j] && starArray[i].filterOn){
-                {{py setFilter(%currentFilterSettings[i][j].min%,%currentFilterSettings[i][j].max%, %starArray[i].variables[j]%, "%groupNames[i]%")}}
-            }
+    for (var i = currentFilterSettings.length - 1; i >= 0; i--) {    // Loop through all current sets.
+        {{py setColorRange(%starArray[i].colorRange[0]%, %starArray[i].colorRange[1]%,"%groupNames[i]%")}}
+        if (starArray[i].filterOn) {
+            {{py setFilterBounds(%starArray[i].filterRange[0]%,%starArray[i].filterRange[1]%, "%currentVariableFilter[i]%", "%groupNames[i]%")}}
         }
+        //for (var j = starArray[i].variables.length - 1; j >= 0; j--) {
+        //    if (currentFilterSettings[i][j] && starArray[i].filterOn ){
+            //    {{py setFilterBounds(%currentFilterSettings[i][j].min%,%currentFilterSettings[i][j].max%, "%starArray[i].variables[j]%", "%groupNames[i]%")}}
+        //    }
+        //}
         if (starArray[i].isLog  ){
             {{py setLogColor(True,"%groupNames[i]%")}}
         } else {
