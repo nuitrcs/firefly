@@ -105,16 +105,16 @@ def onResize():
 def onClientConnected():
     print "Client has connected"
     colorMapArray = [0,1,2,3]
-    colorMapLabels = ["Blue-Orange","Blue-White-Orange","Black-Green","Full Spectrum"]
+    colorMapLabels = ["Black-Green","Full Spectrum","Blue-Orange","Blue-White-Orange"]
+    colorMapNames = ["colormaps/bk-gr.png","colormaps/bu-gr-wh-yl-rd.png","colormaps/bu-og.png","colormaps/bu-wh-og.png"]
+
     filterRanges = [[0.0,100.0],[0.0,100.0],[0.0,100.0],[0.0,100.0]]
     variableRanges = [[0.0,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
     # ps.broadcastjs('printSomething()', '')
     # ps.broadcastjs('setColorMap(' + str() + ')', '')
     ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
-    ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ')','')
-    ps.broadcastjs('addStarPanel(\'Gases\',' + str(variables) + ',' + str(filterRanges) + ')', '')
-    ps.broadcastjs('addStarPanel(\'Dark Matter\',' + str(variables) + ',' + str(filterRanges) + ')', '')
-    ps.broadcastjs('addStarPanel(\'Star Cluster\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+    ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
+    ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 
@@ -147,7 +147,7 @@ def setFilterBounds(minRange, maxRange, filterName,setName):
     pc.setFilterBounds(minRange/100.0, maxRange/100.0)
     return False
 
-def setColorRange(minRange, maxRange, setName):
+def setColorBounds(minRange, maxRange, setName):
     return False
 
 def setLogColor(isLog, setName):

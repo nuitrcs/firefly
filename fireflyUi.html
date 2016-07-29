@@ -2,19 +2,74 @@
 <head>
     <title>Drag Sync</title>
     <script src="controlKit.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<!--     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+ -->
+<!--     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+ --><script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <!--<link rel="stylesheet" href="/resources/demos/style.css"> -->
     <script src="porthole/res/porthole.js"></script>
+    <script>
+        $( function() {
+            $( "#dialog" ).dialog({
+                // position: [200, 200],
+                // autoOpen: false,
+                height: 100,
+                width: 'auto'
+            });
+        } );
+    </script>
+    <style>
+    .ui-dialog {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: .2em;
+        outline: 0;
+        background-color: rgb(64,64,64);
+    }
+    .ui-dialog .ui-dialog-titlebar {
+        padding: .4em 1em;
+        position: relative;
+        background-color: rgb(64,64,64);
+    }
+    .ui-dialog .ui-dialog-title {
+        float: left;
+        margin: .1em 0;
+        white-space: nowrap;
+        width: 90%;
+        overflow: hidden;
+        background-color: rgb(64,64,64);
+        color: rgb(255,255,255);
+        text-overflow: ellipsis;
+        text-align:center;
+    }
+    .ui-dialog .ui-dialog-titlebar-close {
+        position: absolute;
+        right: .3em;
+        top: 50%;
+        width: 20px;
+        margin: -10px 0 0 0;
+        padding: 1px;
+        height: 20px;
+        background-color: rgb(64,64,64);
+    }
+    .ui-dialog-titlebar-close {
+        visibility: hidden;
+    }
+    </style> 
 </head>
 
 <body>
-<!--  	<form action="demo_form.asp">
-	  First name: <input type="text" name="fname"><br>
-	  Last name: <input type="text" name="lname"><br>
-	  <input type="submit" value="Submit"> 
-	</form> -->
-    <script src="./fireflyUi.js"/>
-    </script>
+    <div id="dialog" title="Colormap Preview" style="text-align:center;background-color: rgb(45,45,45); color: rgb(164,164,164);">
+        <span id="minColor">12312.31231</span> 
+        <img id="colorMapImg" src="colormaps/bu-og.png" alt="TestImage" style="width:200px;height:16px;">
+        <span id="maxColor">12312.31231</span> <BR>
+        Current Variable: <span id="cColorvariable">Smoothing Length</span>
+    </div>
+    <script src="./fireflyUi.js"/></script>
 </body>
 </html>
-

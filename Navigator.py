@@ -17,8 +17,8 @@ def createInfoLabel(label):
     ly += 20
     return info
 
-cameraInfo = createInfoLabel('Camera Position')    
-pivotInfo = createInfoLabel('Pivot Position') 
+#cameraInfo = createInfoLabel('Camera Position')    
+#pivotInfo = createInfoLabel('Pivot Position') 
 
 cameraPosition = Vector3(0,0,0)
 cameraOrientation = Quaternion()

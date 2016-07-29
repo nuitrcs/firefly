@@ -11,45 +11,22 @@ porthole.connected = function() {
 }
 
 var numStarPanels = 0
-// function addStarPanel(name) {
-//     numStarPanels = numStarPanels + 1
-//     {{py print "In star panel function"}}
-//     console.log(obj.testArray)
-//     obj.testArray.push("testtesttest")
-//     viewPanel.addGroup({label: name})
-//         .addSubGroup({label: 'Color Settings'})
-//             .addSelect(obj, 'select', {label: 'Variable', onChange: function (index) {
-//                 // obj.funcTarget = obj.funcs[index];
-//             }})
-//             .addSelect(obj, 'select', {label: 'Colors', onChange: function (index) {
-//                 // obj.funcTarget = obj.funcs[index];
-//             }})
-//             .addRange(obj,'valueRange',{label : 'Range'})
-//             .addCheckbox(obj, 'bool', {label: 'Log Scale'})
-//         .addSubGroup({label: 'Filter Settings'})
-//             .addSelect(obj, 'select', {label: 'Variable', onChange: function (index) {
-//                 // obj.funcTarget = obj.funcs[index];
-//             }})
-//             .addCheckbox(obj, 'bool2', {label: 'Filter On'})
-//             .addRange(obj,'valueRange',{label : 'Range:'})
-//     {{py print "Now done"}}
-// }
-
 var currentColors = new Array()
 var currentFilterSettings = new Array()
 var currentColorSettings = new Array()
 var currentVariableColor = new Array(10)
 var currentVariableFilter = new Array(10)
 var groupNames = new Array(10)
-var refresh = false
 var colorMapLabels = new Array(10)
 var colorMapArray = new Array(10)
 var variableArray = new Array(10)
 var variableRanges = new Array(10)
+var colorMapPaths = new Array(10)
 
-function setColorMapArrays( cm, cml) {
+function setColorMapArrays( cm, cml,cp) {
     colorMapArray = cm
     colorMapLabels = cml
+    colorMapPaths = cp
 }
 function setVariables( variables, ranges) {
     console.log("Variables Set")
@@ -58,21 +35,25 @@ function setVariables( variables, ranges) {
 }
 
 function addStarPanel(name, variables, ranges ) {
-    {{py print "In star panel function"}}
+    {{py print "Adding a new Star Panel"}}
     console.log(variables)
     console.log(ranges)
     console.log(name)
     var obj = {
-        colorRange : [0,1],
-        filterRange : [0,1],
-        minVal : 0.2,
-        maxVal : 0.8,
+        colorRange : [0,100],
+        colorAreaRange : [0,100],
+        filterRange : [0,100],
+        colorArea : 50,
+        colorCenter : 50,
+        filterCenter : 50,
+        filterAreaRange : [0,100],
+        filterArea : 50,
         filterOn: false,
         isLog: false,
         variables : variables,
         colors : colorMapLabels,
-        xPos : 0,
-        yPos : 0
+        val1 : 0,
+        val2 : 0
     };
     starArray.push(obj)
     groupNames[numStarPanels] = name
@@ -86,23 +67,17 @@ function addStarPanel(name, variables, ranges ) {
         .addSubGroup({label: 'Color Settings', enable: false})
             .addSelect(starArray[numStarPanels], 'variables' , {label: 'Variable', onChange: function (index) {
                 updateTables()
+                $("#cColorvariable").html(variableArray[index])
                 currentVariableColor[currIndex] = index
-                console.log(currentVariableColor[currIndex])
                 if (currentColorSettings[currIndex][index] == 0) {
                     currentColorSettings[currIndex][index]= {
                         on : false,
                         min : ranges[index][0],
                         max : ranges[index][1]
                     }
-                    starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
+                    starArray[currIndex].isLog = currentColorSettings[currIndex][index].ons
                     starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
                 } else {
-                    console.log(currentColorSettings[currIndex])
-                    console.log('current Value', starArray[currIndex].isLog )
-                    console.log('saved Value', currentColorSettings[currIndex][index].on)
-
-                    console.log('new Value',starArray[currIndex].isLog )
-
                     starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
                     starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
                 }
@@ -110,13 +85,22 @@ function addStarPanel(name, variables, ranges ) {
                 {{py setColorVariable("%starArray[currIndex].variables[index]%","%groupNames[currIndex]%")}}
             }})
             .addSelect(starArray[numStarPanels], 'colors', {label: 'Colors', onChange: function (index) {
-                // currentColors[numStarPanels] = index
-                // obj.funcTarget = obj.funcs[index];
                 console.log('color map changed')
                 {{py setColorMap("%colorMapArray[index]%","%groupNames[currIndex]%")}}
+                $("#colorMapImg").attr('src',colorMapPaths[index]);
             }})
-            .addRange(starArray[numStarPanels],'colorRange',{label : 'Range:'})
+            //.addRange(starArray[numStarPanels],'colorRange',{label : 'Range:'})
             .addCheckbox(starArray[numStarPanels], 'isLog', {label: 'Log Scale'})
+
+            .addSlider(starArray[numStarPanels],'colorCenter','colorRange',{label : 'Color Center:'})
+            .addSlider(starArray[numStarPanels],'colorArea','colorAreaRange',{label : 'Color Range:'})
+            .addRange(starArray[numStarPanels],'colorAreaRange',{label : 'Area Range:'})
+            .addButton('Reset Filters',function(){
+                    starArray[currIndex].colorAreaRange[0] = 0
+                    starArray[currIndex].colorAreaRange[1] = 100
+                    starArray[currIndex].colorCenter = 50
+                    starArray[currIndex].colorArea = 50
+                }, {})
         .addSubGroup({label: 'Filter Settings', enable: false})
             .addSelect(starArray[numStarPanels], 'variables', {label: 'Variable', onChange: function (index) {
                 updateTables()
@@ -140,19 +124,38 @@ function addStarPanel(name, variables, ranges ) {
                 controlKit.update();
             }})
             .addCheckbox(starArray[numStarPanels], 'filterOn', {label: 'Filter On'})
-            .addRange(starArray[numStarPanels],'filterRange',{label : 'Range:'})
+            .addSlider(starArray[numStarPanels],'filterCenter','filterRange',{label : 'Filter Center:'})
+            .addSlider(starArray[numStarPanels],'filterArea','filterAreaRange',{label : 'Filter Range:'})
+            .addRange(starArray[numStarPanels],'filterAreaRange',{label : 'Area Range:'})
+            .addButton('Reset Filters',function(){
+                    starArray[currIndex].filterAreaRange[0] = 0
+                    starArray[currIndex].filterAreaRange[1] = 100
+                    starArray[currIndex].filterCenter = 50
+                    starArray[currIndex].filterArea = 50
+                }, {})
         .addSubGroup({label: 'Information'})
-            .addNumberOutput(starArray[numStarPanels], 'xPos', {label: 'Val 1:'})
-            .addNumberOutput(starArray[numStarPanels], 'yPos', {label: 'Val 2:'})
+            .addNumberOutput(starArray[numStarPanels], 'val1', {label: 'Val 1:'})
+            .addNumberOutput(starArray[numStarPanels], 'val2', {label: 'Val 2:'})
     {{py print "Now done"}}
     numStarPanels = numStarPanels + 1
 }
+
+
 // controlKit.update();
 function update(){
     for (var i = currentFilterSettings.length - 1; i >= 0; i--) {    // Loop through all current sets.
-        {{py setColorRange(%starArray[i].colorRange[0]%, %starArray[i].colorRange[1]%,"%groupNames[i]%")}}
+        //{{py setColorRange(%starArray[i].colorRange[0]%, %starArray[i].colorRange[1]%,"%groupNames[i]%")}}
+        var min = starArray[i].colorCenter - starArray[i].colorArea
+        var max = starArray[i].colorCenter + starArray[i].colorArea
+        {{py setColorBounds(%min%,%max%, "%groupNames[i]%")}}
+        $("#minColor").html((starArray[i].colorCenter - starArray[i].colorArea).toFixed(4));
+        $("#maxColor").html((starArray[i].colorCenter + starArray[i].colorArea).toFixed(4));
         if (starArray[i].filterOn) {
-            {{py setFilterBounds(%starArray[i].filterRange[0]%,%starArray[i].filterRange[1]%, "%currentVariableFilter[i]%", "%groupNames[i]%")}}
+            var min = starArray[i].filterCenter - starArray[i].filterArea
+            var max = starArray[i].filterCenter + starArray[i].filterArea
+            {{py setFilterBounds(%min%,%max%, "%currentVariableFilter[i]%", "%groupNames[i]%")}}
+        } else {
+            {{py setFilterBounds(0,100,0, "%groupNames[i]%")}}
         }
         //for (var j = starArray[i].variables.length - 1; j >= 0; j--) {
         //    if (currentFilterSettings[i][j] && starArray[i].filterOn ){
@@ -195,8 +198,4 @@ function updateTables() {
             {{py setLogColor("False",%i%)}}
         }
     }
-} 
-// function printSomething() {
-//     console.log("something has printed")
-//     {{py print "Yay this has finally worked!!"}}
-// }
+}
