@@ -215,9 +215,9 @@ def gameTick(dt):
 #setUpdateFunction(onAnimate)
 def onEvent():
     e = getEvent()
-    if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleColorMap()','')
+    if(e.isKeyDown(Keyboard.KEY_M)): ps.broadcastjs('toggleColorMap()','')
     if(e.isKeyDown(Keyboard.KEY_H)): ps.broadcastjs('toggleHelp()','')
     if(e.isKeyDown(Keyboard.KEY_V)): ps.broadcastjs('clearConsole()','')
-    if(e.isKeyDown(Keyboard.KEY_B)): ps.broadcastjs('printConsole()','')
+    if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleConsole()','')
 
 setEventFunction(onEvent)

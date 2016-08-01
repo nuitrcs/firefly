@@ -3,6 +3,7 @@ var starArray = new Array()
 var controlKit
 var helpDisplayed = false
 var colormapDisplayed =  false
+var consoleDisplayed = false
 
 porthole.connected = function() {
     {{py print "started porthole connected function"}}
@@ -63,6 +64,15 @@ function toggleHelp() {
         $('#helpBox').dialog('close');
     } else {
         $('#helpBox').dialog('open');
+    }
+    //helpDisplayed = ! helpDisplayed 
+
+}
+function toggleConsole() {
+    if (consoleDisplayed) {
+        $('#console').dialog('close');
+    } else {
+        $('#console').dialog('open');
     }
     //helpDisplayed = ! helpDisplayed 
 

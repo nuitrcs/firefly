@@ -18,11 +18,16 @@
                 // autoOpen: false,
                 height: 90,
                 resizable: false,
-                width: $(window).width(),
+                width: $(window).width() - 20,
                 position: 'asdf',
-                // right: 200px, /* use a length or percentage */
-                open: function(event, ui) {
-                    $(".ui-dialog-titlebar", ui.dialog | ui).hide();
+                // right: 200px, /* use a length or percentage */ consoleDisplayed
+                close: function(event,ui) {
+                    consoleDisplayed = false
+                },
+                open: function(event,ui) {
+                    consoleDisplayed = true
+                    //$(".ui-dialog-titlebar", ui.dialog | ui).hide();
+                    $('#console').dialog({ dialogClass: 'noTitleStuff' });
                 }
             });
         } );
@@ -30,7 +35,7 @@
             $( "#helpBox" ).dialog({
                 // position: [200, 200],
                 // autoOpen: false,
-                height: 350,
+                height: 370,
                 width: 400,
                 close: function(event,ui) {
                     helpDisplayed = false
@@ -95,6 +100,7 @@
         float:left;
         margin-right:5px;
     }
+    .noTitleStuff .ui-dialog-titlebar {display:none}
 /*    .ui-dialog-titlebar-close {
         visibility: hidden;
     }*/
@@ -112,6 +118,8 @@
     <div id="helpBox" title="Help and Controls" style="font-size: 14;text-align:center;background-color:  rgb(45,45,45); color: rgb(164,164,164);">
         <div class ='child_div_1'>H Key:<BR>
                                 C Key: <BR>
+                                V Key: <BR>
+                                M Key: <BR>
                                 A, D Keys:<BR>
                                 W, S Keys:<BR>
                                 R, F Keys:<BR>
@@ -129,6 +137,8 @@
                                 Range Max <BR>
                                 </div>
         <div class ='child_div_2'>Toggle Help On/Off<BR>
+                                Toggle Console On/Off <BR>
+                                Clear Console <BR>
                                 Colormap Preview On/Off<BR>
                                 Move Camera Left/Right <BR>
                                 Zoom in/out <BR>
