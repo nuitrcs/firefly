@@ -118,6 +118,7 @@ def onEvent():
     if(e.isKeyDown(Keyboard.KEY_F)): panVector.y -= ps
     elif(e.isKeyUp(Keyboard.KEY_F)): panVector.y = 0
 
+
 def onUpdate(frame, time, dt):
     global pivotPosition
     global cameraPosition
@@ -132,8 +133,8 @@ def onUpdate(frame, time, dt):
     panSpeedMultiplier = 0.1 + abs(l / 100)
     
     # update info ui
-    cameraInfo.setText(str(getDefaultCamera().getPosition()))
-    pivotInfo.setText(str(pivotPosition) + ' d=' + str(pivotDistance))
+    #cameraInfo.setText(str(getDefaultCamera().getPosition()))
+    #pivotInfo.setText(str(pivotPosition) + ' d=' + str(pivotDistance))
 
 setEventFunction(onEvent)
 setUpdateFunction(onUpdate)

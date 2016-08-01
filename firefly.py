@@ -165,5 +165,59 @@ def setLogColor(isLog, setName):
         isLogArray[1] = isLog
         print "after: " , p.isLog
 
-def setFilter(isOn, variable, setName):
+def playAnimation(file):
+    playing = True
+    animateCamera()
+
+
+def onAnimate():
+    if playing:
+        return False
+
+def isAtPoint():
     return False
+
+def nextPoint():
+    return False
+
+def resetAnimation():
+    return False
+
+def loadAnimation():
+    return False
+
+def gameLoop(t,dt):
+    global lastFrameTime, gameOver
+    #currentTime = time.time()
+    change = t - lastFrameTime
+    if (change > (1.0/60.0)):
+        lastFrameTime = t
+        if (gameOver):
+            gameOverTick()
+        else:
+            gameTick(dt)
+
+def gameTick(dt):
+    for ent in entities:   
+        ent.tick(dt)
+    calculateSpawn()
+    draw()
+    global l2, l, currentPlayer,score
+    newString = "Health: " + str(currentPlayer.health)
+    l2.setText(newString)
+    newString = "Score: " + str(score)
+    l.setText(newString)
+    info = []
+    info.append(score)
+    info.append(currentPlayer.health)
+    calljs('updateHealthScore',info)
+
+#setUpdateFunction(onAnimate)
+def onEvent():
+    e = getEvent()
+    if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleColorMap()','')
+    if(e.isKeyDown(Keyboard.KEY_H)): ps.broadcastjs('toggleHelp()','')
+    if(e.isKeyDown(Keyboard.KEY_V)): ps.broadcastjs('clearConsole()','')
+    if(e.isKeyDown(Keyboard.KEY_B)): ps.broadcastjs('printConsole()','')
+
+setEventFunction(onEvent)

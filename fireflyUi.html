@@ -14,11 +14,45 @@
     <script src="porthole/res/porthole.js"></script>
     <script>
         $( function() {
-            $( "#dialog" ).dialog({
+            $( "#console" ).dialog({
+                // autoOpen: false,
+                height: 90,
+                resizable: false,
+                width: $(window).width(),
+                position: 'asdf',
+                // right: 200px, /* use a length or percentage */
+                open: function(event, ui) {
+                    $(".ui-dialog-titlebar", ui.dialog | ui).hide();
+                }
+            });
+        } );
+        $( function() {
+            $( "#helpBox" ).dialog({
+                // position: [200, 200],
+                // autoOpen: false,
+                height: 350,
+                width: 400,
+                close: function(event,ui) {
+                    helpDisplayed = false
+                },
+                open: function(event,ui) {
+                    helpDisplayed = true
+                }
+            });
+        } );
+        $( function() {
+            $( "#colormapPreview" ).dialog({
                 // position: [200, 200],
                 // autoOpen: false,
                 height: 100,
-                width: 'auto'
+                width: 'auto',
+                close: function(event,ui) {
+                    colormapDisplayed =  false
+                },
+                open: function(event,ui) {
+                    colormapDisplayed =  true
+                }
+
             });
         } );
     </script>
@@ -57,19 +91,66 @@
         height: 20px;
         background-color: rgb(64,64,64);
     }
-    .ui-dialog-titlebar-close {
-        visibility: hidden;
+    .child_div_1{
+        float:left;
+        margin-right:5px;
     }
+/*    .ui-dialog-titlebar-close {
+        visibility: hidden;
+    }*/
     </style> 
 </head>
 
 <body>
-    <div id="dialog" title="Colormap Preview" style="text-align:center;background-color: rgb(45,45,45); color: rgb(164,164,164);">
+    <div id="colormapPreview" title="Colormap Preview" style="text-align:center;background-color: rgb(45,45,45); color: rgb(164,164,164);">
         <span id="minColor">12312.31231</span> 
         <img id="colorMapImg" src="colormaps/bu-og.png" alt="TestImage" style="width:200px;height:16px;">
         <span id="maxColor">12312.31231</span> <BR>
         Current Variable: <span id="cColorvariable">Smoothing Length</span>
     </div>
+
+    <div id="helpBox" title="Help and Controls" style="font-size: 14;text-align:center;background-color:  rgb(45,45,45); color: rgb(164,164,164);">
+        <div class ='child_div_1'>H Key:<BR>
+                                C Key: <BR>
+                                A, D Keys:<BR>
+                                W, S Keys:<BR>
+                                R, F Keys:<BR>
+                                Mouse:<BR>
+                                <BR>
+                                Color Settings: <BR>
+                                Log Scale:<BR>
+                                Color Center<BR>
+                                Color Range <BR>
+                                Range Max <BR>
+                                <BR>
+                                Filter Settings: <BR>
+                                Filter Center<BR>
+                                Filter Range <BR>
+                                Range Max <BR>
+                                </div>
+        <div class ='child_div_2'>Toggle Help On/Off<BR>
+                                Colormap Preview On/Off<BR>
+                                Move Camera Left/Right <BR>
+                                Zoom in/out <BR>
+                                Move Camera Up/Down<BR>
+                                Click and Drag to Rotate<BR>
+                                <BR>
+                                <BR>
+                                Toggle Log/Linear Mapping <BR>
+                                Center of Map on a normalized scale <BR>
+                                Distance of map bounds from center <BR>
+                                Max value of "Color Range" slider <BR>
+                                <BR>
+                                <BR>
+                                Center of filter on a normalized scale <BR>
+                                Distance of filter bounds from center<BR>
+                                Max value of "Filter Range" slider <BR>
+                                </div>
+    </div>
+    <div id="console" title="Console" style="font-size: 12;background-color: rgb(45,45,45); color: rgb(164,164,164);">
+        <span id="consoleText">Messages can be printed here </span>
+    </div>
     <script src="./fireflyUi.js"/></script>
+
 </body>
 </html>

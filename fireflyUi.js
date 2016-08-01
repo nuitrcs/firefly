@@ -1,13 +1,21 @@
 var viewPanel
 var starArray = new Array()
 var controlKit
+var helpDisplayed = false
+var colormapDisplayed =  false
+
 porthole.connected = function() {
     {{py print "started porthole connected function"}}
     controlKit = new ControlKit();
-    controlKit.addPanel({label: 'Star Group Settings' , fixed: false, width: 320});
+    controlKit.addPanel({label: 'Star Group Settings' , fixed: false, width: 320,position: [window.innerWidth -  320, 50]});
     console.log(controlKit)
     viewPanel = controlKit._panels[0]
     console.log(viewPanel)
+    //$('#helpBox').dialog('close');
+
+    $('#colormapPreview').dialog('close');
+    helpDisplayed = true 
+    colormapDisplayed = false
 }
 
 var numStarPanels = 0
@@ -22,6 +30,7 @@ var colorMapArray = new Array(10)
 var variableArray = new Array(10)
 var variableRanges = new Array(10)
 var colorMapPaths = new Array(10)
+var consoleString = ""
 
 function setColorMapArrays( cm, cml,cp) {
     colorMapArray = cm
@@ -33,6 +42,40 @@ function setVariables( variables, ranges) {
     variableArray = variables
     variableRanges = ranges
 }
+function printConsole(text) {
+    text = "Another line of Text"
+    consoleString = consoleString + "<BR>" + text
+    $("#consoleText").html(consoleString)
+    $('#console').animate({
+        scrollTop: $('#console').scrollTop() + $('#console').height()
+    });
+}
+function setConsole(text) {
+    $("#consoleText").html(text)
+}
+function clearConsole(text) {
+    consoleString = ""
+    $("#consoleText").html(consoleString)
+}
+
+function toggleHelp() {
+    if (helpDisplayed) {
+        $('#helpBox').dialog('close');
+    } else {
+        $('#helpBox').dialog('open');
+    }
+    //helpDisplayed = ! helpDisplayed 
+
+}
+
+function  toggleColorMap() {
+    if (colormapDisplayed) {
+        $('#colormapPreview').dialog('close');
+    } else {
+        $('#colormapPreview').dialog('open');
+    }
+    //colormapDisplayed = ! colormapDisplayed 
+}
 
 function addStarPanel(name, variables, ranges ) {
     {{py print "Adding a new Star Panel"}}
@@ -40,14 +83,16 @@ function addStarPanel(name, variables, ranges ) {
     console.log(ranges)
     console.log(name)
     var obj = {
-        colorRange : [0,100],
-        colorAreaRange : [0,100],
-        filterRange : [0,100],
+        colorRange : [0.0,100.0],
+        colorAreaRange : [0.0,100.0],
+        filterRange : [0.0,100.0],
         colorArea : 50,
+        colorAreaStr : "50",
         colorCenter : 50,
         filterCenter : 50,
-        filterAreaRange : [0,100],
+        filterAreaRange : [0.0,100.0],
         filterArea : 50,
+        filterAreaStr : "50",
         filterOn: false,
         isLog: false,
         variables : variables,
@@ -92,9 +137,14 @@ function addStarPanel(name, variables, ranges ) {
             //.addRange(starArray[numStarPanels],'colorRange',{label : 'Range:'})
             .addCheckbox(starArray[numStarPanels], 'isLog', {label: 'Log Scale'})
 
-            .addSlider(starArray[numStarPanels],'colorCenter','colorRange',{label : 'Color Center:'})
-            .addSlider(starArray[numStarPanels],'colorArea','colorAreaRange',{label : 'Color Range:'})
-            .addRange(starArray[numStarPanels],'colorAreaRange',{label : 'Area Range:'})
+            .addSlider(starArray[numStarPanels],'colorCenter','colorRange',{label : 'Color Center:', dp: 20})
+            .addSlider(starArray[numStarPanels],'colorArea','colorAreaRange',{label : 'Color Range:', dp: 20})
+            .addStringInput(starArray[numStarPanels],'colorAreaStr',{ label: 'Range Max', // replace key label with custom one
+                                    onChange : function(){  // on enter
+                                        starArray[currIndex].colorAreaRange[1] = parseFloat(starArray[currIndex].colorAreaStr)
+                                        console.log(starArray[currIndex].colorAreaStr)
+                                    }
+                                  })
             .addButton('Reset Filters',function(){
                     starArray[currIndex].colorAreaRange[0] = 0
                     starArray[currIndex].colorAreaRange[1] = 100
@@ -124,9 +174,14 @@ function addStarPanel(name, variables, ranges ) {
                 controlKit.update();
             }})
             .addCheckbox(starArray[numStarPanels], 'filterOn', {label: 'Filter On'})
-            .addSlider(starArray[numStarPanels],'filterCenter','filterRange',{label : 'Filter Center:'})
-            .addSlider(starArray[numStarPanels],'filterArea','filterAreaRange',{label : 'Filter Range:'})
-            .addRange(starArray[numStarPanels],'filterAreaRange',{label : 'Area Range:'})
+            .addSlider(starArray[numStarPanels],'filterCenter','filterRange',{label : 'Filter Center:', dp: 20})
+            .addSlider(starArray[numStarPanels],'filterArea','filterAreaRange',{label : 'Filter Range:', dp: 20})
+            .addStringInput(starArray[numStarPanels],'filterAreaStr',{ label: 'Range Max', // replace key label with custom one
+                                    onChange : function(){  // on enter
+                                        starArray[currIndex].filterAreaRange[1] = parseFloat(starArray[currIndex].filterAreaStr)
+                                        console.log("Filter Max Area: ", starArray[currIndex].filterAreaRange[1])
+                                    }
+                                  })
             .addButton('Reset Filters',function(){
                     starArray[currIndex].filterAreaRange[0] = 0
                     starArray[currIndex].filterAreaRange[1] = 100
