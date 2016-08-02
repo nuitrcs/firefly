@@ -76,6 +76,7 @@ def onEvent():
             if(res[0] == True):
                 pivotRayOrigin = res[1]
                 pivotRayDirection = res[2]
+                pivotDistance = abs(pivotPosition - pivotRayOrigin)
                 pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
                 snapback = True
                 snapbackCameraPosition = camera.getPosition()

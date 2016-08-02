@@ -1,3 +1,4 @@
+from overlay import *
 from signac import *
 import Navigator
 
@@ -5,11 +6,30 @@ sig = Signac.getInstance()
 
 #-------------------------------------------------------------------------------
 # GPU Program Setup
-prog = sig.addProgram('points')
-prog.setVertexShader('shaders/point.vert')
-prog.setGeometryShader('shaders/point.geom')
-prog.setFragmentShader('shaders/point.frag')
-prog.setColormapShader('shaders/colormaps.frag')
+prog_default = sig.addProgram('default')
+prog_default.setVertexShader('shaders/point.vert')
+prog_default.setGeometryShader('shaders/point.geom')
+prog_default.setFragmentShader('shaders/point.frag')
+
+prog_fixedColor = sig.addProgram('fixedColor')
+prog_fixedColor.setVertexShader('shaders/point.vert')
+prog_fixedColor.setGeometryShader('shaders/point.geom')
+prog_fixedColor.setFragmentShader('shaders/point-fixedColor.frag')
+
+prog_df = sig.addProgram('depthFilter')
+prog_df.setVertexShader('shaders/point-depthFilter.vert')
+prog_df.setGeometryShader('shaders/point-depthFilter.geom')
+prog_df.setFragmentShader('shaders/point-depthFilter.frag')
+
+prog_channel = sig.addProgram('channel')
+prog_channel.setVertexShader('shaders/point.vert')
+prog_channel.setGeometryShader('shaders/point.geom')
+prog_channel.setFragmentShader('shaders/point-channel.frag')
+
+prog_mapper = sig.addProgram('colormapper')
+prog_mapper.setVertexShader('shaders/colormapper.vert')
+prog_mapper.setFragmentShader('shaders/colormapper.frag')
+
 
 colormaps = [
     loadImage('colormaps/bu-og.png'),
@@ -21,42 +41,72 @@ colormaps = [
 #-------------------------------------------------------------------------------
 # Data Setup
 l = FireLoader()
-l.open('snapshot_140.hdf5')
+l.open('C:/dev/omegalib/apps/firefly/snapshot_140.hdf5')
 
-ds = Dataset.create('PartType0')
-ds.setLoader(l)
+# PartType0
+ds0 = Dataset.create('PartType0')
+ds0.setLoader(l)
 
-x = ds.addDimension('Coordinates', DimensionType.Float, 0, 'x')
-y = ds.addDimension('Coordinates', DimensionType.Float, 1, 'y')
-z = ds.addDimension('Coordinates', DimensionType.Float, 2, 'z')
-smoothingLength = ds.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
-density = ds.addDimension('Density', DimensionType.Float, 0, 'Density')
+x0 = ds0.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+y0 = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+z0 = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
+d0 = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
 variableDict = {}
 variableDict["Smoothing Length"] = smoothingLength
 variableDict["Density"] = density
 variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
 
-pc = PointCloud()
-pc.setOptions('100000 0:100000:10')
+pc0 = PointCloud()
+pc0.setOptions('100000 0:100000:10')
+pc0.setDimensions(x0, y0, z0)
+pc0.setData(sl0)
+pc0.setSize(sl0)
+pc0.setProgram(prog_fixedColor)
+pc0.normalizeFilterBounds(True)
+pc0.setFilterBounds(0, 1)
+pc0.setColormap(colormaps[0])
+pc0.setColor(Color('red'))
 
-pc.setDimensions(x, y, z)
-pc.setData(smoothingLength)
-pc.setSize(smoothingLength)
-pc.setProgram(prog)
-pc.setFilter(smoothingLength)
-pc.normalizeFilterBounds(True)
-pc.setFilterBounds(0, 1.0)
-pc.setColormap(colormaps[0])
+# PartType1
+ds1 = Dataset.create('PartType2')
+ds1.setLoader(l)
+
+x1 = ds1.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+y1 = ds1.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+z1 = ds1.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+
+pc1 = PointCloud()
+pc1.setOptions('100000 0:100000:10')
+pc1.setDimensions(x1, y1, z1)
+pc1.setProgram(prog_fixedColor)
+pc1.normalizeFilterBounds(True)
+pc1.setFilterBounds(0, 1)
+pc1.setColormap(colormaps[0])
+pc1.setColor(Color('blue'))
+
+pcw = PointCloudView()
+pcw.addPointCloud(pc0)
+pcw.addPointCloud(pc1)
+pcw.setColormapper(prog_mapper)
+pcw.setColormap(colormaps[1])
+#pcw.enableColormapper(True)
+mainView = Overlay()
+mainView.setAutosize(True)
+mainView.setTexture(pcw.getOutput())
+
 #-------------------------------------------------------------------------------
 # Scene Setup
 sn = SceneNode.create('galaxy')
-sn.addComponent(pc)
+sn.addComponent(pc0)
+sn.addComponent(pc1)
 
 scale = 0.01
 sn.setScale(scale, scale, scale)
 #sn.setPosition(-5, 1, -10)
 
-pc.setPointScale(scale)
+pc0.setPointScale(scale)
+pc1.setPointScale(scale)
 
 # set camera near / far z to some reasonable value
 # this is needed to make slicing work.
@@ -72,10 +122,48 @@ filterEnd = 1.0
 isLogArray = [False] * 10
 
 #-------------------------------------------------------------------------------
+# Input
+def onEvent():
+    global startPos
+    global rotating
+    global pivotPosition
+    global pivotRayOrigin
+    global pivotRayDirection
+    global pivotDistance
+    global cameraPosition
+    global cameraOrientation
+    global snapbackCameraPosition
+    global snapbackCameraOrientation
+    global snapback
+    global panVector
+    global panSpeed
+    
+    e = getEvent()
+    if(e.isFlagSet(EventFlags.Shift)): enablePivotSelectorMode(True)
+    elif(e.getType() == EventType.Up and not e.isFlagSet(EventFlags.Shift)) : enablePivotSelectorMode(False)
+    
+def onUpdate(frame, time, dt):
+    pc0.setFocusPosition(Navigator.pivotPosition)
+    pc1.setFocusPosition(Navigator.pivotPosition)
+
+setUpdateFunction(onUpdate)
+setEventFunction(onEvent)
+
+#-------------------------------------------------------------------------------
+# Misc
+def enablePivotSelectorMode(enabled):
+    if(enabled):
+        pc0.setProgram(prog_df)
+        pc1.setProgram(prog_df)
+    else:
+        pc0.setProgram(prog_fixedColor)
+        pc1.setProgram(prog_fixedColor)
+
+
+#-------------------------------------------------------------------------------
 # UI
 from omium import *
 import porthole
-from overlay import *
 
 o = Omium.getInstance()
 
@@ -84,15 +172,17 @@ ps = porthole.getService()
 ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
 
-print "KEYMAP: " ,Keyboard.KEY_A
+
 def loadUi():
     global gui
     global p
     gui = Overlay()
     p = o.getPixels()
+    guifx = OverlayEffect()
+    guifx.setShaders('overlay/overlay.vert', 'overlay/overlay-flipy.frag')
     gui.setTexture(p)
     gui.setAutosize(True)
-    o.setZoom(3)
+    gui.setEffect(guifx)
     o.open('http://localhost:4080')
     onResize()
 
@@ -101,6 +191,7 @@ getDisplayConfig().canvasChangedCommand = 'onResize()'
 def onResize():
     r = getDisplayConfig().getCanvasRect()
     o.resize(r[2], r[3])
+    pcw.resize(r[2], r[3])
 
 def onClientConnected():
     print "Client has connected"
@@ -115,6 +206,7 @@ def onClientConnected():
     ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
     ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
     ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+    o.setZoom(2)
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 

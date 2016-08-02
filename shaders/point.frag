@@ -5,7 +5,7 @@ flat in float data;
 in vec2 texCoord;
 
 // Outputs
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 fragmentColor;
 
 // Uniforms
 uniform mat4 modelViewProjection;
@@ -17,6 +17,14 @@ uniform vec2 d0Bounds;
 uniform int isLog;
 
 uniform vec2 dataBounds;
+
+// Colormap
+uniform sampler2D colormap;
+
+vec4 mapToColor(float v)
+{
+    return texture2D(colormap, vec2(v, 0.5)) * 0.2;
+}
 
 void main (void)
 {
@@ -38,5 +46,5 @@ void main (void)
         float v = ((data) - (dataBounds[0])) / r;
     }
 
-    color = mapToColor(v) * zz;
+    fragmentColor = mapToColor(v) * sin(z);
 }
