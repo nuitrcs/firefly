@@ -52,10 +52,6 @@ y0 = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
 z0 = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
 sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
 d0 = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
-variableDict = {}
-variableDict["Smoothing Length"] = smoothingLength
-variableDict["Density"] = density
-variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
 
 pc0 = PointCloud()
 pc0.setOptions('100000 0:100000:10')
@@ -141,6 +137,11 @@ def onEvent():
     e = getEvent()
     if(e.isFlagSet(EventFlags.Shift)): enablePivotSelectorMode(True)
     elif(e.getType() == EventType.Up and not e.isFlagSet(EventFlags.Shift)) : enablePivotSelectorMode(False)
+
+    if(e.isKeyDown(Keyboard.KEY_M)): ps.broadcastjs('toggleColorMap()','')
+    if(e.isKeyDown(Keyboard.KEY_H)): ps.broadcastjs('toggleHelp()','')
+    if(e.isKeyDown(Keyboard.KEY_V)): ps.broadcastjs('clearConsole()','')
+    if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleConsole()','')
     
 def onUpdate(frame, time, dt):
     pc0.setFocusPosition(Navigator.pivotPosition)
@@ -164,6 +165,11 @@ def enablePivotSelectorMode(enabled):
 # UI
 from omium import *
 import porthole
+
+variableDict = {}
+variableDict["Smoothing Length"] = sl0
+variableDict["Density"] = d0
+variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
 
 o = Omium.getInstance()
 
@@ -235,15 +241,15 @@ def setFilterBounds(minRange, maxRange, filterName,setName):
     #print "setName: " , setName 
     #print filterName
     #print variableDict[variables[int(filterName)]]
-    pc.setFilter(variableDict[variables[int(filterName)]])
-    pc.setFilterBounds(minRange/100.0, maxRange/100.0)
+    #pc.setFilter(variableDict[variables[int(filterName)]])
+    #pc.setFilterBounds(minRange/100.0, maxRange/100.0)
     return False
 
 def setColorBounds(minRange, maxRange, setName):
     return False
 
 def setLogColor(isLog, setName):
-    # return False
+    return False
     p = prog.getParams()
     if isLog != isLogArray[1] and setName == 'Gases':
         print "SetName: " , setName
@@ -278,38 +284,3 @@ def resetAnimation():
 def loadAnimation():
     return False
 
-def gameLoop(t,dt):
-    global lastFrameTime, gameOver
-    #currentTime = time.time()
-    change = t - lastFrameTime
-    if (change > (1.0/60.0)):
-        lastFrameTime = t
-        if (gameOver):
-            gameOverTick()
-        else:
-            gameTick(dt)
-
-def gameTick(dt):
-    for ent in entities:   
-        ent.tick(dt)
-    calculateSpawn()
-    draw()
-    global l2, l, currentPlayer,score
-    newString = "Health: " + str(currentPlayer.health)
-    l2.setText(newString)
-    newString = "Score: " + str(score)
-    l.setText(newString)
-    info = []
-    info.append(score)
-    info.append(currentPlayer.health)
-    calljs('updateHealthScore',info)
-
-#setUpdateFunction(onAnimate)
-def onEvent():
-    e = getEvent()
-    if(e.isKeyDown(Keyboard.KEY_M)): ps.broadcastjs('toggleColorMap()','')
-    if(e.isKeyDown(Keyboard.KEY_H)): ps.broadcastjs('toggleHelp()','')
-    if(e.isKeyDown(Keyboard.KEY_V)): ps.broadcastjs('clearConsole()','')
-    if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleConsole()','')
-
-setEventFunction(onEvent)

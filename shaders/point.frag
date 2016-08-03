@@ -36,15 +36,8 @@ void main (void)
     	discard;
 
     float z = sqrt(zz);
-    float r;
-    float v;
-    if (isLog == 0){
-        float r = log(dataBounds[1]) - log(dataBounds[0]);
-        float v = (log(data) - log(dataBounds[0])) / r;
-    } else {
-        float r = (dataBounds[1]) - (dataBounds[0]);
-        float v = ((data) - (dataBounds[0])) / r;
-    }
+    float r = (dataBounds[1]) - (dataBounds[0]);
+    float v = ((data) - (dataBounds[0])) / r;
 
     fragmentColor = mapToColor(v) * sin(z);
 }
