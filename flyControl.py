@@ -1,24 +1,6 @@
 from omega import *
 from euclid import *
 from math import *
-from omegaToolkit import *
-
-# create info UI
-ui = UiModule.createAndInitialize().getUi()
-ly = 5
-def createInfoLabel(label):
-    global ly
-    infoLabel = Label.create(ui)
-    infoLabel.setColor(Color('yellow'))
-    infoLabel.setPosition(Vector2(5, ly))
-    infoLabel.setText(label)
-    info = Label.create(ui)
-    info.setPosition(Vector2(150, ly))
-    ly += 20
-    return info
-
-#cameraInfo = createInfoLabel('Camera Position')    
-#pivotInfo = createInfoLabel('Pivot Position') 
 
 cameraPosition = Vector3(0,0,0)
 cameraOrientation = Quaternion()
@@ -100,6 +82,7 @@ def onEvent():
         cameraOrientation = rot * cameraOrientation
         camera.setOrientation(cameraOrientation)
         camera.setPosition(cameraPosition)
+        if(not snapback): dqon()
         startPos = e.getPosition()
 
     # Panning control
@@ -125,8 +108,11 @@ def onUpdate(frame, time, dt):
     global cameraPosition
     global cameraOrientation
     global panSpeedMultiplier
-    cameraPosition += cameraOrientation * panVector * dt * panSpeedMultiplier
-    camera.setPosition(cameraPosition)
+    
+    if(panVector.magnitude() > 0): 
+        dqon()
+        cameraPosition += cameraOrientation * panVector * dt * panSpeedMultiplier
+        camera.setPosition(cameraPosition)
     #camera.lookAt(pivot.getPosition(), Vector3(0,1,0))
     # cange the pan speed multiplier depending on how far
     # we are from the object, so panning speed looks constant

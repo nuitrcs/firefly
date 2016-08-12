@@ -1,6 +1,6 @@
 from overlay import *
 from signac import *
-import Navigator
+import datetime
 
 sig = Signac.getInstance()
 
@@ -10,6 +10,11 @@ prog_default = sig.addProgram('default')
 prog_default.setVertexShader('shaders/point.vert')
 prog_default.setGeometryShader('shaders/point.geom')
 prog_default.setFragmentShader('shaders/point.frag')
+
+prog_vector = sig.addProgram('vector')
+prog_vector.setVertexShader('shaders/vector.vert')
+prog_vector.setGeometryShader('shaders/vector.geom')
+prog_vector.setFragmentShader('shaders/vector.frag')
 
 prog_fixedColor = sig.addProgram('fixedColor')
 prog_fixedColor.setVertexShader('shaders/point.vert')
@@ -30,13 +35,13 @@ prog_mapper = sig.addProgram('colormapper')
 prog_mapper.setVertexShader('shaders/colormapper.vert')
 prog_mapper.setFragmentShader('shaders/colormapper.frag')
 
+colorMapLabels = ["Black-Green","Full Spectrum","Blue-Orange","Blue-White-Orange"]
+colorMapNames = ["colormaps/bk-gr.png","colormaps/bu-gr-wh-yl-rd.png","colormaps/bu-og.png","colormaps/bu-wh-og.png"]
+colormaps = []
+for cn in colorMapNames:
+    colormaps.append(loadImage(cn))
 
-colormaps = [
-    loadImage('colormaps/bu-og.png'),
-    loadImage('colormaps/bu-wh-og.png'),
-    loadImage('colormaps/bk-gr.png'),
-    loadImage('colormaps/bu-gr-wh-yl-rd.png')
-]
+for i in colormaps: i.setTextureFlags(TextureFlags.WrapClamp)
 
 #-------------------------------------------------------------------------------
 # Data Setup
@@ -52,16 +57,20 @@ y0 = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
 z0 = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
 sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
 d0 = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
+vx0 = ds0.addDimension('Velocities', DimensionType.Float, 0, 'vx')
+vy0 = ds0.addDimension('Velocities', DimensionType.Float, 1, 'vy')
+vz0 = ds0.addDimension('Velocities', DimensionType.Float, 2, 'vz')
 
 pc0 = PointCloud()
-pc0.setOptions('100000 0:100000:10')
+pc0.setOptions('100000 0:100000:1')
 pc0.setDimensions(x0, y0, z0)
 pc0.setData(sl0)
+pc0.setVectorData(vx0, vy0, vz0)
 pc0.setSize(sl0)
-pc0.setProgram(prog_fixedColor)
+pc0.setProgram(prog_vector)
 pc0.normalizeFilterBounds(True)
 pc0.setFilterBounds(0, 1)
-pc0.setColormap(colormaps[0])
+pc0.setColormap(colormaps[2])
 pc0.setColor(Color('red'))
 
 # PartType1
@@ -73,7 +82,7 @@ y1 = ds1.addDimension('Coordinates', DimensionType.Float, 1, 'y')
 z1 = ds1.addDimension('Coordinates', DimensionType.Float, 2, 'z')
 
 pc1 = PointCloud()
-pc1.setOptions('100000 0:100000:10')
+pc1.setOptions('100000 0:100000:1')
 pc1.setDimensions(x1, y1, z1)
 pc1.setProgram(prog_fixedColor)
 pc1.normalizeFilterBounds(True)
@@ -85,19 +94,30 @@ pcw = PointCloudView()
 pcw.addPointCloud(pc0)
 pcw.addPointCloud(pc1)
 pcw.setColormapper(prog_mapper)
-pcw.setColormap(colormaps[1])
+pcw.setColormap(colormaps[2])
 #pcw.enableColormapper(True)
 mainView = Overlay()
 mainView.setAutosize(True)
 mainView.setTexture(pcw.getOutput())
 
+parts = [pc0, pc1]
+
+#-------------------------------------------------------------------------------
+# Load firefly components
+orun('dynamicQuality.py')
+orun('flyControl.py')
+
 #-------------------------------------------------------------------------------
 # Scene Setup
+camera = getDefaultCamera()
+camera.setBackgroundColor(Color('black'))
 sn = SceneNode.create('galaxy')
 sn.addComponent(pc0)
 sn.addComponent(pc1)
 
 scale = 0.01
+pointScale = scale
+dataMode = None
 sn.setScale(scale, scale, scale)
 #sn.setPosition(-5, 1, -10)
 
@@ -109,8 +129,8 @@ pc1.setPointScale(scale)
 getDefaultCamera().setNearFarZ(1, 100000)
 
 # Hardcoded initial pivot.
-Navigator.pivotPosition = Vector3(47, 17, 62)
-Navigator.focus()
+pivotPosition = Vector3(47, 17, 62)
+focus()
 
 filterStart = 0.0
 filterEnd = 1.0
@@ -144,21 +164,30 @@ def onEvent():
     if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleConsole()','')
     
 def onUpdate(frame, time, dt):
-    pc0.setFocusPosition(Navigator.pivotPosition)
-    pc1.setFocusPosition(Navigator.pivotPosition)
+    pc0.setFocusPosition(pivotPosition)
+    pc1.setFocusPosition(pivotPosition)
 
 setUpdateFunction(onUpdate)
 setEventFunction(onEvent)
 
+def redraw():
+    dqon()
+    
 #-------------------------------------------------------------------------------
 # Misc
 def enablePivotSelectorMode(enabled):
     if(enabled):
         pc0.setProgram(prog_df)
         pc1.setProgram(prog_df)
+        pc0.setPointScale(scale)
+        pc1.setPointScale(scale)
+        pcw.enableColormapper(False)
+        for p in parts: p.setDecimation(dqDec)
+        camera.setSceneEnabled(True)
     else:
-        pc0.setProgram(prog_fixedColor)
-        pc1.setProgram(prog_fixedColor)
+        # Reset previous view mode
+        setDataMode(dataMode)
+        setPointScale(pointScale)
 
 
 #-------------------------------------------------------------------------------
@@ -166,17 +195,16 @@ def enablePivotSelectorMode(enabled):
 from omium import *
 import porthole
 
-variableDict = {}
-variableDict["Smoothing Length"] = sl0
-variableDict["Density"] = d0
-variables = ["Smoothing Length","Density","Internal Energy","Formation Rate"]
-
 o = Omium.getInstance()
 
 porthole.initialize(4080, './fireflyUi.html')
 ps = porthole.getService()
 ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
+
+# used for passing boleans from the js interface
+true = True
+false = False
 
 
 def loadUi():
@@ -199,40 +227,91 @@ def onResize():
     o.resize(r[2], r[3])
     pcw.resize(r[2], r[3])
 
-def onClientConnected():
-    print "Client has connected"
-    colorMapArray = [0,1,2,3]
-    colorMapLabels = ["Black-Green","Full Spectrum","Blue-Orange","Blue-White-Orange"]
-    colorMapNames = ["colormaps/bk-gr.png","colormaps/bu-gr-wh-yl-rd.png","colormaps/bu-og.png","colormaps/bu-wh-og.png"]
+dataModes = [
+    'DataType', 
+    'Density',
+    'IntegralDensity',
+    'SmoothingLength',
+    'Pivot',
+    'VelocityVectors']
 
+def onClientConnected():
     filterRanges = [[0.0,100.0],[0.0,100.0],[0.0,100.0],[0.0,100.0]]
     variableRanges = [[0.0,10.0],[2.0,4.0],[10.0,100.0],[0.5,2.0]]
     # ps.broadcastjs('printSomething()', '')
     # ps.broadcastjs('setColorMap(' + str() + ')', '')
-    ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
-    ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
-    ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+    #ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
+    #ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
+    #ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
+       
+    ps.broadcastjs('initializeControls({0}, {1}, {2})'
+        .format(dataModes, colorMapLabels, colorMapNames), '')
     o.setZoom(2)
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 
-def updateStars():
-    return Falsed
+def setDataMode(mode):
+    global dataMode
+    dataMode = mode
+    dm = dataModes[mode]
+    if(dm == 'DataType'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_fixedColor)
+        pc0.setColor(Color(0.2, 0.2, 1, 0.1))
+        pc1.setVisible(True)
+        pc1.setProgram(prog_fixedColor)
+        pc1.setColor(Color(1, 1, 0.2, 0.1))
+        pcw.enableColormapper(False)
+    elif(dm == 'Density'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_default)
+        pc0.setData(d0)
+        pc1.setVisible(False)
+        pcw.enableColormapper(False)
+    elif(dm == 'IntegralDensity'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_default)
+        pc0.setData(d0)
+        pc1.setVisible(False)
+        pcw.enableColormapper(True)
+    elif(dm == 'SmoothingLength'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_default)
+        pc0.setData(sl0)
+        pc1.setVisible(False)
+        pcw.enableColormapper(False)
+    elif(dm == 'Pivot'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_df)
+        pc1.setVisible(True)
+        pc1.setProgram(prog_df)
+        pcw.enableColormapper(False)
+    elif(dm == 'VelocityVectors'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_vector)
+        pc1.setVisible(False)
+        pcw.enableColormapper(False)
+    redraw()
 
-def setColorMap(colorName, setName):
-    global colormap
-    print "Setting a new Color Map: " , colorName, " For Set: ", setName
-    colormap = colorName
-    print setName
-    print colorName
-    print colormaps[int(colorName)]
-    pc.setColormap(colormaps[int(colorName)])
-
-def setColorVariable(variable, setName):
-    pc.setData(variableDict[variable])
-
-def setPointSize(size, setName): 
-    return False
+def enableSmoothingLength(enabled):
+    print(enabled)
+    if(enabled):
+        pc0.setSize(sl0)
+    else:
+        pc0.setSize(None)
+    redraw()
+    
+def setPointScale(sc):
+    global pointScale
+    pointScale = sc
+    for p in parts: p.setPointScale(sc)
+    print('point scale: ' + str(sc))
+    redraw()
+  
+def setColormap(index):
+    for p in parts: p.setColormap(colormaps[index])
+    pcw.setColormap(colormaps[index])
+    redraw()
 
 def setFilterBounds(minRange, maxRange, filterName,setName):
     #print "filterrangemin: " , minRange
@@ -263,24 +342,16 @@ def setLogColor(isLog, setName):
         isLogArray[1] = isLog
         print "after: " , p.isLog
 
-def playAnimation(file):
-    playing = True
-    animateCamera()
+setDataMode(0)
+setPointScale(pointScale)
 
+def saveViewImage():
+    filename = '{:%Y%m%d-%H%M%S}.png'.format(datetime.datetime.now())
+    saveImage(pcw.getOutput(), filename, ImageFormat.FormatPng)
+    ps.broadcastjs("setScreenView('{0}')".format(filename), '')
+        
+def echo(msg):
+    ps.broadcastjs("setConsole('" + msg + "')", '')
 
-def onAnimate():
-    if playing:
-        return False
-
-def isAtPoint():
-    return False
-
-def nextPoint():
-    return False
-
-def resetAnimation():
-    return False
-
-def loadAnimation():
-    return False
-
+def cls():
+    ps.broadcastjs('clearConsole()', '')

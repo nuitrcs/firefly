@@ -1,5 +1,5 @@
 layout(points) in;
-layout(triangle_strip, max_vertices=4) out;
+layout(line_strip, max_vertices=2) out;
 
 uniform mat4 modelView;
 uniform mat4 projection;
@@ -9,6 +9,7 @@ uniform int decimation;
 // Data attributes
 //Inputs
 in float attrib_data[];
+in vec4 attrib_vector_data[];
 in float attrib_size[];
 in float attrib_filter[];
 
@@ -22,6 +23,7 @@ uniform float pointScale;
 
 void main(void)
 {    
+    if(attrib_data[0] < 300.00000) return;
     if(gl_PrimitiveIDIn % decimation != 0) return;
     
 #if (FILTER_MODE == 1)
@@ -29,7 +31,7 @@ void main(void)
 #endif
 
 #if (SIZE_MODE == 1)
-    float radius =  attrib_size[0] * pointScale * 0.1;
+    float radius =  attrib_size[0] * pointScale;
     float v = 4.188 * pow(radius * 0.5, 3);
     data = attrib_data[0] / v;
 #else
@@ -39,29 +41,16 @@ void main(void)
 
     float halfsize = radius * 0.5;
     
-    texCoord = vec2(1.0,-1.0);
+    texCoord = vec2(0.0,0.0);
     gl_Position = gl_in[0].gl_Position;
-    gl_Position.xy += vec2(halfsize, -halfsize);
     gl_Position = projection * gl_Position;
     EmitVertex();
 
     texCoord = vec2(1.0,1.0);
-    gl_Position = gl_in[0].gl_Position;
-    gl_Position.xy += vec2(halfsize, halfsize);
+    gl_Position = gl_in[0].gl_Position + attrib_vector_data[0] * radius;
     gl_Position = projection * gl_Position;
     EmitVertex();
 
-    texCoord = vec2(-1.0,-1.0);
-    gl_Position = gl_in[0].gl_Position;
-    gl_Position.xy += vec2(-halfsize, -halfsize);
-    gl_Position = projection * gl_Position;
-    EmitVertex();
-
-    texCoord= vec2(-1.0,1.0);
-    gl_Position = gl_in[0].gl_Position;
-    gl_Position.xy += vec2(-halfsize, halfsize);
-    gl_Position = projection * gl_Position;
-    EmitVertex();
 
     EndPrimitive();
 }

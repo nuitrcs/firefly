@@ -18,9 +18,12 @@ uniform mat4 projection;
 uniform mat4 modelViewProjection;
 uniform vec2 filterBounds;
 uniform float pointScale;
+uniform int decimation;
 
 void main(void)
 {    
+    if(gl_PrimitiveIDIn % decimation != 0) return;
+    
 #if (FILTER_MODE == 1)
     if(attrib_filter[0] < filterBounds[0] || attrib_filter[0] > filterBounds[1]) return;
 #endif

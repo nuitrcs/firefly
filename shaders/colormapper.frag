@@ -11,9 +11,9 @@ uniform vec2 dataBounds;
 
 void main()
 {    
-    float data = texture(channels, TexCoords).r / 200;
-    float r = dataBounds[1] - dataBounds[0];
-    float v = (data - dataBounds[0]) / r;
+    float data = texture(channels, TexCoords).r;
+    float r = log(dataBounds[1]) - log(dataBounds[0]);
+    float v = (log(data) - log(dataBounds[0])) / r;
     v = clamp(v, 0.0, 1.0);
     fragmentColor.rgb = texture(colormap, vec2(v, 0.5)).rgb;
     fragmentColor.a=1.0;
