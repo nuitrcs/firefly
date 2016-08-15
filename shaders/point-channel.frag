@@ -22,5 +22,5 @@ void main (void)
 
     float z = sqrt(zz);
     
-    fragmentColor = vec4(data * sin(z), 0, 0, 1.0);
+    fragmentColor = vec4(data, 0, 0, 1.0) * sin(z);
 }

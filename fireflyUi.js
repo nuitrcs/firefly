@@ -75,6 +75,7 @@ porthole.connected = function() {
     //console.log(viewPanel)
     $('#helpBox').dialog('close');
     $('#colormapPreview').dialog('close');
+    $('#screen').dialog('close');
 }
 
 var numStarPanels = 0
@@ -272,19 +273,29 @@ function addStarPanel(name, variables, ranges ) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+controlData = {
+    dataMode: null,
+    selectedDataMode: null,
+    useSmoothingLength: true,
+    pointScale: 0.05,
+    pointScaleRange: [0.001, 0.02],
+    colormap: null,
+    enableColormapper: false,
+    selectedColormap: null,
+    colormapPaths: null,
+    colormapMin: '0',
+    colormapMax: '1',
+    navspeed: 50,
+    navspeedRange: [1, 50]
+};
+
+////////////////////////////////////////////////////////////////////////////////
 function initializeControls(modes, colormaps, colormapFiles) {
-    controlData = {
-        dataMode: modes,
-        selectedDataMode: modes[0],
-        useSmoothingLength: true,
-        pointScale: 0.05,
-        pointScaleRange: [0.001, 0.02],
-        colormap: colormaps,
-        selectedColormap: colormaps[0],
-        colormapPaths: colormapFiles,
-        navspeed: 50,
-        navspeedRange: [1, 50]
-    };
+    controlData.dataMode = modes;
+    controlData.selectedDataMode = modes[0];
+    controlData.colormap = colormaps;
+    controlData.selectedColormap = colormaps[0];
+    controlData.colormapPaths = colormapFiles;
     
     controls = controlKit.addPanel({
         label: 'Options', 
@@ -299,23 +310,7 @@ function initializeControls(modes, colormaps, colormapFiles) {
             onChange: function (index) {
                 controlData.selectedDataMode = controlData.dataMode[index];
                 {{py setDataMode(%index%)}}
-                // updateTables()
                 $("#Colorvariable").html(controlData.selectedDataMode)
-                // currentVariableColor[currIndex] = index
-                // if (currentColorSettings[currIndex][index] == 0) {
-                    // currentColorSettings[currIndex][index]= {
-                        // on : false,
-                        // min : ranges[index][0],
-                        // max : ranges[index][1]
-                    // }
-                    // starArray[currIndex].isLog = currentColorSettings[currIndex][index].ons
-                    // starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
-                // } else {
-                    // starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
-                    // starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
-                // }
-                // controlKit.update();
-                //{{py setColorVariable("%starArray[currIndex].variables[index]%","%groupNames[currIndex]%")}}
             }
         })
         .addCheckbox(controlData, 'useSmoothingLength', {
@@ -331,6 +326,12 @@ function initializeControls(modes, colormaps, colormapFiles) {
                 {{py setPointScale(%controlData.pointScale%)}}
             }
         })
+        .addCheckbox(controlData, 'enableColormapper', {
+            label: 'Advanced Colormapper',
+            onChange: function () {
+                {{py enableColormapper(%controlData.enableColormapper%)}}
+            }
+        })
         .addSelect(controlData, 'colormap' , {
             label: 'Color Map', 
             onChange: function (index) {
@@ -340,6 +341,20 @@ function initializeControls(modes, colormaps, colormapFiles) {
                 $("#colorMapImg").attr('src',controlData.colormapPaths[index]);
             }
         })
+        .addStringInput(controlData,'colormapMin', { 
+            label: 'Colormap Min'
+        })
+        .addStringInput(controlData,'colormapMax', { 
+            label: 'Colormap Max'
+        })
+        .addButton('Update Bounds',function() { 
+                {{py updateColormapBounds(%controlData.colormapMin%, %controlData.colormapMax%) }}
+            }, {}
+        )
+        .addButton('Reset Bounds',function() { 
+                {{py resetColormapBounds() }}
+            }, {}
+        )
     
     filterPanel = controls.addGroup({label: 'Filter', enable: false})
     controls.addGroup({label: 'View', enable: false})
@@ -351,9 +366,15 @@ function initializeControls(modes, colormaps, colormapFiles) {
             }
         })
         .addButton('Save Image',function() { {{py saveViewImage() }} }, {}
-
         )
     
+}
+
+////////////////////////////////////////////////////////////////////////////////
+function updateColormapBounds(cmin, cmax) {
+    controlData.colormapMin = cmin;
+    controlData.colormapMax = cmax;
+    controlKit.update();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -61,8 +61,8 @@ vx0 = ds0.addDimension('Velocities', DimensionType.Float, 0, 'vx')
 vy0 = ds0.addDimension('Velocities', DimensionType.Float, 1, 'vy')
 vz0 = ds0.addDimension('Velocities', DimensionType.Float, 2, 'vz')
 
-pc0 = PointCloud()
-pc0.setOptions('100000 0:100000:1')
+pc0 = PointCloud.create('pc0')
+pc0.setOptions('50000 0:100000:1')
 pc0.setDimensions(x0, y0, z0)
 pc0.setData(sl0)
 pc0.setVectorData(vx0, vy0, vz0)
@@ -81,8 +81,8 @@ x1 = ds1.addDimension('Coordinates', DimensionType.Float, 0, 'x')
 y1 = ds1.addDimension('Coordinates', DimensionType.Float, 1, 'y')
 z1 = ds1.addDimension('Coordinates', DimensionType.Float, 2, 'z')
 
-pc1 = PointCloud()
-pc1.setOptions('100000 0:100000:1')
+pc1 = PointCloud.create('pc1')
+pc1.setOptions('50000 0:100000:1')
 pc1.setDimensions(x1, y1, z1)
 pc1.setProgram(prog_fixedColor)
 pc1.normalizeFilterBounds(True)
@@ -118,6 +118,11 @@ sn.addComponent(pc1)
 scale = 0.01
 pointScale = scale
 dataMode = None
+colormapperEnabled = False
+colormapMin = 0
+colormapMax = 1
+pivotSelectionMode = False
+
 sn.setScale(scale, scale, scale)
 #sn.setPosition(-5, 1, -10)
 
@@ -156,7 +161,7 @@ def onEvent():
     
     e = getEvent()
     if(e.isFlagSet(EventFlags.Shift)): enablePivotSelectorMode(True)
-    elif(e.getType() == EventType.Up and not e.isFlagSet(EventFlags.Shift)) : enablePivotSelectorMode(False)
+    elif(e.getType() == EventType.Up and not e.isFlagSet(EventFlags.Shift) and pivotSelectionMode) : enablePivotSelectorMode(False)
 
     if(e.isKeyDown(Keyboard.KEY_M)): ps.broadcastjs('toggleColorMap()','')
     if(e.isKeyDown(Keyboard.KEY_H)): ps.broadcastjs('toggleHelp()','')
@@ -176,6 +181,8 @@ def redraw():
 #-------------------------------------------------------------------------------
 # Misc
 def enablePivotSelectorMode(enabled):
+    global pivotSelectionMode
+    pivotSelectionMode = enabled
     if(enabled):
         pc0.setProgram(prog_df)
         pc1.setProgram(prog_df)
@@ -230,7 +237,6 @@ def onResize():
 dataModes = [
     'DataType', 
     'Density',
-    'IntegralDensity',
     'SmoothingLength',
     'Pivot',
     'VelocityVectors']
@@ -261,36 +267,27 @@ def setDataMode(mode):
         pc1.setVisible(True)
         pc1.setProgram(prog_fixedColor)
         pc1.setColor(Color(1, 1, 0.2, 0.1))
-        pcw.enableColormapper(False)
     elif(dm == 'Density'):
         pc0.setVisible(True)
-        pc0.setProgram(prog_default)
+        pc0.setProgram(prog_channel)
         pc0.setData(d0)
         pc1.setVisible(False)
-        pcw.enableColormapper(False)
-    elif(dm == 'IntegralDensity'):
-        pc0.setVisible(True)
-        pc0.setProgram(prog_default)
-        pc0.setData(d0)
-        pc1.setVisible(False)
-        pcw.enableColormapper(True)
     elif(dm == 'SmoothingLength'):
         pc0.setVisible(True)
-        pc0.setProgram(prog_default)
+        pc0.setProgram(prog_channel)
         pc0.setData(sl0)
         pc1.setVisible(False)
-        pcw.enableColormapper(False)
-    elif(dm == 'Pivot'):
-        pc0.setVisible(True)
-        pc0.setProgram(prog_df)
-        pc1.setVisible(True)
-        pc1.setProgram(prog_df)
-        pcw.enableColormapper(False)
     elif(dm == 'VelocityVectors'):
         pc0.setVisible(True)
         pc0.setProgram(prog_vector)
         pc1.setVisible(False)
-        pcw.enableColormapper(False)
+    redraw()
+
+def enableColormapper(enabled):
+    global colormapperEnabled
+    colormapperEnabled = enabled
+    pcw.enableColormapper(enabled)
+    pcw.updateChannelBounds(True)
     redraw()
 
 def enableSmoothingLength(enabled):
@@ -324,9 +321,29 @@ def setFilterBounds(minRange, maxRange, filterName,setName):
     #pc.setFilterBounds(minRange/100.0, maxRange/100.0)
     return False
 
-def setColorBounds(minRange, maxRange, setName):
-    return False
+def updateColormapBounds(cmin, cmax):
+    print('bounds now are {0}    {1}'.format(cmin, cmax))
+    global colormapMin
+    global colormapMax
+    colormapMin = cmin
+    colormapMax = cmax
+    pcw.setChannelBounds(colormapMin, colormapMax)
+    redraw()
 
+def resetColormapBounds():
+    print('resetting bounds')
+    pcw.updateChannelBounds(True)
+    queueCommand('sendColormapBounds()')
+
+def sendColormapBounds():
+    print('sending bounds')
+    global colormapMin
+    global colormapMax
+    colormapMin = pcw.getChannelMin()
+    colormapMax = pcw.getChannelMax()
+    ps.broadcastjs("updateColormapBounds({0}, {1})".format(colormapMin, colormapMax), '')
+    
+    
 def setLogColor(isLog, setName):
     return False
     p = prog.getParams()
@@ -348,7 +365,7 @@ setPointScale(pointScale)
 def saveViewImage():
     filename = '{:%Y%m%d-%H%M%S}.png'.format(datetime.datetime.now())
     saveImage(pcw.getOutput(), filename, ImageFormat.FormatPng)
-    ps.broadcastjs("setScreenView('{0}')".format(filename), '')
+    #ps.broadcastjs("setScreenView('{0}')".format(filename), '')
         
 def echo(msg):
     ps.broadcastjs("setConsole('" + msg + "')", '')

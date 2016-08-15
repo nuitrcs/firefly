@@ -11,7 +11,7 @@ pivotPosition = Vector3(4, 5, 6)
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
 pivotDistance = 1
-pivotDistanceIncrement = 1
+pivotDistanceIncrement = 0.5
     
 # node around which the camera rotates.
 camera = getDefaultCamera()

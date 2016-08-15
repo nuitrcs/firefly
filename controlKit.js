@@ -29,6 +29,7 @@ var Mouse   = require('./core/document/Mouse');
 
 var ValuePlotter = require('./component/ValuePlotter');
 var StringOutput = require('./component/StringOutput'),
+    //StringInput = require('./component/StringInput'),
     NumberOutput = require('./component/NumberOutput');
 
 var DEFAULT_HISTORY = false,
@@ -214,6 +215,7 @@ ControlKit.prototype.update = function () {
                 // }
                 if (component instanceof ValuePlotter ||
                     component instanceof StringOutput ||
+                    //component instanceof StringInput ||
                     component instanceof NumberOutput) {
                 
                     console.log('updateValue')

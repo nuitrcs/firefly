@@ -16,5 +16,5 @@ void main()
     float v = (log(data) - log(dataBounds[0])) / r;
     v = clamp(v, 0.0, 1.0);
     fragmentColor.rgb = texture(colormap, vec2(v, 0.5)).rgb;
-    fragmentColor.a=1.0;
+    fragmentColor.a=v;
 }  
