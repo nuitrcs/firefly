@@ -47,9 +47,11 @@ def onEvent():
     global panSpeed
     
     e = getEvent()
+    portholeS = porthole.getService()
     if(e.getType() == EventType.Zoom):
         pivotDistance += e.getExtraDataInt(0) * pivotDistanceIncrement
         pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
+        portholeS.broadcastjs('updateCenterOfRotation('+str(pivotPosition[0])+','+str(pivotPosition[1])+','+str(pivotPosition[2])+')','')
         return
     
     if(e.isButtonDown(EventFlags.Left)):
@@ -60,6 +62,7 @@ def onEvent():
                 pivotRayDirection = res[2]
                 pivotDistance = abs(pivotPosition - pivotRayOrigin)
                 pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
+                portholeS.broadcastjs('updateCenterOfRotation('+str(pivotPosition[0])+','+str(pivotPosition[1])+','+str(pivotPosition[2])+')','')
                 snapback = True
                 snapbackCameraPosition = camera.getPosition()
                 snapbackCameraOrientation = camera.getOrientation()

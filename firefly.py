@@ -52,11 +52,11 @@ l.open('C:/Users/defaultuser0/snapshot_140.hdf5')
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)
 
-x0 = ds0.addDimension('Coordinates', DimensionType.Float, 0, 'x')
-y0 = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
-z0 = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+x0  = ds0.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+y0  = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+z0  = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
 sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
-d0 = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
+d0  = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
 vx0 = ds0.addDimension('Velocities', DimensionType.Float, 0, 'vx')
 vy0 = ds0.addDimension('Velocities', DimensionType.Float, 1, 'vy')
 vz0 = ds0.addDimension('Velocities', DimensionType.Float, 2, 'vz')
@@ -168,9 +168,18 @@ def onEvent():
     if(e.isKeyDown(Keyboard.KEY_V)): ps.broadcastjs('clearConsole()','')
     if(e.isKeyDown(Keyboard.KEY_C)): ps.broadcastjs('toggleConsole()','')
     
+timeSinceUpdate = 0
 def onUpdate(frame, time, dt):
     pc0.setFocusPosition(pivotPosition)
     pc1.setFocusPosition(pivotPosition)
+    global timeSinceUpdate
+    timeSinceUpdate = timeSinceUpdate + dt
+    if timeSinceUpdate > 2:
+        timeSinceUpdate = 0
+        #global cameraPosition,pivotPosition
+        #print "Updating, setting cameraPos: ", cameraPosition
+        #ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
+        #ps.broadcastjs()
 
 setUpdateFunction(onUpdate)
 setEventFunction(onEvent)
@@ -196,6 +205,30 @@ def enablePivotSelectorMode(enabled):
         setDataMode(dataMode)
         setPointScale(pointScale)
 
+def setCamPos(x,y,z):
+    global camera, cameraPosition
+    oldPos = camera.getPosition()
+    print "old camera position to: " , cameraPosition
+    cameraPosition = Vector3(float(x),float(y),float(z))
+    print "new camera position to:" , cameraPosition
+    camera.setPosition(cameraPosition)
+    redraw()
+    #camera.setPosition(Vector3(float(x),float(y),float(z)))
+
+def setPivotPoint(x,y,z):
+    global pivotPosition
+    print "setting pivit point to to x:" , x ," y: ", y , " z: ", z
+    pivotPosition = Vector3(float(x),float(y),float(z))
+
+def lookAtPivot():
+    print "looking at pivot point"
+    global camera, pivotPosition
+    camera.lookAt(pivotPosition,Vector3(0,1,0))
+    redraw()
+
+def requestUpdatePos():
+    global cameraPosition
+    ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
 
 #-------------------------------------------------------------------------------
 # UI
@@ -249,10 +282,13 @@ def onClientConnected():
     #ps.broadcastjs('setVariables(' + str(variables) + ',' + str(filterRanges) + ')','')
     #ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
     #ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
-       
+    ps.broadcastjs('initializePresetPanels()', '')
+    
     ps.broadcastjs('initializeControls({0}, {1}, {2})'
         .format(dataModes, colorMapLabels, colorMapNames), '')
     o.setZoom(2)
+
+
     # ps.broadcastjs('addStarPanel()', '')
     print "finished broadcasting some commands"
 

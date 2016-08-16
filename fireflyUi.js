@@ -286,10 +286,49 @@ controlData = {
     colormapMin: '0',
     colormapMax: '1',
     navspeed: 50,
-    navspeedRange: [1, 50]
+    navspeedRange: [1, 50],
+    camPosX: '0',
+    camPosY: '0',
+    camPosZ: '0',
+    corPosX: '0',
+    corPosY: '0',
+    corPosZ: '0'
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+presetData = {
+    presetList: ['test 1', 'test 2', 'test 3'],
+    currentName: ''
+}
+
+function initializePresetPanels() {
+    console.log("Preset Panel initialized")
+    presetPanel = controlKit.addPanel({
+        label: 'Presets',
+        fixed: false, 
+        width: 320,
+        // align: 'left'//,
+        position: [window.innerwidth - 320, 250]
+    })
+    presetPanel.addSelect(presetData,'presetList' , {
+            label: 'Preset', 
+            onChange: function (index) {
+            }
+        })
+    presetPanel.addButton('Apply',function() { 
+            }, {}
+        )
+    presetPanel.addStringInput(presetData,'currentName', { 
+            label: 'Name'
+        })
+    presetPanel.addButton('Save Settings',function() { 
+            }, {}
+        )
+    presetPanel.addButton('Delete Entry',function() { 
+            }, {}
+        )
+}
+var controls
 function initializeControls(modes, colormaps, colormapFiles) {
     controlData.dataMode = modes;
     controlData.selectedDataMode = modes[0];
@@ -368,7 +407,42 @@ function initializeControls(modes, colormaps, colormapFiles) {
         })
         .addButton('Save Image',function() { {{py saveViewImage() }} }, {}
         )
-    
+        .addSubGroup({label: 'Camera Position', enable: false})
+            .addStringInput(controlData,'camPosX', { 
+                label: 'X-Pos:'
+            })
+            .addStringInput(controlData,'camPosY', { 
+                label: 'Y-Pos:'
+            })
+            .addStringInput(controlData,'camPosZ', { 
+                label: 'Z-Pos:'
+            })
+            .addButton('Update Position', function() {
+                {{py requestUpdatePos()}}
+            }, {})
+            .addButton('Apply',function() { 
+                    console.log("Applying camera Pos")
+                    {{py setCamPos('%controlData.camPosX%','%controlData.camPosY%','%controlData.camPosZ%')}}
+                    //{{py camera.setPosition(Vector3(%controlData.camX%,%controlData.camY%,%controlData.camZ%))}}
+                }, {})
+        .addSubGroup({label: 'Center of Rotation', enable: false})
+            .addStringInput(controlData,'corPosX', { 
+                label: 'X-Pos:'
+            })
+            .addStringInput(controlData,'corPosY', { 
+                label: 'Y-Pos:'
+            })
+            .addStringInput(controlData,'corPosZ', { 
+                label: 'Z-Pos:'
+            })
+            .addButton('Apply',function() { 
+                    console.log("Applying center of Rotation Pos")
+                    {{py setPivotPoint('%controlData.corPosX%','%controlData.corPosY%','%controlData.corPosZ%')}}
+                }, {})
+            .addButton('Center on Rotation Point',function() { 
+                    console.log("Applying center of Rotation Pos")
+                    {{py lookAtPivot()}}
+                }, {})
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -382,6 +456,27 @@ function updateColormapBounds(cmin, cmax) {
 ////////////////////////////////////////////////////////////////////////////////
 function setScreenView(imgPath) {
     $("#screenImg").attr('src',imgPath);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+function updateCameraPos(x,y,z) {
+    // console.log(controls)
+    // console.log(controls._groups[2]._subGroups[1]._enabled)
+    // if (controls._groups[2]._subGroups[1]._enabled == false) {
+    console.log("Cam pos updated")
+    controlData.camPosX = x
+    controlData.camPosY = y
+    controlData.camPosZ = z
+    controlKit.update()
+    //}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+function updateCenterOfRotation(x,y,z) {
+    controlData.corPosX = x
+    controlData.corPosY = y
+    controlData.corPosZ = z
+    controlKit.update()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
