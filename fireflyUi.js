@@ -353,6 +353,7 @@ function initializeControls(modes, colormaps, colormapFiles) {
         )
         .addButton('Reset Bounds',function() { 
                 {{py resetColormapBounds() }}
+                console.log("Resetting bounds")
             }, {}
         )
     
@@ -374,6 +375,7 @@ function initializeControls(modes, colormaps, colormapFiles) {
 function updateColormapBounds(cmin, cmax) {
     controlData.colormapMin = cmin;
     controlData.colormapMax = cmax;
+    console.log("Updating colormap bounds")
     controlKit.update();
 }
 

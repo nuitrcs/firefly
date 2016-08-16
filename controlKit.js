@@ -29,7 +29,7 @@ var Mouse   = require('./core/document/Mouse');
 
 var ValuePlotter = require('./component/ValuePlotter');
 var StringOutput = require('./component/StringOutput'),
-    //StringInput = require('./component/StringInput'),
+    StringInput = require('./component/StringInput'),
     NumberOutput = require('./component/NumberOutput');
 
 var DEFAULT_HISTORY = false,
@@ -180,10 +180,11 @@ ControlKit.prototype.addPanel = function (params) {
  * Updates all ControlKit components if the wat
  */
 ControlKit.prototype.update = function () {
+    // console.log("In update function")
     if (!this._enabled || !this._canUpdate){
         return;
     }
-    
+    // console.log("Is capable of updating")
     //this.dispatchEvent(new Event_(this, ComponentEvent.VALUE_UPDATED));
     var i, j, k;
     var l, m, n;
@@ -215,14 +216,15 @@ ControlKit.prototype.update = function () {
                 // }
                 if (component instanceof ValuePlotter ||
                     component instanceof StringOutput ||
-                    //component instanceof StringInput ||
+                    component instanceof StringInput ||
                     component instanceof NumberOutput) {
                 
-                    console.log('updateValue')
+                    // console.log('updating value of ')
                     component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
                 }   
 
                 if (component.update) {
+                    // console.log("component update")
                     component.update();
                 }
                 //}
@@ -335,7 +337,7 @@ ControlKit.destroy = function(){
 };
 
 module.exports = ControlKit;
-},{"./component/NumberOutput":15,"./component/Options":16,"./component/Picker":19,"./component/StringOutput":28,"./component/ValuePlotter":29,"./core/ComponentEvent":31,"./core/History":33,"./core/HistoryEvent":34,"./core/State":38,"./core/document/CSS":42,"./core/document/DocumentEvent":43,"./core/document/Mouse":44,"./core/document/Node":45,"./core/document/NodeEvent":46,"./core/document/Style":47,"./core/event/Event":48,"./core/event/EventDispatcher":49,"./group/MenuEvent":55,"./group/Panel":56}],3:[function(require,module,exports){
+},{"./component/NumberOutput":15,"./component/Options":16,"./component/Picker":19,"./component/StringInput":27,"./component/StringOutput":28,"./component/ValuePlotter":29,"./core/ComponentEvent":31,"./core/History":33,"./core/HistoryEvent":34,"./core/State":38,"./core/document/CSS":42,"./core/document/DocumentEvent":43,"./core/document/Mouse":44,"./core/document/Node":45,"./core/document/NodeEvent":46,"./core/document/Style":47,"./core/event/Event":48,"./core/event/EventDispatcher":49,"./group/MenuEvent":55,"./group/Panel":56}],3:[function(require,module,exports){
 var Event_         = require('../core/event/Event'),
     NodeEvent      = require('../core/document/NodeEvent'),
     ComponentEvent = require('../core/ComponentEvent');
@@ -364,6 +366,7 @@ function Button(parent,label,onPress,params) {
                            function() {
                                onPress.bind(self)();
                                self.dispatchEvent(new Event_(self,ComponentEvent.VALUE_UPDATED));
+                               // console.log("Button Event dispatched")
                            });
 
     this._wrapNode.addChild(node);
@@ -3955,6 +3958,7 @@ StringInput.prototype._onInputKeyUp = function (e) {
 };
 
 StringInput.prototype._onInputChange = function (e) {
+    // console.log("String input on input change")
     if (this._keyIsChar(e.keyCode)){
         this.pushHistoryState();
     }
@@ -3975,12 +3979,16 @@ StringInput.prototype._keyIsChar = function (keyCode) {
 
 
 StringInput.prototype.applyValue = function () {
+    // console.log("String input apply value")
     this._obj[this._key] = this._input.getProperty('value');
+    // console.log("Value property is: ", this._input.getProperty('value'))
     this.dispatchEvent(new Event_(this, ComponentEvent.VALUE_UPDATED, null));
 };
 
 StringInput.prototype.onValueUpdate = function (e) {
+    // console.log("String input on Value Update")
     if (e.data.origin == this)return;
+    // console.log("String input on Value Update origin is not this")
     this._input.setProperty('value', this._obj[this._key]);
 };
 

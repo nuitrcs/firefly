@@ -46,7 +46,7 @@ for i in colormaps: i.setTextureFlags(TextureFlags.WrapClamp)
 #-------------------------------------------------------------------------------
 # Data Setup
 l = FireLoader()
-l.open('C:/dev/omegalib/apps/firefly/snapshot_140.hdf5')
+l.open('C:/Users/defaultuser0/snapshot_140.hdf5')
 
 # PartType0
 ds0 = Dataset.create('PartType0')
