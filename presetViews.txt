@@ -1,0 +1,3 @@
+name	camX	camY	camZ	pivotX	pivotY	pivotZ	pointScale	dataMode	useSmoothingLength	colormapEnabled, colorMapIndex, colormapMin, colormapMax
+test	9.276481146240862	-9.981265737530496	13.681247980194014	47.0	17.0	62.0	0.01	0	True	True	0	0.0	1.0
+test2	-0.03640805440091686	-0.011619591830079849	-0.048027646230996715	47.0	17.0	62.0	0.01	0	True	True	0	0.0	1.0

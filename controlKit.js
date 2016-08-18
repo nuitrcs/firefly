@@ -30,6 +30,7 @@ var Mouse   = require('./core/document/Mouse');
 var ValuePlotter = require('./component/ValuePlotter');
 var StringOutput = require('./component/StringOutput'),
     StringInput = require('./component/StringInput'),
+    Select = require('./component/Select'),
     NumberOutput = require('./component/NumberOutput');
 
 var DEFAULT_HISTORY = false,
@@ -217,7 +218,11 @@ ControlKit.prototype.update = function () {
                 if (component instanceof ValuePlotter ||
                     component instanceof StringOutput ||
                     component instanceof StringInput ||
+                    component instanceof Select ||
                     component instanceof NumberOutput) {
+                    if (component instanceof Select) {
+                        console.log("Updating Select?")
+                    }
                 
                     // console.log('updating value of ')
                     component.dispatchEvent(new Event_(component, ComponentEvent.VALUE_UPDATED, null));
@@ -337,7 +342,7 @@ ControlKit.destroy = function(){
 };
 
 module.exports = ControlKit;
-},{"./component/NumberOutput":15,"./component/Options":16,"./component/Picker":19,"./component/StringInput":27,"./component/StringOutput":28,"./component/ValuePlotter":29,"./core/ComponentEvent":31,"./core/History":33,"./core/HistoryEvent":34,"./core/State":38,"./core/document/CSS":42,"./core/document/DocumentEvent":43,"./core/document/Mouse":44,"./core/document/Node":45,"./core/document/NodeEvent":46,"./core/document/Style":47,"./core/event/Event":48,"./core/event/EventDispatcher":49,"./group/MenuEvent":55,"./group/Panel":56}],3:[function(require,module,exports){
+},{"./component/NumberOutput":15,"./component/Options":16,"./component/Picker":19,"./component/Select":24,"./component/StringInput":27,"./component/StringOutput":28,"./component/ValuePlotter":29,"./core/ComponentEvent":31,"./core/History":33,"./core/HistoryEvent":34,"./core/State":38,"./core/document/CSS":42,"./core/document/DocumentEvent":43,"./core/document/Mouse":44,"./core/document/Node":45,"./core/document/NodeEvent":46,"./core/document/Style":47,"./core/event/Event":48,"./core/event/EventDispatcher":49,"./group/MenuEvent":55,"./group/Panel":56}],3:[function(require,module,exports){
 var Event_         = require('../core/event/Event'),
     NodeEvent      = require('../core/document/NodeEvent'),
     ComponentEvent = require('../core/ComponentEvent');
@@ -3523,6 +3528,13 @@ Select.prototype._updateAppearance = function () {
 };
 
 Select.prototype.onValueUpdate = function (e) {
+    // console.log("Updating Select")
+    var obj = this._obj,
+        key = this._key;
+    // console.log(obj[key])
+    this._values = obj[key]
+    // console.log(this._values)
+
     if (!this._hasTarget()){
         return;
     }

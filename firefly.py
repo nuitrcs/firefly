@@ -1,5 +1,6 @@
 from overlay import *
 from signac import *
+import os, csv
 import datetime
 
 sig = Signac.getInstance()
@@ -139,6 +140,7 @@ focus()
 
 filterStart = 0.0
 filterEnd = 1.0
+currentColorMapIndex = 0
 # Initialize an array with false
 isLogArray = [False] * 10
 
@@ -243,6 +245,7 @@ ps.setServerStartedCommand('loadUi()')
 ps.setConnectedCommand('onClientConnected()')
 
 # used for passing boleans from the js interface
+useSmoothingLength = False
 true = True
 false = False
 
@@ -283,6 +286,7 @@ def onClientConnected():
     #ps.broadcastjs('setColorMapArrays(' + str(colorMapArray) + ',' + str(colorMapLabels) + ',' + str(colorMapNames) + ')','')
     #ps.broadcastjs('addStarPanel(\'View Settings\',' + str(variables) + ',' + str(filterRanges) + ')', '')
     ps.broadcastjs('initializePresetPanels()', '')
+    initializePresetViews()
     
     ps.broadcastjs('initializeControls({0}, {1}, {2})'
         .format(dataModes, colorMapLabels, colorMapNames), '')
@@ -327,6 +331,8 @@ def enableColormapper(enabled):
     redraw()
 
 def enableSmoothingLength(enabled):
+    global useSmoothingLength
+    useSmoothingLength = enabled
     print(enabled)
     if(enabled):
         pc0.setSize(sl0)
@@ -342,6 +348,8 @@ def setPointScale(sc):
     redraw()
   
 def setColormap(index):
+    global currentColorMapIndex
+    currentColorMapIndex = index
     for p in parts: p.setColormap(colormaps[index])
     pcw.setColormap(colormaps[index])
     redraw()
@@ -408,3 +416,98 @@ def echo(msg):
 
 def cls():
     ps.broadcastjs('clearConsole()', '')
+
+#-----------------Loading and Saving Presets -----------------------
+
+file = False
+reader = False
+fileName = "presetViews.txt"
+presets = []
+nameList = []
+currentIndex = 0
+
+# file.close()
+
+def initializePresetViews():
+    print "initializing presets"
+    global reader, presets, file, reader, nameList
+    if not os.path.isfile(fileName):
+        print "No file: " , fileName , " creating new file"
+        file = open(fileName, "w")
+        file.close()
+    else:
+        print "File: ", fileName, " found, loaded saved data"
+    file = open(fileName, 'rU')
+    reader = csv.reader(file, delimiter='\t')
+    skip = True
+    nameList = []
+    for row in reader:
+        if skip: 
+            skip = False
+            print "skipping first, but by the way, it is: "
+            print row
+        elif not row:
+            print "found empty array, moving onwards"
+        else: 
+            print "reading row: "
+            print row
+            v = [row[0],float(row[1]),float(row[2]),float(row[3]),float(row[4]),float(row[5]),float(row[6]),float(row[7]),int(row[8]),bool(row[9]),bool(row[10]),int(row[11]),float(row[12]),float(row[13])]
+            presets.append(v)
+            nameList.append(row[0])
+    ps.broadcastjs('settingPresets(' + str(nameList) + ')', '')
+
+def setPresetView( viewArrayIndex ):
+    global cameraPosition,pivotPosition,pointScale, dataMode, useSmoothingLength
+    global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax
+    global presets
+    presetData = presets[viewArrayIndex]
+    print "Setting current View to :", presetData[0]
+    setCamPos(presetData[1],presetData[2],presetData[3])
+    setPivotPoint(presetData[4],presetData[5],presetData[6])
+    setPointScale(presetData[7])
+    # setDataMode(presetData[8])
+    # enableSmoothingLength(presetData[9])
+    # enableColormapper(presetData[10])
+    # setColormap(presetData[11])
+    # updateColormapBounds(presetData[12], presetData[13])
+    redraw()
+    
+def saveCurrentView(name):
+    global presets
+    global file, nameList
+    nameList.append(name)
+    print "Name: " , name
+    global cameraPosition,pivotPosition,pointScale, dataMode, useSmoothingLength
+    global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax
+
+    newEntry = [name, cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],pointScale,dataMode,useSmoothingLength,colormapperEnabled,currentColorMapIndex,colormapMin,colormapMax]
+    # print "Table: ",newEntry
+    print "Before: "
+    print presets
+    presets.append(newEntry)
+    print "After: "
+    print presets
+
+    saveViews()
+
+def saveViews():
+    global presets, file
+    file = open(fileName,'w')
+    writer = csv.writer(file, delimiter='\t')
+    s = ['name','camX','camY','camZ','pivotX','pivotY','pivotZ','pointScale','dataMode','useSmoothingLength','colormapEnabled, colorMapIndex, colormapMin, colormapMax']
+    writer.writerow(s)
+    for row in presets:
+        print "writing row: " , row
+        writer.writerow(row)
+    file.close()
+
+def eraseView(number):
+    global presets
+    print "Erasing element from array"
+    # print presets
+    presets = presets.pop(number)
+    # print "After delete"
+    # print presets 
+    saveViews()
+    pass
+
