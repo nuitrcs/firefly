@@ -4,14 +4,10 @@ from math import *
 
 cameraPosition = Vector3(0,0,0)
 cameraOrientation = Quaternion()
-snapbackCameraPosition = Vector3(0,0,0)
-snapbackcameraOrientation = Quaternion()
-snapback = False
-pivotPosition = Vector3(4, 5, 6)
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
 pivotDistance = 1
-pivotDistanceIncrement = 0.5
+pivotDistanceIncrement = 2
     
 # node around which the camera rotates.
 camera = getDefaultCamera()
@@ -40,22 +36,19 @@ def onEvent():
     global pivotDistance
     global cameraPosition
     global cameraOrientation
-    global snapbackCameraPosition
-    global snapbackCameraOrientation
-    global snapback
     global panVector
     global panSpeed
     
     e = getEvent()
     portholeS = porthole.getService()
     if(e.getType() == EventType.Zoom):
-        pivotDistance += e.getExtraDataInt(0) * pivotDistanceIncrement
+        pivotDistance += e.getExtraDataInt(0) * pivotDistanceIncrement * panSpeedMultiplier
         pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
         portholeS.broadcastjs('updateCenterOfRotation('+str(pivotPosition[0])+','+str(pivotPosition[1])+','+str(pivotPosition[2])+')','')
         return
     
     if(e.isButtonDown(EventFlags.Left)):
-        if(e.isFlagSet(EventFlags.Shift)):
+        if(e.isFlagSet(EventFlags.Ctrl)):
             res = getRayFromEvent(e)
             if(res[0] == True):
                 pivotRayOrigin = res[1]
@@ -63,30 +56,33 @@ def onEvent():
                 pivotDistance = abs(pivotPosition - pivotRayOrigin)
                 pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
                 portholeS.broadcastjs('updateCenterOfRotation('+str(pivotPosition[0])+','+str(pivotPosition[1])+','+str(pivotPosition[2])+')','')
-                snapback = True
-                snapbackCameraPosition = camera.getPosition()
-                snapbackCameraOrientation = camera.getOrientation()
         startPos = e.getPosition()
         rotating = True
+        cameraOrientation = camera.getOrientation()
+        cameraPosition = camera.getPosition()
+        
     elif(e.isButtonUp(EventFlags.Left)):
         rotating = False
-        if(snapback):
-            camera.setPosition(snapbackCameraPosition)
-            camera.setOrientation(snapbackCameraOrientation)
-            cameraPosition = snapbackCameraPosition
-            cameraOrientation = snapbackCameraOrientation
-        snapback = False
+        cameraOrientation = camera.getOrientation()
+        cameraPosition = camera.getPosition()
+        
     elif(rotating == True and e.getServiceType() == ServiceType.Pointer 
         and e.getType() == EventType.Move):
-        dx = e.getPosition().x - startPos.x
-        dy = e.getPosition().y - startPos.y
-        rot = Quaternion.new_rotate_euler(radians(dx / 10), radians(dy / 10), 0)
-        cameraPosition = rot * (cameraPosition - pivotPosition) + pivotPosition
-        cameraOrientation = rot * cameraOrientation
-        camera.setOrientation(cameraOrientation)
-        camera.setPosition(cameraPosition)
-        if(not snapback): dqon()
-        startPos = e.getPosition()
+        dx = startPos.x - e.getPosition().x
+        dy = startPos.y - e.getPosition().y
+        
+        # compute the rotation basis and the new rotation
+        left = cameraOrientation * Vector3(1,0,0)
+        up = cameraOrientation * Vector3(0,1,0)
+        rot = Quaternion.new_rotate_axis(radians(dy / 10), left)
+        rot = rot * Quaternion.new_rotate_axis(radians(dx / 10), up)
+        
+        # Rotate the camera around the pivot
+        newPosition = rot * (cameraPosition - pivotPosition) + pivotPosition
+        camera.setOrientation(rot * cameraOrientation)
+        camera.setPosition(newPosition)
+        redraw()
+        #startPos = e.getPosition()
 
     # Panning control
     ps = panSpeed
@@ -113,7 +109,7 @@ def onUpdate(frame, time, dt):
     global panSpeedMultiplier
     
     if(panVector.magnitude() > 0): 
-        dqon()
+        redraw()
         cameraPosition += cameraOrientation * panVector * dt * panSpeedMultiplier
         camera.setPosition(cameraPosition)
     #camera.lookAt(pivot.getPosition(), Vector3(0,1,0))

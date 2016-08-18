@@ -28,6 +28,10 @@ vec4 mapToColor(float v)
 
 void main (void)
 {
+#if (LOG_MODE == 1)
     float v = clamp(log(data) / 20.0, 0, 1);
+#else
+    float v = clamp(data / 20.0, 0, 1);
+#endif
     fragmentColor = mapToColor(v);
 }

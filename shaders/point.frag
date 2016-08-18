@@ -36,8 +36,20 @@ void main (void)
     	discard;
 
     float z = sqrt(zz);
+    
+#if (LOG_MODE == 1)
+    float r = log(dataBounds[1]) - log(dataBounds[0]);
+    float v = ((data) - log(dataBounds[0])) / r;
+#else
     float r = (dataBounds[1]) - (dataBounds[0]);
     float v = ((data) - (dataBounds[0])) / r;
+#endif
 
+
+#if (KERNEL_MODE == 1)
     fragmentColor = mapToColor(v) * sin(z);
+#else
+    fragmentColor = mapToColor(v);
+    fragmentColor.a = 1.0;
+#endif
 }
