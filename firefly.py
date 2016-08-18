@@ -4,23 +4,10 @@ from omium import *
 import porthole
 import datetime
 
+# Initialize the signac point cloud rendering module. Whenever new data is loaded
+# call the redraw function to refresh the screen.
 sig = Signac.getInstance()
 sig.setFieldLoadedCommand('redraw()')
-
-#-------------------------------------------------------------------------------
-# Application state
-scale = 0.01
-pointScale = scale
-dataMode = None
-filterMode = None
-filterMin = 0
-filterMax = 1
-colormapperEnabled = False
-colormapMin = 0
-colormapMax = 1
-pivotSelectionMode = False
-kernelMode = 0
-renderMode = 0
 
 #-------------------------------------------------------------------------------
 # Load firefly components
@@ -31,17 +18,56 @@ orun('flyControl.py')
 orun('render.py')
 
 #-------------------------------------------------------------------------------
+# Application state
+
+# default scale applied to points
+pointScale = scale                 
+
+# data mode. see loader.py
+dataMode = None                     
+
+# filter mode. Used to exclude a data range from rendering
+filterMode = None                   
+filterMin = 0
+filterMax = 1
+
+# colormapper flag, and bounds of the color map
+colormapperEnabled = False
+colormapMin = 0
+colormapMax = 1
+
+# True when we are choosing a center of rotation. see flyControl.py
+pivotSelectionMode = False
+
+# rendering options. kernelMode controls how every single point is rendered.
+# renderMode controls how the full image is rendered on screen.
+kernelMode = 0
+renderMode = 0
+
+#-------------------------------------------------------------------------------
 # Scene Setup
+
+# create a point cloud view. This object takes care of rendering and generates
+# an image we can place on screen or save to disk. 
 pcw = PointCloudView()
 pcw.setColormapper(prog_mapper)
+
+# we assume parts is a list containing all the point clouds we want to render
+# (parts is populated by loader.py)
 for p in parts: pcw.addPointCloud(p)
+
+# create a 2D overlay to display the image rendered by the point cloud view
 mainView = Overlay()
 mainView.setAutosize(True)
 mainView.setTexture(pcw.getOutput())
 
+# setup the camera
 camera = getDefaultCamera()
 camera.setBackgroundColor(Color('black'))
 camera.setNearFarZ(1, 100000)
+
+# create a scene node to handle the 3D scene, attach all the point cloud objects
+# to it. 
 sn = SceneNode.create('galaxy')
 sn.setScale(scale, scale, scale)
 for p in parts: 
@@ -74,8 +100,10 @@ renderModes = [
     'Band5'    
 ]
 
+# Omium is the web renderer. we use it to render the user interface
 o = Omium.getInstance()
 
+# start up the web server that will serve the user interface.
 porthole.initialize(4080, './fireflyUi.html')
 ps = porthole.getService()
 ps.setServerStartedCommand('loadUi()')
@@ -85,6 +113,7 @@ ps.setConnectedCommand('onClientConnected()')
 true = True
 false = False
 
+# called when the user interface is ready. Create an overlay to display it.
 def loadUi():
     global gui
     global p
@@ -98,6 +127,14 @@ def loadUi():
     o.open('http://localhost:4080')
     onResize()
 
+# called when a user interface client connects.
+def onClientConnected():
+    ps.broadcastjs('initializePresetPanels()', '')
+    ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
+        .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
+    o.setZoom(2)
+
+# handle input events
 def onEvent():
     e = getEvent()
     if(e.isFlagSet(EventFlags.Ctrl)): enablePivotSelectorMode(True)
@@ -110,18 +147,13 @@ def onEvent():
     
 setEventFunction(onEvent)
 
-def onClientConnected():
-    ps.broadcastjs('initializePresetPanels()', '')
-    ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
-        .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
-    o.setZoom(2)
-
 def setKernelMode(mode):
-    print ('kernel mode ' + str(mode))
+    # pass the kernel mode index to the shaders and redraw
     for p in programs: p.define('KERNEL_MODE', str(mode))
     redraw()
 
 def setRenderMode(mode):
+    # pass the render mode index to the shaders and redraw
     global renderMode
     renderMode = renderModes[mode]
     for p in programs: p.define('RENDER_MODE', str(mode))

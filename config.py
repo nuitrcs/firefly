@@ -11,3 +11,7 @@ datasetPath = ';'.join(files)
 
 # Initial pivot.
 pivotPosition = Vector3(47, 17, 62)
+
+# Scale to apply to the entire 3D dataset. Useful if the dataset is too large,
+# to simplify navigation
+scale = 0.01

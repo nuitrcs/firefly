@@ -37,7 +37,8 @@ void main(void)
     data = attrib_data[0];
 #endif
 
-    float halfsize = radius * 0.5 * sqrt(decimation);
+    //float halfsize = radius * 0.5 * sqrt(decimation);
+    float halfsize = radius * 0.5;
     
     texCoord = vec2(1.0,-1.0);
     gl_Position = gl_in[0].gl_Position;
