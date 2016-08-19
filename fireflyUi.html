@@ -19,54 +19,37 @@
         Current Variable: <span id="cColorvariable">Smoothing Length</span>
     </div>
 
-    <div id="screen" title="Screen Capture" style="text-align:center;background-color: rgb(45,45,45); color: rgb(164,164,164);">
-        <img id="screenImg" alt="screen view" width="720">
-    </div>
-
-    <div id="helpBox" title="Help and Controls" style="font-size: 14;text-align:center;background-color:  rgb(45,45,45); color: rgb(164,164,164);">
-        <div class ='child_div_1'>H Key:<BR>
-                                C Key: <BR>
-                                V Key: <BR>
-                                M Key: <BR>
-                                A, D Keys:<BR>
-                                W, S Keys:<BR>
-                                R, F Keys:<BR>
-                                Mouse:<BR>
-                                <BR>
-                                Color Settings: <BR>
-                                Log Scale:<BR>
-                                Color Center<BR>
-                                Color Range <BR>
-                                Range Max <BR>
-                                <BR>
-                                Filter Settings: <BR>
-                                Filter Center<BR>
-                                Filter Range <BR>
-                                Range Max <BR>
-                                </div>
-        <div class ='child_div_2'>Toggle Help On/Off<BR>
-                                Toggle Console On/Off <BR>
-                                Clear Console <BR>
-                                Colormap Preview On/Off<BR>
-                                Move Camera Left/Right <BR>
-                                Zoom in/out <BR>
-                                Move Camera Up/Down<BR>
-                                Click and Drag to Rotate<BR>
-                                <BR>
-                                <BR>
-                                Toggle Log/Linear Mapping <BR>
-                                Center of Map on a normalized scale <BR>
-                                Distance of map bounds from center <BR>
-                                Max value of "Color Range" slider <BR>
-                                <BR>
-                                <BR>
-                                Center of filter on a normalized scale <BR>
-                                Distance of filter bounds from center<BR>
-                                Max value of "Filter Range" slider <BR>
-                                </div>
+    <div id="helpBox" title="Help and Controls" style="font-size: 14;background-color:  rgb(45,45,45); color: rgb(164,164,164);">
+        <h2>Navigation</h2>
+        <ul>
+        <li><b>AD Keys:</b> fly left/right</li>
+        <li><b>WS Keys:</b> fly forward/backward</li>
+        <li><b>RF Keys:</b> fly up/down</li>
+        <li><b>Click and drag:</b> rotate view</li>
+        </ul>
+        <h2>Center Selection</h2>
+        Hold <b>CTRL</b> to enable pivot selection mode. Click on the object
+        you want to center rotation on. Use mouse wheel to scroll forward or
+        backward to move the center of rotation along the view ray. The object 
+        will turn greener the closer you are to center on it. When done, release
+        the <b>CTRL</b> button and click anywhere.
+        <h2>User Interface</h2>
+        <ul>
+        <li><b>H Key:</b> toggle this help screen</li>
+        <li><b>C Keys:</b> toggle log</li>
+        <li><b>M Keys:</b> toggle colormap</li>
+        </ul>
+        <h2>Console</h2>
+        The console is a full python interpreter. here are a few useful 
+        commands as a reference.
+        <ul>
+        <li><b>:q</b> quit the application</li>
+        <li><b>resetPivot()</b> set the center of rotation to the center of the model</li>
+        <li><b>dqDec = [value]</b> set progressive render quality. Try values such as 1,2,8,64</li>
+        </ul>
     </div>
     <div id="console" title="Console" style="font-size: 12;background-color: rgb(45,45,45); color: rgb(164,164,164);">
-        <span id="consoleText">Messages can be printed here </span>
+        <span id="consoleText">Press H to open the help screen.</span>
     </div>
     <script src="./fireflyUi.js"/></script>
 

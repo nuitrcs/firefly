@@ -19,8 +19,8 @@ $( function() {
     $( "#helpBox" ).dialog({
         // position: [200, 200],
         // autoOpen: false,
-        height: 370,
-        width: 400,
+        height: 400,
+        width: 460,
         close: function(event,ui) {
             helpDisplayed = false
         },
@@ -38,20 +38,6 @@ $( function() {
         },
         open: function(event,ui) {
             colormapDisplayed =  true
-        }
-
-    });
-
-    $( "#screen" ).dialog({
-        // position: [200, 200],
-        // autoOpen: false,
-        height: 100,
-        width: 'auto',
-        close: function(event,ui) {
-            screenDisplayed =  false
-        },
-        open: function(event,ui) {
-            screenDisplayed =  true
         }
 
     });
@@ -75,7 +61,6 @@ porthole.connected = function() {
     //console.log(viewPanel)
     $('#helpBox').dialog('close');
     $('#colormapPreview').dialog('close');
-    $('#screen').dialog('close');
 }
 
 var numStarPanels = 0
@@ -155,128 +140,11 @@ function  toggleColorMap() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function addStarPanel(name, variables, ranges ) {
-    //console.log(variables)
-    //console.log(ranges)
-    //console.log(name)
-    var obj = {
-        colorRange : [0.0,100.0],
-        colorAreaRange : [0.0,100.0],
-        filterRange : [0.0,100.0],
-        colorArea : 50,
-        colorAreaStr : "50",
-        colorCenter : 50,
-        filterCenter : 50,
-        filterAreaRange : [0.0,100.0],
-        filterArea : 50,
-        filterAreaStr : "50",
-        filterOn: false,
-        isLog: false,
-        variables : variables,
-        colors : colorMapLabels,
-        val1 : 0,
-        val2 : 0
-    };
-    starArray.push(obj)
-    groupNames[numStarPanels] = name
-    currentFilterSettings[numStarPanels] = new Array(10)
-    currentFilterSettings[numStarPanels].fill(0)
-    currentColorSettings[numStarPanels] = new Array(10)
-    currentColorSettings[numStarPanels].fill(0)
-
-    var currIndex = numStarPanels
-    viewPanel.addGroup({label: name, enable: false})
-        .addSubGroup({label: 'Color Settings', enable: false})
-            .addSelect(starArray[numStarPanels], 'variables' , {label: 'Variable', onChange: function (index) {
-                updateTables()
-                $("#cColorvariable").html(variableArray[index])
-                currentVariableColor[currIndex] = index
-                if (currentColorSettings[currIndex][index] == 0) {
-                    currentColorSettings[currIndex][index]= {
-                        on : false,
-                        min : ranges[index][0],
-                        max : ranges[index][1]
-                    }
-                    starArray[currIndex].isLog = currentColorSettings[currIndex][index].ons
-                    starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
-                } else {
-                    starArray[currIndex].isLog = currentColorSettings[currIndex][index].on
-                    starArray[currIndex].colorRange = [currentColorSettings[currIndex][index].min, currentColorSettings[currIndex][index].max]
-                }
-                controlKit.update();
-                //{{py setColorVariable("%starArray[currIndex].variables[index]%","%groupNames[currIndex]%")}}
-            }})
-            .addSelect(starArray[numStarPanels], 'colors', {label: 'Colors', onChange: function (index) {
-                console.log('color map changed')
-                //{{py setColorMap("%colorMapArray[index]%","%groupNames[currIndex]%")}}
-                $("#colorMapImg").attr('src',colorMapPaths[index]);
-            }})
-            //.addRange(starArray[numStarPanels],'colorRange',{label : 'Range:'})
-            .addCheckbox(starArray[numStarPanels], 'isLog', {label: 'Log Scale'})
-
-            .addSlider(starArray[numStarPanels],'colorCenter','colorRange',{label : 'Color Center:', dp: 20})
-            .addSlider(starArray[numStarPanels],'colorArea','colorAreaRange',{label : 'Color Range:', dp: 20})
-            .addStringInput(starArray[numStarPanels],'colorAreaStr',{ label: 'Range Max', // replace key label with custom one
-                                    onChange : function(){  // on enter
-                                        starArray[currIndex].colorAreaRange[1] = parseFloat(starArray[currIndex].colorAreaStr)
-                                        console.log(starArray[currIndex].colorAreaStr)
-                                    }
-                                  })
-            .addButton('Reset Filters',function(){
-                    starArray[currIndex].colorAreaRange[0] = 0
-                    starArray[currIndex].colorAreaRange[1] = 100
-                    starArray[currIndex].colorCenter = 50
-                    starArray[currIndex].colorArea = 50
-                }, {})
-        .addSubGroup({label: 'Filter Settings', enable: false})
-            .addSelect(starArray[numStarPanels], 'variables', {label: 'Variable', onChange: function (index) {
-                updateTables()
-                currentVariableFilter[currIndex] = index
-                if (currentFilterSettings[currIndex][index] == 0) {
-                    console.log('new')
-                    currentFilterSettings[currIndex][index]= {
-                        on : false,
-                        min : 0.0,
-                        max : 1.0
-                    }
-                    starArray[currIndex].filterOn = currentFilterSettings[currIndex][index].on
-                    starArray[currIndex].filterRange = [currentFilterSettings[currIndex][index].min, currentFilterSettings[currIndex][index].max]
-                } else {
-                    starArray[currIndex].filterOn = currentFilterSettings[currIndex][index].on
-                    starArray[currIndex].filterRange = [currentFilterSettings[currIndex][index].min, currentFilterSettings[currIndex][index].max]
-                    //console.log(starArray[currIndex].filterOn)
-                }
-                // obj.funcTarget = obj.funcs[index];
-                starArray[currIndex].filterRange = variableRanges[index]
-                controlKit.update();
-            }})
-            .addCheckbox(starArray[numStarPanels], 'filterOn', {label: 'Filter On'})
-            .addSlider(starArray[numStarPanels],'filterCenter','filterRange',{label : 'Filter Center:', dp: 20})
-            .addSlider(starArray[numStarPanels],'filterArea','filterAreaRange',{label : 'Filter Range:', dp: 20})
-            .addStringInput(starArray[numStarPanels],'filterAreaStr',{ label: 'Range Max', // replace key label with custom one
-                                    onChange : function(){  // on enter
-                                        starArray[currIndex].filterAreaRange[1] = parseFloat(starArray[currIndex].filterAreaStr)
-                                        console.log("Filter Max Area: ", starArray[currIndex].filterAreaRange[1])
-                                    }
-                                  })
-            .addButton('Reset Filters',function(){
-                    starArray[currIndex].filterAreaRange[0] = 0
-                    starArray[currIndex].filterAreaRange[1] = 100
-                    starArray[currIndex].filterCenter = 50
-                    starArray[currIndex].filterArea = 50
-                }, {})
-        .addSubGroup({label: 'Information'})
-            .addNumberOutput(starArray[numStarPanels], 'val1', {label: 'Val 1:'})
-            .addNumberOutput(starArray[numStarPanels], 'val2', {label: 'Val 2:'})
-    {{py print "Now done"}}
-    numStarPanels = numStarPanels + 1
-}
-
-////////////////////////////////////////////////////////////////////////////////
 controlData = {
     dataMode: null,
     selectedDataMode: null,
     useSmoothingLength: true,
+    useLog: false,
     pointScale: 0.05,
     pointScaleRange: [0.001, 0.02],
     colormap: null,
@@ -287,6 +155,8 @@ controlData = {
     colormapMax: '1',
     navspeed: 50,
     navspeedRange: [1, 50],
+    filterMin: '0',
+    filterMax: '1',
     camPosX: '0',
     camPosY: '0',
     camPosZ: '0',
@@ -354,20 +224,28 @@ function settingPresets( nameList ){
 }
 
 var controls
-function initializeControls(modes, colormaps, colormapFiles) {
+////////////////////////////////////////////////////////////////////////////////
+function initializeControls(modes, colormaps, colormapFiles, filterModes, kernelModes, renderModes) {
     controlData.dataMode = modes;
     controlData.selectedDataMode = modes[0];
     controlData.colormap = colormaps;
     controlData.selectedColormap = colormaps[0];
     controlData.colormapPaths = colormapFiles;
+    controlData.filterMode = filterModes;
+    controlData.selectedFilterMode = filterModes[0];
+    controlData.kernelMode = kernelModes;
+    controlData.selectedKernelMode = kernelModes[0];
+    controlData.renderMode = renderModes;
+    controlData.selectedRenderMode = renderModes[0];
     
     controls = controlKit.addPanel({
         label: 'Options', 
         fixed: false, 
-        width: 320,
-        position: [window.innerWidth - 320, 50]
+        width: 400,
+        position: [window.innerWidth - 400, 50]
     });
     
+    // Data panel
     controls.addGroup({label: 'Data', enable: false})
         .addSelect(controlData, 'dataMode' , {
             label: 'Display', 
@@ -383,11 +261,31 @@ function initializeControls(modes, colormaps, colormapFiles) {
                 {{py enableSmoothingLength(%controlData.useSmoothingLength%)}}
             }
         })
+        .addCheckbox(controlData, 'useLog', {
+            label: 'Log Scale',
+            onChange: function () {
+                {{py enableLogScale(%controlData.useLog%)}}
+            }
+        })
         .addSlider(controlData, 'pointScale','pointScaleRange', {
             label : 'Point Scale:', 
             dp: 3,
             onFinish: function() {
                 {{py setPointScale(%controlData.pointScale%)}}
+            }
+        })
+        .addSelect(controlData, 'kernelMode' , {
+            label: 'Kernel', 
+            onChange: function (index) {
+                controlData.selectedKernelMode = controlData.kernelMode[index];
+                {{py setKernelMode(%index%)}}
+            }
+        })
+        .addSelect(controlData, 'renderMode' , {
+            label: 'Draw Mode', 
+            onChange: function (index) {
+                controlData.selectedRenderMode = controlData.renderMode[index];
+                {{py setRenderMode(%index%)}}
             }
         })
         .addCheckbox(controlData, 'enableColormapper', {
@@ -421,7 +319,31 @@ function initializeControls(modes, colormaps, colormapFiles) {
             }, {}
         )
     
+    // Filter panel
     filterPanel = controls.addGroup({label: 'Filter', enable: false})
+        .addSelect(controlData, 'filterMode' , {
+            label: 'Filter Mode', 
+            onChange: function (index) {
+                controlData.selectedFilterMode = controlData.filterMode[index];
+                {{py setFilterMode(%index%)}}
+            }
+        })
+        .addStringInput(controlData,'filterMin', { 
+            label: 'Min'
+        })
+        .addStringInput(controlData,'filterMax', { 
+            label: 'Max'
+        })
+        .addButton('Update Filter',function() { 
+                {{py updateFilterBounds(%controlData.filterMin%, %controlData.filterMax%) }}
+            }, {}
+        )
+        .addButton('Reset Filter',function() { 
+                {{py resetFilterBounds() }}
+            }, {}
+        )
+   
+    // View panel
     controls.addGroup({label: 'View', enable: false})
         .addSlider(controlData, 'navspeed','navspeedRange', {
             label : 'Navigation Speed:', 
@@ -479,11 +401,6 @@ function updateColormapBounds(cmin, cmax) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-function setScreenView(imgPath) {
-    $("#screenImg").attr('src',imgPath);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 function updateCameraPos(x,y,z) {
     // console.log(controls)
     // console.log(controls._groups[2]._subGroups[1]._enabled)
@@ -504,63 +421,3 @@ function updateCenterOfRotation(x,y,z) {
     controlKit.update()
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// controlKit.update();
-function update(){
-    for (var i = currentFilterSettings.length - 1; i >= 0; i--) {    // Loop through all current sets.
-        //{{py setColorRange(%starArray[i].colorRange[0]%, %starArray[i].colorRange[1]%,"%groupNames[i]%")}}
-        var min = starArray[i].colorCenter - starArray[i].colorArea
-        var max = starArray[i].colorCenter + starArray[i].colorArea
-        //{{py setColorBounds(%min%,%max%, "%groupNames[i]%")}}
-        $("#minColor").html((starArray[i].colorCenter - starArray[i].colorArea).toFixed(4));
-        $("#maxColor").html((starArray[i].colorCenter + starArray[i].colorArea).toFixed(4));
-        if (starArray[i].filterOn) {
-            var min = starArray[i].filterCenter - starArray[i].filterArea
-            var max = starArray[i].filterCenter + starArray[i].filterArea
-            //{{py setFilterBounds(%min%,%max%, "%currentVariableFilter[i]%", "%groupNames[i]%")}}
-        } else {
-            //{{py setFilterBounds(0,100,0, "%groupNames[i]%")}}
-        }
-        //for (var j = starArray[i].variables.length - 1; j >= 0; j--) {
-        //    if (currentFilterSettings[i][j] && starArray[i].filterOn ){
-            //    {{py setFilterBounds(%currentFilterSettings[i][j].min%,%currentFilterSettings[i][j].max%, "%starArray[i].variables[j]%", "%groupNames[i]%")}}
-        //    }
-        //}
-        if (starArray[i].isLog  ){
-            //{{py setLogColor(True,"%groupNames[i]%")}}
-        } else {
-            //{{py setLogColor(False,"%groupNames[i]%")}}
-        }
-    }
-    requestAnimationFrame(update);
-}
-update()
-
-////////////////////////////////////////////////////////////////////////////////
-function updateTables() {
-    for (var i = currentFilterSettings.length - 1; i >= 0; i--) {
-        // console.log(currentVariableColor)
-        var j = currentVariableColor[i]
-        console.log(j)
-        console.log(currentFilterSettings[i][j])
-        if (currentColorSettings[i][j]){
-            currentColorSettings[i][j].on = starArray[i].isLog
-            console.log('saving new value:', currentColorSettings[i][j].on )
-            currentColorSettings[i][j].min = starArray[i].colorRange[0]
-            currentColorSettings[i][j].max = starArray[i].colorRange[1]
-        }
-        j = currentVariableFilter[i]
-        if (currentFilterSettings[i][j]) {
-
-            currentFilterSettings[i][j].on = starArray[i].filterOn
-            console.log("saving value", currentFilterSettings[i][j].on)
-            currentFilterSettings[i][j].min = starArray[i].filterRange[0]
-            currentFilterSettings[i][j].max = starArray[i].filterRange[1]
-        }
-        /*if (starArray[i].isLog) {
-            {{py setLogColor("True",%i%)}}
-        } else {
-            {{py setLogColor("False",%i%)}}
-        }*/
-    }
-}

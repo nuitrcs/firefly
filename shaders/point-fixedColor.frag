@@ -22,4 +22,10 @@ void main (void)
     float z = sqrt(zz);
 
     fragmentColor = color;
+#if (KERNEL_MODE == 1)
+    fragmentColor = color * sin(z);
+#else
+    fragmentColor = color;
+    fragmentColor.a = 1.0;
+#endif
 }

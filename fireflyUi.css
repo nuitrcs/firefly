@@ -34,7 +34,7 @@
 }
 .child_div_1{
     float:left;
-    margin-right:5px;
+    padding-right:15px;
 }
 .noTitleStuff .ui-dialog-titlebar {display:none}
 /*    .ui-dialog-titlebar-close {

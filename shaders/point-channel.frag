@@ -22,5 +22,9 @@ void main (void)
 
     float z = sqrt(zz);
     
-    fragmentColor = vec4(data, 0, 0, 1.0) * sin(z);
+#if (KERNEL_MODE == 1)
+    fragmentColor = vec4(data, 0, 0, 1.0) * pow(z, 2);
+#else
+    fragmentColor = vec4(data, 0, 0, 1.0);
+#endif
 }

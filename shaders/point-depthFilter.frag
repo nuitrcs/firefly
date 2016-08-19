@@ -22,5 +22,9 @@ void main (void)
 
     float z = sqrt(zz);
 
+#if (KERNEL_MODE == 1)
+    fragmentColor = distanceColor * sin(z);
+#else
     fragmentColor = distanceColor;
+#endif
 }
