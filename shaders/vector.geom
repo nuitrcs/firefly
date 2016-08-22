@@ -6,13 +6,16 @@ uniform mat4 projection;
 uniform mat4 modelViewProjection;
 uniform int decimation;
 
-// Data attributes
-//Inputs
+// Attributes
 in float attrib_data[];
 in vec4 attrib_vector_data[];
-in float attrib_size[];
-in float attrib_filter[];
+#if (SIZE_MODE == 1)
+    in float attrib_size[];
+#endif
 
+#if (FILTER_MODE == 1)
+    in float attrib_filter[];
+#endif
 // Outputs
 flat out float data;
 out vec2 texCoord;

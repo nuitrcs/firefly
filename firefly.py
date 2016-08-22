@@ -76,13 +76,6 @@ for p in parts:
 
 #-------------------------------------------------------------------------------
 # UI
-dataModes = [
-    'DataType', 
-    'Density',
-    'SmoothingLength',
-    'Pivot',
-    'VelocityVectors']
-    
 filterModes = [
     'None',
     'Density',
@@ -132,7 +125,7 @@ def onClientConnected():
     ps.broadcastjs('initializePresetPanels()', '')
     ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
         .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
-    o.setZoom(2)
+    o.setZoom(-1)
 
 # handle input events
 def onEvent():
@@ -247,6 +240,7 @@ def enablePivotSelectorMode(enabled):
     pivotSelectionMode = enabled
     if(enabled):
         for p in parts:
+            p.setData(None)
             p.setProgram(prog_df)
             p.setPointScale(scale)
         pcw.enableColormapper(False)

@@ -2,9 +2,14 @@ layout(points) in;
 layout(triangle_strip, max_vertices=4) out;
 
 //Inputs
-in float attrib_data[];
-in float attrib_size[];
-in float attrib_filter[];
+#if (SIZE_MODE == 1)
+    in float attrib_size[];
+#endif
+
+#if (FILTER_MODE == 1)
+    in float attrib_filter[];
+#endif
+
 in float focusDistance[];
 
 // Outputs
@@ -30,11 +35,8 @@ void main(void)
 
 #if (SIZE_MODE == 1)
     float radius =  attrib_size[0] * pointScale;
-    float v = 4.188 * pow(radius * 0.5, 3);
-    data = attrib_data[0] / v;
 #else
     float radius =  pointScale * 2.0;
-    data = attrib_data[0];
 #endif
     
     float fd = clamp(focusDistance[0] / 20, 0, 1);

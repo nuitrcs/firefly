@@ -1,5 +1,3 @@
-//#line 2 "point.frag"
-
 // Inputs
 flat in float data;
 in vec2 texCoord;
@@ -23,7 +21,7 @@ uniform sampler2D colormap;
 
 vec4 mapToColor(float v)
 {
-    return texture2D(colormap, vec2(v, 0.5)) * v;
+    return texture(colormap, vec2(v, 0.5)) * v;
 }
 
 void main (void)
@@ -33,5 +31,5 @@ void main (void)
 #else
     float v = clamp(data / 20.0, 0, 1);
 #endif
-    fragmentColor = mapToColor(v);
+    fragmentColor = mapToColor(v) * texCoord.x;
 }

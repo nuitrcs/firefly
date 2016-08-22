@@ -1,7 +1,4 @@
-//#line 2 "point.frag"
-
 // Inputs
-flat in float data;
 in vec2 texCoord;
 
 // Outputs

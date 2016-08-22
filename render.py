@@ -50,6 +50,14 @@ programs = [
     prog_channel, 
     prog_mapper]
 
+for p in programs:
+    p.define('KERNEL_MODE', '0')
+    p.define('RENDER_MODE', '0')
+    p.define('LOG_MODE', '0')
+    p.define('FILTER_MODE', '0')
+    p.define('DATA_MODE', '0')
+    p.define('SIZE_MODE', '0')
+    
 # Load colormaps 
 colormaps = []
 for cn in colorMapNames:

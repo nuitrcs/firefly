@@ -1,7 +1,7 @@
-//#line 2 "point.frag"
-
 // Inputs
-flat in float data;
+#if(DATA_MODE == 1)
+    flat in float data;
+#endif
 in vec2 texCoord;
 
 // Outputs
@@ -21,7 +21,10 @@ void main (void)
     	discard;
 
     float z = sqrt(zz);
-    
+
+#if(DATA_MODE == 0)
+    float data = 0;
+#endif   
 #if (KERNEL_MODE == 1)
     fragmentColor = vec4(data, 0, 0, 1.0) * pow(z, 2);
 #else

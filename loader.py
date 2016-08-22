@@ -37,15 +37,23 @@ pc1.setColor(Color('blue'))
 
 parts = [pc0, pc1]
 
+dataModes = [
+    'DataType', 
+    'Density',
+    'SmoothingLength',
+    'VelocityVectors']
+    
 def setDataMode(mode):
     global dataMode
     dataMode = mode
     dm = dataModes[mode]
     if(dm == 'DataType'):
+        pc0.setData(None)
         pc0.setVisible(True)
         pc0.setProgram(prog_fixedColor)
         pc0.setColor(Color(0.2, 0.2, 1, 0.1))
         pc1.setVisible(True)
+        pc1.setData(None)
         pc1.setProgram(prog_fixedColor)
         pc1.setColor(Color(1, 1, 0.2, 0.1))
     elif(dm == 'Density'):
@@ -61,5 +69,8 @@ def setDataMode(mode):
     elif(dm == 'VelocityVectors'):
         pc0.setVisible(True)
         pc0.setProgram(prog_vector)
+        pc0.setVectorData(vx0,vy0,vz0)
         pc1.setVisible(False)
     redraw()
+    
+setDataMode(0)

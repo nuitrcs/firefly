@@ -2,14 +2,21 @@
 in float x;
 in float y;
 in float z;
-in float data;
-in float size;
-in float filter;
+#if (DATA_MODE == 1)
+    in float data;
+#endif
+
+#if (SIZE_MODE == 1)
+    in float size;
+    out float attrib_size;
+#endif
+
+#if (FILTER_MODE == 1)
+    in float datafilter;
+    out float attrib_filter;
+#endif
 
 // Outputs
-out float attrib_data;
-out float attrib_size;
-out float attrib_filter;
 out float focusDistance;
 
 // Uniforms
@@ -24,7 +31,12 @@ void main(void)
     gl_Position = modelView * vec4(x, y, z, 1);
     vec4 vfp = view * vec4(focusPosition.xyz, 1);
     focusDistance = distance(gl_Position, vfp);
-    attrib_data = data;
+
+#if (SIZE_MODE == 1)
     attrib_size = size;
-    attrib_filter = filter;
+#endif
+
+#if (FILTER_MODE == 1)
+    attrib_filter = datafilter;
+#endif
 }

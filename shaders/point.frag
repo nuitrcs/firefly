@@ -1,7 +1,7 @@
-//#line 2 "point.frag"
-
 // Inputs
-flat in float data;
+#if(DATA_MODE == 1)
+    flat in float data;
+#endif
 in vec2 texCoord;
 
 // Outputs
@@ -23,7 +23,7 @@ uniform sampler2D colormap;
 
 vec4 mapToColor(float v)
 {
-    return texture2D(colormap, vec2(v, 0.5)) * 0.2;
+    return texture(colormap, vec2(v, 0.5)) * 0.2;
 }
 
 void main (void)
@@ -36,15 +36,17 @@ void main (void)
     	discard;
 
     float z = sqrt(zz);
-    
-#if (LOG_MODE == 1)
-    float r = log(dataBounds[1]) - log(dataBounds[0]);
-    float v = ((data) - log(dataBounds[0])) / r;
+#if(DATA_MODE == 1)    
+    #if (LOG_MODE == 1)
+        float r = log(dataBounds[1]) - log(dataBounds[0]);
+        float v = ((data) - log(dataBounds[0])) / r;
+    #else
+        float r = (dataBounds[1]) - (dataBounds[0]);
+        float v = ((data) - (dataBounds[0])) / r;
+    #endif
 #else
-    float r = (dataBounds[1]) - (dataBounds[0]);
-    float v = ((data) - (dataBounds[0])) / r;
+    float v = 0;
 #endif
-
 
 #if (KERNEL_MODE == 1)
     fragmentColor = mapToColor(v) * sin(z);
