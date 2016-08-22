@@ -170,35 +170,60 @@ presetData = {
     presetList: ['test 1', 'test 2', 'test 3'],
     currentName: ''
 }
-
+var currentPresetIndex = -1
 function initializePresetPanels() {
     console.log("Preset Panel initialized")
     presetPanel = controlKit.addPanel({
         label: 'Presets',
         fixed: false, 
         width: 320,
+        currentPresetIndex: -1,
         // align: 'left'//,
         position: [window.innerwidth - 320, 250]
     })
-    presetPanel.addSelect(presetData,'presetList' , {
+    select = presetPanel.addSelect(presetData,'presetList' , {
             label: 'Preset', 
             onChange: function (index) {
-            }
+                currentPresetIndex = index
+            },
+            target: 'currentPresetIndex'
         })
-    presetPanel.addButton('Apply',function() { 
-            }, {}
-        )
+    presetPanel.addButton('Apply',function() {
+            console.log("Applying Entry: ", currentPresetIndex)
+            {{py print "Applying Entry" , %currentPresetIndex%}}
+            if (currentPresetIndex != -1) {
+                {{py setPresetView(%currentPresetIndex%)}} 
+            }
+        }, {})
     presetPanel.addStringInput(presetData,'currentName', { 
             label: 'Name'
         })
     presetPanel.addButton('Save Settings',function() { 
-            }, {}
-        )
-    presetPanel.addButton('Delete Entry',function() { 
-            }, {}
-        )
+            console.log("Saving Entry: ", presetData.currentName)
+            exportArray = []
+            //exportArray = [1,2,3,4]
+            presetData.presetList = presetData.presetList.concat([presetData.currentName])
+            {{py saveCurrentView("%presetData.currentName%")}}
+            console.log("Adding new entry and Refreshing")
+            console.log(presetData.presetList)
+            controlKit.update();
+        }, {})
+    presetPanel.addButton('Delete Current Entry',function() {
+            console.log("Deleting Entry: ", currentPresetIndex)
+            if (currentPresetIndex != -1) {
+                {{py eraseView(%currentPresetIndex%)}} 
+                presetData.presetList.splice(currentPresetIndex,1)
+                presetData.currentPresetIndex = presetData.currentPresetIndex - 1
+                controlKit.update()
+            }
+        }, {})
 }
 
+function settingPresets( nameList ){
+    presetData.presetList = nameList
+}
+
+var controls
 ////////////////////////////////////////////////////////////////////////////////
 function initializeControls(modes, colormaps, colormapFiles, filterModes, kernelModes, renderModes) {
     controlData.dataMode = modes;
