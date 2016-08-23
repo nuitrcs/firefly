@@ -6,7 +6,11 @@ for i in range(0, 4):
 datasetPath = ';'.join(files)
 
 # use this to load a single file.
-datasetPath = '/Volumes/Windows/dev/omegalib/apps/firefly/snapshot_140.hdf5'
+# <<<<<<< Updated upstream
+# datasetPath = '/Volumes/Windows/dev/omegalib/apps/firefly/snapshot_140.hdf5'
+# =======
+datasetPath = 'C:/Users/defaultuser0/snapshot_140.hdf5'
+# >>>>>>> Stashed changes
 
 
 # Initial pivot.

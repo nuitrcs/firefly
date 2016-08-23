@@ -1,9 +1,11 @@
+print "Start of Python Imports"
 from overlay import *
 from signac import *
 import os, csv
 from omium import *
 import porthole
 import datetime
+print "End of Python imports"
 
 # # Initialize the signac point cloud rendering module. Whenever new data is loaded
 # # call the redraw function to refresh the screen.
@@ -131,7 +133,8 @@ def loadUi():
 def onClientConnected():
     ps.broadcastjs('initializePresetPanels()', '')
     initializePresetViews()
-    
+    print "-----======Sending on Client Connected=====------"
+    #print "Color Map Names: " , colorMapNames
     ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
         .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
     o.setZoom(-1)
@@ -201,8 +204,10 @@ def updateColormapBounds(cmin, cmax):
     redraw()
 
 def resetColormapBounds():
-    pcw.updateChannelBounds(True)
+    print "resetting Colormap bounds"
     queueCommand('sendColormapBounds()')
+    #pcw.updateChannelBounds(True)
+
 
 def sendColormapBounds():
     global colormapMin

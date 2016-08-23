@@ -231,6 +231,13 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
     controlData.colormap = colormaps;
     controlData.selectedColormap = colormaps[0];
     controlData.colormapPaths = colormapFiles;
+    {{py print "Pre paths from initControls: " , "%controlData.colormapPaths%"}}
+    console.log("Pre Paths from initControls: " , controlData.colorMapPaths)
+    console.log("From Python: ", colormapFiles)
+    controlData.colormapPaths = colormapFiles;
+    console.log("Pre Paths from initControls: " , controlData.colormapPaths)
+    console.log("Pre Paths String: " , String(controlData.colormapPaths))
+
     controlData.filterMode = filterModes;
     controlData.selectedFilterMode = filterModes[0];
     controlData.kernelMode = kernelModes;
@@ -297,10 +304,17 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
         .addSelect(controlData, 'colormap' , {
             label: 'Color Map', 
             onChange: function (index) {
-                controlData.selectedColormap = controlData.colormap[index];
-                {{py setColormap(%index%)}}
+                console.log("on Change: " , controlData.colorMapPaths)
+                {{py print "Colormap on change"}}
+                {{py print "%controlData.colorMapPaths%"}}
+                {{py print "%index%"}}
+                //controlData.selectedColormap = controlData.colormap[index];
+                {{py print "setting colormap path to ", "%controlData.colorMapPaths[index]%"}}
+                {{py print "Colormap on change===="}}
+
+                //$("#colorMapImg").attr('src',controlData.colormapPaths[index]);
+                // {{py setColormap(%index%)}}
                 // updateTables()
-                $("#colorMapImg").attr('src',controlData.colormapPaths[index]);
             }
         })
         .addStringInput(controlData,'colormapMin', { 
@@ -310,12 +324,13 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
             label: 'Colormap Max'
         })
         .addButton('Update Bounds',function() { 
+                $('#minColor').html(controlData.colormapMin)
+                $('#maxColor').html(controlData.colormapMax)
                 {{py updateColormapBounds(%controlData.colormapMin%, %controlData.colormapMax%) }}
             }, {}
         )
         .addButton('Reset Bounds',function() { 
                 {{py resetColormapBounds() }}
-                console.log("Resetting bounds")
             }, {}
         )
     

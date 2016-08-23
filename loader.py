@@ -2,9 +2,9 @@ l = FireLoader()
 l.open(datasetPath)
 
 # change the last number to choose a different decimation level for data loading
-pointCloudLoadOptions = "50000 0:100000:1"
+pointCloudLoadOptions = "50000 0:100000:10"
 
-# PartType0
+# # PartType0
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)
 
