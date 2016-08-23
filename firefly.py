@@ -12,13 +12,18 @@ print "End of Python imports"
 sig = Signac.getInstance()
 sig.setFieldLoadedCommand('redraw()')
 
+# setup the camera
+camera = getDefaultCamera()
+camera.setBackgroundColor(Color('black'))
+camera.setNearFarZ(1, 100000)
+
 # #-------------------------------------------------------------------------------
 # # Load firefly components
 orun('config.py')
 orun('colormapConfig.py')
+orun('render.py')
 orun('loader.py')
 orun('flyControl.py')
-orun('render.py')
 
 #-------------------------------------------------------------------------------
 # Application state
@@ -68,11 +73,6 @@ for p in parts: pcw.addPointCloud(p)
 mainView = Overlay()
 mainView.setAutosize(True)
 mainView.setTexture(pcw.getOutput())
-
-# setup the camera
-camera = getDefaultCamera()
-camera.setBackgroundColor(Color('black'))
-camera.setNearFarZ(1, 100000)
 
 # create a scene node to handle the 3D scene, attach all the point cloud objects
 # to it. 
@@ -126,8 +126,16 @@ def loadUi():
     gui.setTexture(p)
     gui.setAutosize(True)
     gui.setEffect(guifx)
+    o.setFocusChangedCommand('onUiFocusChanged()')
     o.open('http://localhost:4080')
     onResize()
+    onUiFocusChanged()
+
+def onUiFocusChanged():
+    if(o.isFocused()):
+        gui.setAlpha(1)
+    else:
+        gui.setAlpha(0.8)
 
 # called when a user interface client connects.
 def onClientConnected():

@@ -168,7 +168,8 @@ controlData = {
 ////////////////////////////////////////////////////////////////////////////////
 presetData = {
     presetList: ['test 1', 'test 2', 'test 3'],
-    currentName: ''
+    currentName: '',
+    currentPresetIndex: 0
 }
 var currentPresetIndex = -1
 function initializePresetPanels() {
