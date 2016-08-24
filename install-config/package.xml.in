@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <SortingPriority>100</SortingPriority>
+    <DisplayName>Firefly</DisplayName>
+    <Description>The firefly application</Description>
+    <Version>1.0.0</Version>
+    <ReleaseDate>${BUILD_DATE}</ReleaseDate>
+    <Name>core</Name>
+    <Licenses>
+        <License name="GNU Lesser General Public License" file="license.txt" />
+    </Licenses>
+    <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+     <Script>installscript.js</Script>
+</Package>
