@@ -17,6 +17,9 @@ vx0 = ds0.addDimension('Velocities', DimensionType.Float, 0, 'vx')
 vy0 = ds0.addDimension('Velocities', DimensionType.Float, 1, 'vy')
 vz0 = ds0.addDimension('Velocities', DimensionType.Float, 2, 'vz')
 
+m0 = ds0.addDimension('Masses', DimensionType.Float,0, 'm')
+e0 = ds0.addDimension('InternalEnergy',DimensionType.Float,0,'e')
+
 pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
 pc0.setDimensions(x0, y0, z0)
@@ -42,7 +45,9 @@ dataModes = [
     'Density',
     'Density Color',
     'SmoothingLength',
-    'VelocityVectors']
+    'VelocityVectors',
+    'Masses',
+    'InternalEnergy']
     
 def setDataMode(mode):
     global dataMode
@@ -76,6 +81,16 @@ def setDataMode(mode):
         pc0.setVisible(True)
         pc0.setProgram(prog_vector)
         pc0.setVectorData(vx0,vy0,vz0)
+        pc1.setVisible(False)
+    elif(dm == 'Masses'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_vector)
+        pc0.setData(m0)
+        pc1.setVisible(False)
+    elif(dm == 'InternalEnergy'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_vector)
+        pc0.setData(e0)
         pc1.setVisible(False)
     redraw()
     
