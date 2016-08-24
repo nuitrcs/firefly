@@ -5,11 +5,10 @@
     <Title>Firefly</Title>
     <Publisher>The Firefly team</Publisher>
     <StartMenuDir>Firefly</StartMenuDir>
-    <TargetDir>@@ApplicationsDir@@/firefly</TargetDir>
+    <TargetDir>@@ApplicationsDir@@/firefly.app</TargetDir>
     <ProductUrl>http://www.github.com/febret/firefly/</ProductUrl>
-    <InstallerApplicationIcon>omega64-transparent</InstallerApplicationIcon>
-    <Logo>watermark.png</Logo>
-    <Banner>banner.png</Banner>
+    <InstallerApplicationIcon>icon</InstallerApplicationIcon>
+    <Logo>icon.png</Logo>
     <CreateLocalRepository>True</CreateLocalRepository>
     <MaintenanceToolName>UninstallFirefly</MaintenanceToolName>
 </Installer>

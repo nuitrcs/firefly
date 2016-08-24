@@ -17,11 +17,11 @@ camera.setNearFarZ(1, 100000)
 
 # #-------------------------------------------------------------------------------
 # # Load firefly components
-orun('config.py')
-orun('colormapConfig.py')
-orun('render.py')
-orun('loader.py')
-orun('flyControl.py')
+orun('firefly/config.py')
+orun('firefly/colormapConfig.py')
+orun('firefly/render.py')
+orun('firefly/loader.py')
+orun('firefly/flyControl.py')
 
 #-------------------------------------------------------------------------------
 # Application state
