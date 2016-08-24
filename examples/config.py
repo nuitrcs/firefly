@@ -7,9 +7,9 @@ datasetPath = ';'.join(files)
 
 # use this to load a single file.
 # <<<<<<< Updated upstream
-# datasetPath = '/Volumes/Windows/dev/omegalib/apps/firefly/snapshot_140.hdf5'
+datasetPath = 'snapshot_140.hdf5'
 # =======
-datasetPath = 'C:/Users/defaultuser0/snapshot_140.hdf5'
+#datasetPath = 'C:/Users/defaultuser0/snapshot_140.hdf5'
 # >>>>>>> Stashed changes
 
 
