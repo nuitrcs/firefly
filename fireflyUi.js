@@ -143,13 +143,12 @@ function  toggleColorMap() {
 controlData = {
     dataMode: null,
     selectedDataMode: null,
-    useSmoothingLength: true,
+    useSmoothingLength: false,
     useLog: false,
     pointScale: 0.05,
     pointScaleRange: [0.001, 0.02],
     colormap: null,
     enableColormapper: false,
-    selectedColormap: null,
     colormapPaths: null,
     colormapMin: '0',
     colormapMax: '1',
@@ -167,12 +166,14 @@ controlData = {
 
 ////////////////////////////////////////////////////////////////////////////////
 presetData = {
-    presetList: ['test 1', 'test 2', 'test 3'],
+    presetList: ['noViewsSaved'],
     currentName: '',
     currentPresetIndex: 0
 }
-var currentPresetIndex = -1
+// var currentPresetIndex = -1
+
 function initializePresetPanels() {
+    {{py print "======------Initializing Preset Panel------======"}}
     console.log("Preset Panel initialized")
     presetPanel = controlKit.addPanel({
         label: 'Presets',
@@ -182,6 +183,13 @@ function initializePresetPanels() {
         // align: 'left'//,
         position: [window.innerwidth - 320, 250]
     })
+    if (presetData.presetList[0] == "noViewsSaved") {
+        {{py print "no views saved"}}
+        currentPresetIndex = -1
+    } else {
+        {{py print "previous files found"}}
+        currentPresetIndex = 0
+    }
     select = presetPanel.addSelect(presetData,'presetList' , {
             label: 'Preset', 
             onChange: function (index) {
@@ -221,30 +229,31 @@ function initializePresetPanels() {
 }
 
 function settingPresets( nameList ){
+    {{py print "setting presets : " , %nameList%}}
     presetData.presetList = nameList
 }
 
 var controls
 ////////////////////////////////////////////////////////////////////////////////
 function initializeControls(modes, colormaps, colormapFiles, filterModes, kernelModes, renderModes) {
+    {{py print "======------Initializing Control Panel------======"}}
+
     controlData.dataMode = modes;
     controlData.selectedDataMode = modes[0];
     controlData.colormap = colormaps;
     controlData.selectedColormap = colormaps[0];
     controlData.colormapPaths = colormapFiles;
-    {{py print "Pre paths from initControls: " , "%controlData.colormapPaths%"}}
-    console.log("Pre Paths from initControls: " , controlData.colorMapPaths)
-    console.log("From Python: ", colormapFiles)
-    controlData.colormapPaths = colormapFiles;
-    console.log("Pre Paths from initControls: " , controlData.colormapPaths)
-    console.log("Pre Paths String: " , String(controlData.colormapPaths))
+    // controlData.colormapPaths = colormapFiles;
 
     controlData.filterMode = filterModes;
     controlData.selectedFilterMode = filterModes[0];
     controlData.kernelMode = kernelModes;
+    // controlData.kernelModeInd = 0
     controlData.selectedKernelMode = kernelModes[0];
     controlData.renderMode = renderModes;
     controlData.selectedRenderMode = renderModes[0];
+    // controlData.renderModeInd = 0
+
     
     controls = controlKit.addPanel({
         label: 'Options', 
@@ -261,7 +270,8 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
                 controlData.selectedDataMode = controlData.dataMode[index];
                 {{py setDataMode(%index%)}}
                 $("#Colorvariable").html(controlData.selectedDataMode)
-            }
+            },
+            target: 'selectedDataMode'
         })
         .addCheckbox(controlData, 'useSmoothingLength', {
             label: 'Smoothing Length Enabled',
@@ -287,14 +297,16 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
             onChange: function (index) {
                 controlData.selectedKernelMode = controlData.kernelMode[index];
                 {{py setKernelMode(%index%)}}
-            }
+            },
+            target: 'selectedKernelMode'
         })
         .addSelect(controlData, 'renderMode' , {
             label: 'Draw Mode', 
             onChange: function (index) {
                 controlData.selectedRenderMode = controlData.renderMode[index];
                 {{py setRenderMode(%index%)}}
-            }
+            },
+            target: 'selectedRenderMode'
         })
         .addCheckbox(controlData, 'enableColormapper', {
             label: 'Advanced Colormapper',
@@ -305,18 +317,13 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
         .addSelect(controlData, 'colormap' , {
             label: 'Color Map', 
             onChange: function (index) {
-                console.log("on Change: " , controlData.colorMapPaths)
-                {{py print "Colormap on change"}}
-                {{py print "%controlData.colorMapPaths%"}}
-                {{py print "%index%"}}
-                //controlData.selectedColormap = controlData.colormap[index];
-                {{py print "setting colormap path to ", "%controlData.colorMapPaths[index]%"}}
-                {{py print "Colormap on change===="}}
+                controlData.selectedColormap = controlData.colormap[index];
 
-                //$("#colorMapImg").attr('src',controlData.colormapPaths[index]);
-                // {{py setColormap(%index%)}}
+                $("#colorMapImg").attr('src',controlData.colormapPaths[index]);
+                {{py setColormap(%index%)}}
                 // updateTables()
-            }
+            },
+            target: 'selectedColormap'
         })
         .addStringInput(controlData,'colormapMin', { 
             label: 'Colormap Min'
@@ -426,7 +433,6 @@ function updateCameraPos(x,y,z) {
     controlData.camPosY = y
     controlData.camPosZ = z
     controlKit.update()
-    //}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -437,3 +443,31 @@ function updateCenterOfRotation(x,y,z) {
     controlKit.update()
 }
 
+function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,corZ, rM, kM) {
+    console.log("datmode: " , sDMode)
+    controlData.selectedDataMode = controlData.dataMode[sDMode]
+    console.log(uSL)
+    controlData.useSmoothingLength = uSL
+    console.log(uL)
+    controlData.useLog = uL
+    console.log(pS)
+    controlData.pS = pS
+    console.log(eCM)
+    controlData.enableColormapper = eCM
+    console.log("colormap: ", sCM)
+    controlData.selectedColormap = controlData.colormap[sCM]
+    console.log(cmMin,cmMax)
+    controlData.colormapMin = cmMin
+    controlData.colormapMax = cmMax
+    controlData.camPosX = x 
+    controlData.camPosY = y 
+    controlData.camPosZ = z
+    controlData.corPosX = corX
+    controlData.corPosY = corY 
+    controlData.corPosZ = corZ
+    console.log("rnder: ", rM)
+    controlData.selectedRenderMode = controlData.renderMode[ rM ]
+    console.log("kernelMode ", kM)
+    controlData.selectedKernelMode = controlData.kernelMode[ kM ]
+    controlKit.update();
+}

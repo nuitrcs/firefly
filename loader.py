@@ -40,6 +40,7 @@ parts = [pc0, pc1]
 dataModes = [
     'DataType', 
     'Density',
+    'Density Color',
     'SmoothingLength',
     'VelocityVectors']
     
@@ -59,6 +60,11 @@ def setDataMode(mode):
     elif(dm == 'Density'):
         pc0.setVisible(True)
         pc0.setProgram(prog_channel)
+        pc0.setData(d0)
+        pc1.setVisible(False)
+    elif(dm == "Density Color"):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_default)
         pc0.setData(d0)
         pc1.setVisible(False)
     elif(dm == 'SmoothingLength'):
