@@ -298,6 +298,7 @@ def initializePresetViews():
         if skip: 
             skip = False
         elif not row:
+            pass
         else: 
             # print "reading row: "
             # print row
