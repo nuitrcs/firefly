@@ -170,7 +170,7 @@ presetData = {
     currentName: '',
     currentPresetIndex: 0
 }
-// var currentPresetIndex = -1
+var currentPresetIndex = -1
 
 function initializePresetPanels() {
     {{py print "======------Initializing Preset Panel------======"}}
@@ -212,6 +212,8 @@ function initializePresetPanels() {
             exportArray = []
             //exportArray = [1,2,3,4]
             presetData.presetList = presetData.presetList.concat([presetData.currentName])
+            currentPresetIndex = presetData.presetList.length - 1
+            presetData.currentPresetIndex = presetData.currentName
             {{py saveCurrentView("%presetData.currentName%")}}
             console.log("Adding new entry and Refreshing")
             console.log(presetData.presetList)
@@ -413,7 +415,8 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
                     console.log("Applying center of Rotation Pos")
                     {{py lookAtPivot()}}
                 }, {})
-}
+    {{py updatePythonInterface()}}
+}  
 
 ////////////////////////////////////////////////////////////////////////////////
 function updateColormapBounds(cmin, cmax) {
