@@ -18,7 +18,10 @@ camera.setNearFarZ(1, 100000)
 
 # #-------------------------------------------------------------------------------
 # # Load firefly components
-configFile = sys.argv[1]
+if(len(sys.argv) > 1):
+    configFile = sys.argv[1]
+else:
+    configFile = sys.argv[0]
 orun(configFile)
 orun(loaderScript)
 orun('firefly/colormapConfig.py')
