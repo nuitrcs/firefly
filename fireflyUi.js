@@ -271,7 +271,7 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
             onChange: function (index) {
                 controlData.selectedDataMode = controlData.dataMode[index];
                 {{py setDataMode(%index%)}}
-                $("#Colorvariable").html(controlData.selectedDataMode)
+                $("#cColorvariable").html(controlData.selectedDataMode)
             },
             target: 'selectedDataMode'
         })
@@ -472,5 +472,12 @@ function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,
     controlData.selectedRenderMode = controlData.renderMode[ rM ]
     console.log("kernelMode ", kM)
     controlData.selectedKernelMode = controlData.kernelMode[ kM ]
+    $("#cColorvariable").html(controlData.selectedDataMode)
+    $('#minColor').html(controlData.colormapMin)
+    $('#maxColor').html(controlData.colormapMax)
+
     controlKit.update();
 }
+
+
+
