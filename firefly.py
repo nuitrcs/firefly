@@ -4,6 +4,7 @@ import os, csv
 from omium import *
 import porthole
 import datetime
+import sys
 
 # # Initialize the signac point cloud rendering module. Whenever new data is loaded
 # # call the redraw function to refresh the screen.
@@ -17,12 +18,17 @@ camera.setNearFarZ(1, 100000)
 
 # #-------------------------------------------------------------------------------
 # # Load firefly components
-orun('config.py')
-orun('colormapConfig.py')
-orun('render.py')
-orun('loader.py')
+if(len(sys.argv) > 1):
+    configFile = sys.argv[1]
+else:
+    configFile = sys.argv[0]
+orun(configFile)
+orun(loaderScript)
+orun('firefly/colormapConfig.py')
+orun('firefly/render.py')
+orun('firefly/loader.py')
 #orun('autoLoaderTest.py')
-orun('flyControl.py')
+orun('firefly/flyControl.py')
 
 #-------------------------------------------------------------------------------
 # Application state

@@ -1,9 +1,6 @@
 l = FireLoader()
 l.open(datasetPath)
 
-# change the last number to choose a different decimation level for data loading
-pointCloudLoadOptions = "50000 0:100000:10"
-
 # # PartType0
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)
@@ -17,8 +14,8 @@ vx0 = ds0.addDimension('Velocities', DimensionType.Float, 0, 'vx')
 vy0 = ds0.addDimension('Velocities', DimensionType.Float, 1, 'vy')
 vz0 = ds0.addDimension('Velocities', DimensionType.Float, 2, 'vz')
 
-m0 = ds0.addDimension('Masses', DimensionType.Float,0, 'm')
-e0 = ds0.addDimension('InternalEnergy',DimensionType.Float,0,'e')
+#m0 = ds0.addDimension('Masses', DimensionType.Float,0, 'm')
+#e0 = ds0.addDimension('InternalEnergy',DimensionType.Float,0,'e')
 
 pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
@@ -39,6 +36,7 @@ pc1.setDimensions(x1, y1, z1)
 pc1.setColor(Color('blue'))
 
 parts = [pc0, pc1]
+    
 
 dataModes = [
     'DataType', 
