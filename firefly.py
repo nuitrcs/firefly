@@ -1,5 +1,5 @@
 from overlay import *
-from signac import *
+from signac import * 
 import os, csv
 from omium import *
 import porthole
@@ -37,3 +37,4 @@ else:
     setDataMode(0)
     setPointScale(pointScale)
     focus()
+
