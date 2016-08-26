@@ -129,3 +129,51 @@ def onUpdate(frame, time, dt):
 
 setEventFunction(onEvent)
 setUpdateFunction(onUpdate)
+
+def enablePivotSelectorMode(enabled):
+    global pivotSelectionMode
+    pivotSelectionMode = enabled
+    if(enabled):
+        for p in parts:
+            p.setData(None)
+            p.setProgram(prog_df)
+            p.setPointScale(scale)
+        pcw.enableColormapper(False)
+        for p in parts: p.setDecimation(dqDec)
+        camera.setSceneEnabled(True)
+    else:
+        # Reset previous view mode
+        setDataMode(dataMode)
+        setPointScale(pointScale)
+        enableColormapper(colormapperEnabled)
+        updateColormapBounds(colormapMin, colormapMax)
+        redraw()
+
+def resetPivot():
+    global pivotPosition
+    pivotPosition = sn.getBoundCenter()
+    print("Pivot position: " + str(pivotPosition))
+ 
+def setCamPos(x,y,z):
+    global camera, cameraPosition
+    oldPos = camera.getPosition()
+    cameraPosition = Vector3(float(x),float(y),float(z))
+    print "camera position set to:" , cameraPosition
+    camera.setPosition(cameraPosition)
+    redraw()
+    #camera.setPosition(Vector3(float(x),float(y),float(z)))
+
+def setPivotPoint(x,y,z):
+    global pivotPosition
+    print "setting pivot point to to x:" , x ," y: ", y , " z: ", z
+    pivotPosition = Vector3(float(x),float(y),float(z))
+
+def lookAtPivot():
+    print "looking at pivot point"
+    global camera, pivotPosition
+    camera.lookAt(pivotPosition,Vector3(0,1,0))
+    redraw()
+
+def requestUpdatePos():
+    global cameraPosition
+    ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
