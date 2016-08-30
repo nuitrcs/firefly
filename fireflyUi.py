@@ -173,6 +173,8 @@ def enableLogScale(enable):
         for p in programs: p.define('LOG_MODE', '1')
     else:
         for p in programs: p.define('LOG_MODE', '0')
+    global colormapMax, colormapMin
+    updateColormapBounds(colormapMax, colormpamin)
     redraw()
     
 def saveViewImage():
@@ -185,3 +187,7 @@ def echo(msg):
 
 def cls():
     ps.broadcastjs('clearConsole()', '')
+
+def requestUpdatePos():
+    global cameraPosition
+    ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')

@@ -37,4 +37,3 @@ else:
     setDataMode(0)
     setPointScale(pointScale)
     focus()
-

@@ -83,6 +83,7 @@ def redraw():
         dqCurDec = dqDec
 
 timeSinceUpdate = 0
+
 def onUpdate(frame, time, dt):
     global dqTimer
     global dqCurDec
