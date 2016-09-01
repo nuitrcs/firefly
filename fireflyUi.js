@@ -146,14 +146,14 @@ controlData = {
     useSmoothingLength: false,
     useLog: false,
     pointScale: 0.05,
-    pointScaleRange: [0.001, 0.02],
+    pointScaleRange: [0.001, 0.05],
     colormap: null,
     enableColormapper: false,
     colormapPaths: null,
     colormapMin: '0',
     colormapMax: '1',
     navspeed: 50,
-    navspeedRange: [1, 50],
+    navspeedRange: [1, 100],
     filterMin: '0',
     filterMax: '1',
     camPosX: '0',
@@ -454,7 +454,7 @@ function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,
     console.log(uL)
     controlData.useLog = uL
     console.log(pS)
-    controlData.pS = pS
+    controlData.pointScale = pS
     console.log(eCM)
     controlData.enableColormapper = eCM
     console.log("colormap: ", sCM)

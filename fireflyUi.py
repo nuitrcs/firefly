@@ -61,6 +61,7 @@ def onClientConnected():
     ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
         .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
     o.setZoom(-1)
+    updatePythonInterface()
 
 # handle input events
 def onEvent():
