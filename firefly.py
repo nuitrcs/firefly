@@ -27,8 +27,8 @@ else:
     # Load firefly components
     orun('colormapConfig.py')
     orun('render.py')
-    orun('loader.py')
     orun('flyControl.py')
+    orun('loader.py')
     orun('appstate.py')
     orun('scene.py')
     orun('fireflyUi.py')

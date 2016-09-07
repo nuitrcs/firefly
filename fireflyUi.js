@@ -161,7 +161,10 @@ controlData = {
     camPosZ: '0',
     corPosX: '0',
     corPosY: '0',
-    corPosZ: '0'
+    corPosZ: '0',
+    decValue: 10,
+    decValueRange: [1,100],
+    useProg: true
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -194,6 +197,8 @@ function initializePresetPanels() {
             label: 'Preset', 
             onChange: function (index) {
                 currentPresetIndex = index
+                console.log(currentPresetIndex)
+                {{py print "Applying Entry" , %currentPresetIndex%}}
             },
             target: 'currentPresetIndex'
         })
@@ -377,6 +382,19 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
                 {{py panSpeed = %controlData.navspeed%}}
             }
         })
+        .addSlider(controlData, 'decValue','decValueRange', {
+            label : 'Decimation Value:', 
+            dp: 0,
+            onFinish: function() {
+                {{py setDecimationValue(%controlData.decValue%)}}
+            }
+        })
+        .addCheckbox(controlData, 'useProg', {
+            label: 'Enable Progressive',
+            onChange: function () {
+                {{py enableProgressive(%controlData.useProg%)}}
+            }
+        })
         .addButton('Save Image',function() { {{py saveViewImage() }} }, {}
         )
         .addSubGroup({label: 'Camera Position', enable: false})
@@ -446,7 +464,7 @@ function updateCenterOfRotation(x,y,z) {
     controlKit.update()
 }
 
-function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,corZ, rM, kM) {
+function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,corZ, rM, kM,progScan,dC) {
     console.log("datmode: " , sDMode)
     controlData.selectedDataMode = controlData.dataMode[sDMode]
     console.log(uSL)
@@ -472,6 +490,8 @@ function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,
     controlData.selectedRenderMode = controlData.renderMode[ rM ]
     console.log("kernelMode ", kM)
     controlData.selectedKernelMode = controlData.kernelMode[ kM ]
+    controlData.progScan = progScan
+    control.decValue = dC
     $("#cColorvariable").html(controlData.selectedDataMode)
     $('#minColor').html(controlData.colormapMin)
     $('#maxColor').html(controlData.colormapMax)

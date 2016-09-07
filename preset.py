@@ -32,9 +32,13 @@ def initializePresetViews():
             slEnabled = (row[9] == 'True')
             cmEnabled = (row[10] == 'True')
             lgEnabled = (row[20] == 'True')
+            progEnabled = (row[21] == 'True')
             # print "smoothing length: " , slEnabled
             # print "Color mapper: " , cmEnabled
-            v = [row[0],float(row[1]),float(row[2]),float(row[3]),float(row[4]),float(row[5]),float(row[6]),float(row[7]),int(row[8]),slEnabled,cmEnabled,int(row[11]),float(row[12]),float(row[13]),int(row[14]),int(row[15]),float(row[16]),float(row[17]),float(row[18]),float(row[19]),lgEnabled]
+            print "Loading row: "
+            print "Prog Enabled: ", progEnabled
+            print "Decimation value ", row[22]
+            v = [row[0],float(row[1]),float(row[2]),float(row[3]),float(row[4]),float(row[5]),float(row[6]),float(row[7]),int(row[8]),slEnabled,cmEnabled,int(row[11]),float(row[12]),float(row[13]),int(row[14]),int(row[15]),float(row[16]),float(row[17]),float(row[18]),float(row[19]),lgEnabled,progEnabled,int(float(row[22]))]
             presets.append(v)
             nameList.append(row[0])
     ps.broadcastjs('settingPresets(' + str(nameList) + ')', '')
@@ -42,7 +46,7 @@ def initializePresetViews():
 def setPresetView( viewArrayIndex ):
     global cameraPosition,pivotPosition,pointScale, dataMode, useSmoothingLength
     global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax
-    global presets, cameraOrientation
+    global presets, cameraOrientation, progressiveRender, dqDec
     presetData = presets[viewArrayIndex]
     print "Setting current View to :", presetData[0]
     setCamPos(presetData[1],presetData[2],presetData[3])
@@ -57,6 +61,12 @@ def setPresetView( viewArrayIndex ):
     setRenderMode(presetData[15])
     newQuat = Quaternion.new_rotate_axis(presetData[16],Vector3(presetData[17],presetData[18],presetData[19]))
     enableLogScale(presetData[20])
+
+    print "setting preset view: ", presetData[21]
+    print  "Decimation value : ", presetData[22]
+    enableProgressive(presetData[21])
+    setDecimationValue(presetData[22])
+
     # print "Setting New Camera Orientation" ,newQuat
     cameraOrientation = newQuat
     camera.setOrientation(cameraOrientation)
@@ -67,9 +77,8 @@ def updatePythonInterface():
     print "Updating Python Interface"
     global dataMode,useSmoothingLength,isLogScale,pointScale,colormapperEnabled,currentColorMapIndex
     global colormapMin,colormapMax,cameraPosition,pivotPosition, renderModeInd, kernelModeInd
-    print "Current point scale: ", pointScale
-    ps.broadcastjs("postLoadUpdate({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15})"
-        .format(dataMode, boolToJs(useSmoothingLength), boolToJs(isLogScale), pointScale,boolToJs(colormapperEnabled),currentColorMapIndex,colormapMin,colormapMax,cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],renderModeInd,kernelModeInd), '')
+    ps.broadcastjs("postLoadUpdate({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15},{16},{17})"
+        .format(dataMode, boolToJs(useSmoothingLength), boolToJs(isLogScale), pointScale,boolToJs(colormapperEnabled),currentColorMapIndex,colormapMin,colormapMax,cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],renderModeInd,kernelModeInd,progressiveRender,dqDec), '')
 
 def boolToJs(pythonBool):
     if pythonBool == False:
@@ -84,12 +93,11 @@ def saveCurrentView(name):
     # print "Name: " , name
     global cameraPosition,pivotPosition,pointScale, dataMode, useSmoothingLength, cameraOrientation
     global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax, isLogScale
-
-    # print "Current Camera setOrientation: "
-    # print cameraOrientation
+    global progressiveRender, dqDec
     angAxis = cameraOrientation.get_angle_axis()
-
-    newEntry = [name, cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],pointScale,dataMode,useSmoothingLength,colormapperEnabled,currentColorMapIndex,colormapMin,colormapMax,kernelModeInd,renderModeInd,angAxis[0],angAxis[1][0],angAxis[1][1],angAxis[1][2],isLogScale]
+    print "Set Progressive Render: " , progressiveRender
+    print "Set Decimation to " , dqDec
+    newEntry = [name, cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],pointScale,dataMode,useSmoothingLength,colormapperEnabled,currentColorMapIndex,colormapMin,colormapMax,kernelModeInd,renderModeInd,angAxis[0],angAxis[1][0],angAxis[1][1],angAxis[1][2],isLogScale,progressiveRender,dqDec]
     # print "Table: ",newEntry
     presets.append(newEntry)
     saveViews()

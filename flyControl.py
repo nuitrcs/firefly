@@ -6,7 +6,7 @@ cameraPosition = Vector3(0,0,0)
 cameraOrientation = Quaternion()
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
-pivotDistance = 1
+pivotDistance = -62
 pivotDistanceIncrement = 2
     
 # node around which the camera rotates.
@@ -44,8 +44,13 @@ def onEvent():
     
     # Mouse wheel = move the center of rotation along the pointer view ray
     if(e.getType() == EventType.Zoom):
+        # print " Before: ", pivotPosition
         pivotDistance += e.getExtraDataInt(0) * pivotDistanceIncrement * panSpeedMultiplier
+        # print e.getExtraDataInt(0), " : ", pivotDistance, " PivRayDir: ", pivotRayDirection, " Orig: ", pivotRayOrigin
         pivotPosition = pivotRayOrigin + pivotRayDirection * pivotDistance 
+        # pivotPosition[0] = 47.0
+        # pivotPosition[1] = 17.0
+        # print "PivPos: ",pivotPosition, " CamPos: " , cameraPosition
         portholeS.broadcastjs('updateCenterOfRotation('+str(pivotPosition[0])+','+str(pivotPosition[1])+','+str(pivotPosition[2])+')','')
         return
     

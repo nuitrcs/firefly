@@ -1,6 +1,7 @@
 dqTimeout = 0.1
 dqTimer = 0
-dqDec = 1
+dqDec = 10
+progressiveRender = True
 dqCurDec = 1
 
 # prog_default is used to display points directly, mapping one data dimension to
@@ -106,14 +107,21 @@ def onUpdate(frame, time, dt):
     # decimation is back to one. At that point, render one last frame then disable
     # 3D scene rendering to save CPU/GPU resources, until the redraw() function is
     # called again
-    if(dqTimer > 0):
-        dqTimer -= dt
-    elif(dqCurDec >= 1):
-            dqCurDec = int(dqCurDec / 2)
-            if(dqCurDec == 0): dqCurDec = 1
+    if progressiveRender:
+        if(dqTimer > 0):
+            dqTimer -= dt
+        elif(dqCurDec >= dqDec):
+                print "Reset atnwitn---"
+                dqCurDec = int(dqCurDec / 2)
+                if(dqCurDec == 0): dqCurDec = 1
+                for p in parts: p.setDecimation(dqCurDec)
+                if(dqCurDec == 1):
+                    # draw one high quality frame, then stop.
+                    queueCommand('camera.setSceneEnabled(False)')
+    else:
+        if (dqCurDec != dqDec):
+            print "Resetting-----"
+            dqCurDec = int(dqDec)
             for p in parts: p.setDecimation(dqCurDec)
-            if(dqCurDec == 1):
-                # draw one high quality frame, then stop.
-                queueCommand('camera.setSceneEnabled(False)')
 
 setUpdateFunction(onUpdate)

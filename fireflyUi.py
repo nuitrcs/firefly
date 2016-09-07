@@ -116,6 +116,18 @@ def setPointScale(sc):
     for p in parts: p.setPointScale(sc)
     print('point scale set to ' + str(sc))
     redraw()
+
+def enableProgressive(sc):
+    global progressiveRender
+    progressiveRender = sc
+    print "Setting Progressive to ", progressiveRender
+    redraw()
+
+def setDecimationValue(dc):
+    global dqDec
+    dqDec = int(dc)
+    print "setting decimation value to ", dqDec
+    redraw()
   
 def setColormap(index):
     print "setting colormap to ",index
@@ -175,7 +187,7 @@ def enableLogScale(enable):
     else:
         for p in programs: p.define('LOG_MODE', '0')
     global colormapMax, colormapMin
-    updateColormapBounds(colormapMax, colormpamin)
+    updateColormapBounds(colormapMax, colormapMin)
     redraw()
     
 def saveViewImage():
