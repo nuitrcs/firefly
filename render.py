@@ -111,7 +111,6 @@ def onUpdate(frame, time, dt):
         if(dqTimer > 0):
             dqTimer -= dt
         elif(dqCurDec >= dqDec):
-                print "Reset atnwitn---"
                 dqCurDec = int(dqCurDec / 2)
                 if(dqCurDec == 0): dqCurDec = 1
                 for p in parts: p.setDecimation(dqCurDec)
@@ -120,7 +119,6 @@ def onUpdate(frame, time, dt):
                     queueCommand('camera.setSceneEnabled(False)')
     else:
         if (dqCurDec != dqDec):
-            print "Resetting-----"
             dqCurDec = int(dqDec)
             for p in parts: p.setDecimation(dqCurDec)
 
