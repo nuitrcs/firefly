@@ -231,7 +231,7 @@ function initializePresetPanels() {
 }
 
 function settingPresets( nameList ){
-    {{py print "setting presets : " , %nameList%}}
+    // {{py print "setting presets : " , "%nameList%"}}
     presetData.presetList = nameList
 }
 

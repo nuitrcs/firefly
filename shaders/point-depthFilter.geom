@@ -40,8 +40,8 @@ void main(void)
 #endif
     
     float fd = clamp(focusDistance[0] / 20, 0, 1);
-    distanceColor = mix(vec4(0, 1, 0, 1), vec4(1,0,0,1), fd); 
-    distanceColor *= 1.0 - fd;
+    distanceColor = mix(vec4(0, 1, 0, 1), vec4(1,0,0,0.1), fd); 
+    //distanceColor *= 1.0 - fd;
     
     float halfsize = radius * 0.5;
     
