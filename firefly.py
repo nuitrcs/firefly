@@ -22,12 +22,11 @@ camera.setNearFarZ(1, 100000)
 if(datasetPath == None):
     orun('splash.py')
 else:
-    orun(loaderScript)
-
     # Load firefly components
     orun('colormapConfig.py')
     orun('render.py')
     orun('flyControl.py')
+    orun(loaderScript)
     # orun('loader.py')
     orun('appstate.py')
     orun('scene.py')
