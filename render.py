@@ -1,6 +1,6 @@
 dqTimeout = 0.1
 dqTimer = 0
-dqDec = 10
+# dqDec = 10
 progressiveRender = True
 dqCurDec = 1
 
@@ -118,8 +118,9 @@ def onUpdate(frame, time, dt):
                     # draw one high quality frame, then stop.
                     queueCommand('camera.setSceneEnabled(False)')
     else:
-        if (dqCurDec != dqDec):
-            dqCurDec = int(dqDec)
-            for p in parts: p.setDecimation(dqCurDec)
+        # if (dqCurDec != dqDec):
+        #     dqCurDec = int(dqDec)
+        #     for p in parts: p.setDecimation(dqCurDec)
+        pass
 
 setUpdateFunction(onUpdate)

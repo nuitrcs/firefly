@@ -2,7 +2,7 @@
 
 file = False
 reader = False
-fileName = "presetViews.txt"
+fileName = "fireflyPresets.txt"
 presets = []
 nameList = []
 currentIndex = 0
@@ -11,13 +11,13 @@ currentIndex = 0
 
 def initializePresetViews():
     global reader, presets, file, reader, nameList
-    if not os.path.isfile(fileName):
-        print "No file: " , fileName , " creating new file"
-        file = open(fileName, "w")
+    if not os.path.isfile(presetPath + fileName):
+        print "No file: " , presetPath + fileName , " creating new file"
+        file = open(presetPath + fileName, "w")
         file.close()
     else:
-        print "File: ", fileName, " found, loaded saved data"
-    file = open(fileName, 'rU')
+        print "File: ", presetPath + fileName, " found, loaded saved data"
+    file = open(presetPath + fileName, 'rU')
     reader = csv.reader(file, delimiter='\t')
     skip = True
     nameList = []
@@ -47,8 +47,15 @@ def setPresetView( viewArrayIndex ):
     global cameraPosition,pivotPosition,pointScale, dataMode, useSmoothingLength
     global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax
     global presets, cameraOrientation, progressiveRender, dqDec
+    print "-----------"
+    print presets
+    print "index: " , viewArrayIndex
+    print "Length of array: ", len(presets)
+    if len(presets) == 0:
+        print "No presets currently set"
+        return
     presetData = presets[viewArrayIndex]
-    print "Setting current View to :", presetData[0]
+    # print "Setting current View to :", presetData[0]
     setCamPos(presetData[1],presetData[2],presetData[3])
     setPivotPoint(presetData[4],presetData[5],presetData[6])
     setPointScale(presetData[7])
@@ -62,8 +69,8 @@ def setPresetView( viewArrayIndex ):
     newQuat = Quaternion.new_rotate_axis(presetData[16],Vector3(presetData[17],presetData[18],presetData[19]))
     enableLogScale(presetData[20])
 
-    print "setting preset view: ", presetData[21]
-    print  "Decimation value : ", presetData[22]
+    # print "setting preset view: ", presetData[21]
+    # print  "Decimation value : ", presetData[22]
     enableProgressive(presetData[21])
     setDecimationValue(presetData[22])
 
@@ -74,7 +81,7 @@ def setPresetView( viewArrayIndex ):
     redraw()
     
 def updatePythonInterface():
-    print "Updating Python Interface"
+    # print "Updating Python Interface"
     global dataMode,useSmoothingLength,isLogScale,pointScale,colormapperEnabled,currentColorMapIndex
     global colormapMin,colormapMax,cameraPosition,pivotPosition, renderModeInd, kernelModeInd
     ps.broadcastjs("postLoadUpdate({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15},{16},{17})"
@@ -85,6 +92,7 @@ def boolToJs(pythonBool):
         return "false"
     else:
         return "true"
+
 def saveCurrentView(name):
     global presets
     global file, nameList
@@ -95,16 +103,18 @@ def saveCurrentView(name):
     global colormapperEnabled, currentColorMapIndex, colormapMin, colormapMax, isLogScale
     global progressiveRender, dqDec
     angAxis = cameraOrientation.get_angle_axis()
-    print "Set Progressive Render: " , progressiveRender
-    print "Set Decimation to " , dqDec
+    print "---->", angAxis
+    # print "Set Progressive Render: " , progressiveRender
+    # print "Set Decimation to " , dqDec
     newEntry = [name, cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],pointScale,dataMode,useSmoothingLength,colormapperEnabled,currentColorMapIndex,colormapMin,colormapMax,kernelModeInd,renderModeInd,angAxis[0],angAxis[1][0],angAxis[1][1],angAxis[1][2],isLogScale,progressiveRender,dqDec]
     # print "Table: ",newEntry
     presets.append(newEntry)
+    print("saving current View")
     saveViews()
 
 def saveViews():
     global presets, file
-    file = open(fileName,'w')
+    file = open(presetPath + fileName,'w')
     writer = csv.writer(file, delimiter='\t')
     s = ['name','camX','camY','camZ','pivotX','pivotY','pivotZ','pointScale','dataMode','useSmoothingLength','colormapEnabled, colorMapIndex, colormapMin, colormapMax','KernelModeInd','RenderModeInd',"rotDegree","rotAxisX","rotAxisY","rotAxisZ","logScale"]
     writer.writerow(s)

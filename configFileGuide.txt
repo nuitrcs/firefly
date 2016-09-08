@@ -1,0 +1,52 @@
+Useful Functions and Variables for loader.py
+
+--------- Selecting Snapshots to load ---------
+
+dataBase = string
+Modify this variable to take a string if the source data is in multiple files.
+
+datasetPath = string
+If the source data originates from a single hdf5 file, modify this variable.
+
+--------Camera Variables --------
+
+pivotPosition = Vector(float x, float y, float z):
+	sets the initial pivot point when rotating the galaxy upon starting the application
+	
+cameraPosition = Vector(float x, float y, float z):
+	sets the initial camera position upon starting the application.
+
+cameraOrientation = Quaternion.new_rotate_axis(float w, float ix, float iy, float iz)
+	determines the initial camera orientation when starting the application.
+	The camera orientation is measured using quaternions, with w representing the real component
+	and ix, iy, and iz representing the imaginary components of each axis.
+	
+--------Display variables--------
+
+scale = float
+Scales down the entire 3d Dataset, useful if the dataset is too large.
+This simplifies navigation.
+
+pointCloudLoadOptions = string
+The loader options string should be in the format: "50000 0:100000:X"
+where X is the decimation level for the loader. The true decimation level is the product of the
+loader decimation level and the display decimation level. Higher decimation levels result in fewer points being loaded.
+
+dqDec = int
+This sets the dynamic quality rendering mode. Higher number = faster rendering but
+lower quality
+
+--------Variable Paths--------
+
+loaderScript= string
+This is the name of the script we want to use to load the file. Different simulation
+snapshots might be outputting different DataParts / columns. You can have a different
+loader script for each simulation output config.
+
+imagePath = string
+Set to a string, it will specify the destination path that
+	screenshots taken will be saved to.
+
+presetPath = string 
+Set to a string, it will specify the destination path that
+	the	presets will be loaded and saved to.

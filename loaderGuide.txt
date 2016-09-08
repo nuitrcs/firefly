@@ -1,0 +1,120 @@
+Useful Functions and Variables for loader.py
+
+
+--------Initializing the Firefly Loader--------
+In order to load points in to firefly, you will need to initialize a "FireLoader" class
+object and specify the path of the hdf5 file that you are trying to load.
+
+FireLoader() : Initializes a new Fire Loader object
+
+void FireLoader.setLoader( string filePath) : 
+Specifies the path of the HDF5 file from which you will be loading data from.
+
+--------Importing Datasets--------
+
+Every set of points in an hdf5 file is represented by a seperate "Dataset" object. 
+
+Dataset Dataset.create(string setName) :
+Takes a string corresponding with the name of the subset in the hdf5 file, returns a dataset object.
+
+void Dataset.setLoader(Loader mLoader) :
+For a dataset to properly load data, it must be assigned a Loader objects, which will determine which
+hdf5 files the dataset will load from.
+
+Dimension Dataset.addDimension(string dimensionName, DimensionType dataType, int dataIndex, string label )
+	Creates a new dimension of data that you are able to load from and display. Data within the 
+	dimension are not accessed or in memory until use. Returns a DimensionType class object which can be used as 
+	a variable for colormapping or setting positions.
+		- dimensionName: The name of the dimension within the hdf5 file within the current pointset.
+		- dataType: The type of data stored within the dimension.
+		- dataIndex: For variables with multiple values (ex: Coordinates), this values specifies the index of 
+			the variable will be used as a dimension.
+		- label: Assigns a string to the current index.
+
+
+Example usage:
+	
+l = FireLoader()
+l.open("datasetPath/data.hdf5")
+
+ds0 = Dataset.create("PartType0")
+ds0.setLoader(l)
+
+x0 = ds0.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+y0 = ds0.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+z0 = ds0.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
+
+--------Creating PointCloud--------
+After specifying Datasets of data, "PointCloud" class objects will need to be created to visualize the data. 
+While Dataset Objects hold data, pointCloud objects are actually the objects that display the data points.
+
+PointCloud.create(string name) : Creates a new Point cloud object with the name passed as an id.
+
+PointCloud.setOptions(string loaderOptions )
+	The loader options string should be in the format: "50000 0:100000:X"
+	where X is the decimation level for the loader. The true decimation level is the product of the
+	loader decimation level and the display decimation level. Higher decimation levels result in fewer points being loaded.
+	Defaults to the global variable of pointCloudLoadOptions
+
+PointCloud.setDimension(Dimension xAxis, Dimension yAxis, Dimension zAxis):
+	Indicate the variables that you want to plot for each axis.
+	
+PointCloud.setColor(Color mColor) : 
+	Sets the default color of the point cloud object when Advanced colormapping is turned off.
+
+PointCloud.setData(Dimension dataDimension) :
+	specifies which dimension the pointcloud will as the basis for the colormap.
+
+PointCloud.setVisible(bool visible) :
+	specifies whether the PointCloud object will display any points.
+
+PointCloud.setProgram(Shader mProgram ) :
+	Specifies which shader the pointCloud object will use when rendering points:
+		- prog_fixedColor: Only use if you want all points to use their uniform, default colors.
+		- prog_channel: Use when using a colormap that only includes a single dimension.
+		- prog_vector: Use when using a colormap that includes multiple dimensions.
+
+PointCloud.setVector(Dimension vec1, Dimension vec2, Dimension vec3):
+	Similar to setData, it maps the colormap to a data Dimension, but for multiple variables.
+
+	
+Array parts: Fill this array with all PointClouds that you are planning to use.
+
+Array dataModes: Fill this array with strings specifying the names of the dataModes that you 
+	want to visualize. This array will then be passed to the User interface as options. The strings 
+	in this array will also be sent as parameters to the setDataMode function
+
+
+setDataMode(string mode):
+	You will need to modify this function to specify what happens when each dataMode is selected.
+	typically you will need to use an if statement for each dataMode option.
+	
+
+--------Camera Functions-------
+
+setCamPos(float x, float y, float z)
+	- Sets the camera coordinates.
+
+setPivotPoint(float x, float y, float z)
+	- Sets the center of rotation for the galaxy.
+	
+setCamOrientation(float w, float ix, float iy, float iz )
+	- Determines the direction the camera is facing in Quaternion form
+		- w the real component of the quaternion.
+		- ix,iy,iz: Values of the imaginary components for each axis in the quaternion.
+
+setCamNearFar( float nearPlain, float FarPlane)
+	- Sets the bounds of how near or far an object can be to the camera for it to be drawn.
+	- Objects closer then the nearPlane to the camera will not be drawn. Objects further then the
+		farPlane will also not be drawn.
+	- Do not set the range to be too high (> 1000000). Increasing the draw range will
+		reduce the precision of the objects drawn along the Z-axis
+
+--------Other Variables--------
+
+string imagePath: Set to a string, it will specify the destination path that
+	screenshots taken will be saved to.
+
+string presetPath: Set to a string, it will specify the destination path that
+	the	presets will be loaded and saved to.

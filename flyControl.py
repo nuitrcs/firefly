@@ -2,8 +2,8 @@ from omega import *
 from euclid import *
 from math import *
 
-cameraPosition = Vector3(0,0,0)
-cameraOrientation = Quaternion()
+# cameraPosition = Vector3(0,0,0)
+# cameraOrientation = Quaternion()
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
 pivotDistance = -62
@@ -167,6 +167,16 @@ def setCamPos(x,y,z):
     camera.setPosition(cameraPosition)
     redraw()
     #camera.setPosition(Vector3(float(x),float(y),float(z)))
+
+def setCamOrientation(w,ix,iy,iz):
+    global cameraOrientation
+    newQuat = Quaternion.new_rotate_axis(w,ix,iy,iz)
+    # print "Setting New Camera Orientation" ,newQuat
+    cameraOrientation = newQuat
+    camera.setOrientation(cameraOrientation)
+
+def setCamNearFar(nearPlane, farPlane):
+    camera.setCamNearFarZ(nearPlane,farPlane)
 
 def setPivotPoint(x,y,z):
     global pivotPosition

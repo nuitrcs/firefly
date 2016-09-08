@@ -28,7 +28,7 @@ else:
     orun('colormapConfig.py')
     orun('render.py')
     orun('flyControl.py')
-    orun('loader.py')
+    # orun('loader.py')
     orun('appstate.py')
     orun('scene.py')
     orun('fireflyUi.py')

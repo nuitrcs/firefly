@@ -193,10 +193,10 @@ def enableLogScale(enable):
 def saveViewImage():
     global imagePath
     if not 'imagePath' in globals(): 
-        imagePath = "images/"
+        imagePath = ""
     filename = '{:%Y%m%d-%H%M%S}.png'.format(datetime.datetime.now())
-    filename = '../../../' + imagePath +  filename
-    print "Saving to filename: ", filename
+    filename = imagePath +  filename
+    print "Saving Image to destination: ", filename
     saveImage(pcw.getOutput(), filename, ImageFormat.FormatPng)
     #ps.broadcastjs("setScreenView('{0}')".format(filename), '')
         
