@@ -70,7 +70,7 @@ omegalib> chmod +x omega
 
 Then download and build firefly:
 ```
-omegalib> ./omega get master firefly
+omegalib> ./omega get master febret/firefly
 ```
 This will download and build firefly and all the required dependencies in a directory called master.
 
