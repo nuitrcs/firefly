@@ -36,7 +36,6 @@ pc1.setDimensions(x1, y1, z1)
 pc1.setColor(Color('blue'))
 
 parts = [pc0, pc1]
-    
 
 dataModes = [
     'DataType', 

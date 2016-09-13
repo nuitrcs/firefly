@@ -13,8 +13,19 @@ def initializePresetViews():
     global reader, presets, file, reader, nameList
     if not os.path.isfile(presetPath + fileName):
         print "No file: " , presetPath + fileName , " creating new file"
+
+        # Make the preset directory path if it doesn't exist yet.
+        try:
+          os.makedirs(presetPath)
+        except OSError as exc: # Python >2.5
+          if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+          else: raise
+
+        # Make the file if it doesn't exist yet
         file = open(presetPath + fileName, "w")
         file.close()
+
     else:
         print "File: ", presetPath + fileName, " found, loaded saved data"
     file = open(presetPath + fileName, 'rU')

@@ -1,0 +1,2 @@
+name	camX	camY	camZ	pivotX	pivotY	pivotZ	pointScale	dataMode	useSmoothingLength	colormapEnabled, colorMapIndex, colormapMin, colormapMax	KernelModeInd	RenderModeInd	rotDegree	rotAxisX	rotAxisY	rotAxisZ	logScale
+0	485.1086730957031	530.525390625	492.44879150390625	508	512	513	0.01	0	False	False	0	0	1	0	0	3.889011283822649	0.05314727625553022	0.9471386855618402	0.3163916518159225	False	True	4
