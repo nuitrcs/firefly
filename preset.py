@@ -1,5 +1,5 @@
 #-----------------Loading and Saving Presets -----------------------
-
+presetPath = "./"
 file = False
 reader = False
 fileName = "fireflyPresets.txt"

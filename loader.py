@@ -21,6 +21,7 @@ pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
 pc0.setDimensions(x0, y0, z0)
 pc0.setColor(Color('red'))
+pc0.setPointScale(0.01)
 
 # PartType1
 ds1 = Dataset.create('PartType2')
@@ -34,7 +35,7 @@ pc1 = PointCloud.create('pc1')
 pc1.setOptions(pointCloudLoadOptions)
 pc1.setDimensions(x1, y1, z1)
 pc1.setColor(Color('blue'))
-
+pc1.setPointScale(0.01)
 parts = [pc0, pc1]
     
 

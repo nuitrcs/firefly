@@ -2,8 +2,8 @@ from omega import *
 from euclid import *
 from math import *
 
-# cameraPosition = Vector3(0,0,0)
-# cameraOrientation = Quaternion()
+cameraPosition = Vector3(0,0,0)
+cameraOrientation = Quaternion()
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
 pivotDistance = -62

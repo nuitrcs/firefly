@@ -18,4 +18,3 @@ sn = SceneNode.create('galaxy')
 sn.setScale(scale, scale, scale)
 for p in parts: 
     sn.addComponent(p)
-    p.setPointScale(scale)
