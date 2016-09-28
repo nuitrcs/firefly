@@ -8,7 +8,7 @@ Component.prototype.createOperations = function(archive)
 
 	if(typeof systemInfo != "undefined" && systemInfo.kernelType != "winnt") {
 	    // NOTE: This is specific for OSX, not linux!
-	    component.addElevatedOperation("Execute", "chown", "$(whoami)", "/usr/local");
+	    //component.addElevatedOperation("Execute", "sudo", "chown", "$(whoami)", "/usr/local");
 	    	
 	    // Create links to Chromium embedded framework resources file
 		component.addOperation("Execute", "mkdir", "-p", "@TargetDir@/Contents/Frameworks/Chromium Embedded Framework.framework", 
