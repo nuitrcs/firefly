@@ -1,3 +1,5 @@
+''' Shader code. '''
+
 dqTimeout = 0.1
 dqTimer = 0
 # dqDec = 10

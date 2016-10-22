@@ -1,15 +1,6 @@
 l = FireLoader()
 l.open(datasetPath)
 
-########################################################################
-# DEBUG
-print ''
-print ''
-print 'In loader.py'
-print ''
-print ''
-########################################################################
-
 # # PartType0
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)

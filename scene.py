@@ -1,3 +1,5 @@
+''' Takes care of the setting and view. '''
+
 # create a point cloud view. This object takes care of rendering and generates
 # an image we can place on screen or save to disk. 
 pcw = PointCloudView()
@@ -18,3 +20,6 @@ sn = SceneNode.create('galaxy')
 sn.setScale(scale, scale, scale)
 for p in parts: 
     sn.addComponent(p)
+
+print 'scene.py done.'
+print ''

@@ -1,17 +1,6 @@
 from readsnap import *
 import numpy as np
 
-########################################################################                                                                                                           
-# DEBUG                                                                                                                                                                            
-import os                                                                                                                                                                          
-print ''                                                                                                                                                                           
-print ''                                                                                                                                                                           
-print 'loader_readsnap.py Dir', os.getcwd()                                                                                                                                            
-print ''                                                                                                                                                                           
-print ''                                                                                                                                                                           
-print ''                                                                                                                                                                           
-######################################################################## 
-
 # Read data from the hdf5 file using the readnsap script,
 # then register the loaded numpy arrays with their right dimension
 # names, so the Dataset class can access them.
@@ -21,12 +10,6 @@ print res
 l.addDimension('Coordinates', res['p'])
 l.addDimension('Velocities', res['v'])
 l.addDimension('Mass', res['m'])
-
-########################################################################
-# DEBUG
-import signac
-print "signac =", signac
-########################################################################
 
 ########################################################################
 # DEBUG
@@ -61,11 +44,7 @@ pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
 pc0.setDimensions(x0, y0, z0)
 pc0.setColor(Color('blue'))
-########################################################################
-# DEBUG
-pc0.setPointScale(1000.)
-#pc0.setPointScale(0.01)
-########################################################################
+pc0.setPointScale(0.01)
 parts = [pc0]
 
 dataModes = [
@@ -82,27 +61,20 @@ def setDataMode(mode):
         pc0.setData(None)
         pc0.setVisible(True)
         pc0.setProgram(prog_fixedColor)
-########################################################################
-        # DEBUG
-        #pc0.setColor(Color(0.2, 0.2, 1, 0.1))
-        pc0.setColor(Color(1, 1, 0.2, 0.1))
-########################################################################
+        pc0.setColor(Color(0.2, 0.2, 1, 0.1))
 
-########################################################################
-# DEBUG
-#    elif(dm == 'Masses'):
-#        pc0.setVisible(True)
-#        pc0.setProgram(prog_vector)
-#        pc0.setData(m0)
-#    elif(dm == 'Accurate'):
-#        pc0.setVisible(True)
-#        pc0.setProgram(prog_channel)
-#        pc0.setData(r0)
-########################################################################
+    elif(dm == 'Masses'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_vector)
+        pc0.setData(m0)
+    elif(dm == 'Accurate'):
+        pc0.setVisible(True)
+        pc0.setProgram(prog_channel)
+        pc0.setData(r0)
     redraw()
     
 setDataMode(0)
 
 # Announce completion.
-print 'loader finished.'
+print 'loader done.'
 print ''

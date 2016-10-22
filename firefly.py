@@ -27,15 +27,12 @@ else:
     orun('render.py')
     orun('flyControl.py')
     orun(loaderScript)
-    # orun('loader.py')
     orun('appstate.py')
     orun('scene.py')
     orun('fireflyUi.py')
-########################################################################
-# DEBUG
     orun('preset.py')
-########################################################################
 
     setDataMode(0)
     setPointScale(pointScale)
     focus()
+
