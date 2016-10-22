@@ -1,3 +1,5 @@
+''' Setup flying. '''
+
 from omega import *
 from euclid import *
 from math import *
@@ -192,3 +194,6 @@ def lookAtPivot():
 def requestUpdatePos():
     global cameraPosition
     ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
+
+print 'flyControl.py done'
+print ''

@@ -1,3 +1,5 @@
+''' Default state for the app. '''
+
 # default scale applied to points
 pointScale = scale 
 isLogScale = False                
@@ -29,3 +31,6 @@ kernelMode = 0
 renderMode = 0
 kernelModeInd = 0
 renderModeInd = 0
+
+print 'appstate.py done'
+print ''

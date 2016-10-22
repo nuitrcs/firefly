@@ -1,4 +1,5 @@
-# This file lists available colormaps and colormap names.
+''' This file lists available colormaps and colormap names. '''
+
 colorMapLabels = [
     "Black-Green",
     "Full Spectrum",
@@ -14,3 +15,4 @@ colorMapNames = [
     "colormaps/pr-rd-yl.png"]
 
 print 'colormapConfig.py done'
+print ''

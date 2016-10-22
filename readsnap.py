@@ -50,13 +50,6 @@ def readsnap(sdir,snum,ptype,
     omega_matter = header_toparse["Omega0"]
     omega_lambda = header_toparse["OmegaLambda"]
     hubble = header_toparse["HubbleParam"]
-
-
-    # DEBUG
-    #print "just extracted hubble=",
-    #print hubble
-
-
     flag_stellarage = header_toparse["Flag_StellarAge"]
     flag_metals = header_toparse["Flag_Metals"]
 
@@ -69,12 +62,6 @@ def readsnap(sdir,snum,ptype,
         hinv=1./hubble
     if (cosmological==0): 
         time*=hinv
-
-
-    # DEBUG
-    #print "redshift=",
-    #print redshift
-
     
     # CAFG: changed order of the following two lines, so that header
     # info is returned even if no particles.
@@ -180,11 +167,6 @@ def readsnap(sdir,snum,ptype,
         stellage *= hinv
     if (ptype==5) and (skip_bh==0):
         bhmass *= hinv
- 
-   
-    # DEBUG
-    #print "about to proceed with return"
-
 
     file.close();
     if (ptype==0):

@@ -1,4 +1,4 @@
-#-----------------Loading and Saving Presets -----------------------
+'''Loading and Saving Presets '''
 presetPath = "./"
 file = False
 reader = False
@@ -132,3 +132,6 @@ def eraseView(number):
     # print presets 
     saveViews()
     pass
+
+print 'preset.py done.'
+print ''

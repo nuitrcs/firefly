@@ -1,5 +1,5 @@
-#-------------------------------------------------------------------------------
-# UI
+''' UI '''
+
 filterModes = [
     'None',
     'Density',
@@ -209,3 +209,6 @@ def cls():
 def requestUpdatePos():
     global cameraPosition
     ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
+
+print 'fireflyUi.py done.'
+print ''
