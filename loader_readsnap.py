@@ -16,7 +16,7 @@ print ''
 # then register the loaded numpy arrays with their right dimension
 # names, so the Dataset class can access them.
 l = NumpyLoader()
-res = readsnap(datasetPath, snapshotNumber, 2)
+res = readsnap(datasetPath, snapshotNumber, 0)
 print res
 l.addDimension('Coordinates', res['p'])
 l.addDimension('Velocities', res['v'])
