@@ -1,0 +1,43 @@
+Overview of Python Functions:
+
+--------config Script---------
+
+Specifies a few initial variables, including file destination, initial pivot point.
+More information can be found in the file configGuide.txt
+
+--------loader Script---------
+
+Specifies the variables form the hdf5 to load from, and specifies the 
+shaders and data settings for various colormap settings
+
+More information can be found in loaderGuide.txt
+
+--------render.py---------
+
+Loads all shaders and contains the drawing, rendering, and update functions.
+All dynamic decimation and progressive scan options are located here.
+
+--------flycontrol.py ---------
+
+Controls camera movements and galaxy rotation.
+	Also contains code for all keyboard and mouse inputs.
+ 
+--------appstate.py ---------
+
+Holds initialization information for the User interface information and colormap information.
+
+--------Scene ---------
+
+Initializes the omegalib base that the firefly module is then built upon. 
+	Creates the Scene Node and the 2d overlay that the scene is rendered on top of.
+
+--------Firefly Ui ---------
+
+Coordinates values and controls between the Firefly User interface, written in javascript in Firefly.js, and the 
+other python modules
+
+--------Preset ---------
+
+Works with the preset panel in the  user interface and allows for the saving and loading
+of preset settings, which encompass all current settings in the user interface.
+

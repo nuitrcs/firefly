@@ -1,0 +1,42 @@
+.ui-dialog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .2em;
+    outline: 0;
+    background-color: rgb(64,64,64);
+}
+.ui-dialog .ui-dialog-titlebar {
+    padding: .4em 1em;
+    position: relative;
+    background-color: rgb(64,64,64);
+}
+.ui-dialog .ui-dialog-title {
+    float: left;
+    margin: .1em 0;
+    white-space: nowrap;
+    width: 90%;
+    overflow: hidden;
+    background-color: rgb(64,64,64);
+    color: rgb(255,255,255);
+    text-overflow: ellipsis;
+    text-align:center;
+}
+.ui-dialog .ui-dialog-titlebar-close {
+    position: absolute;
+    right: .3em;
+    top: 50%;
+    width: 20px;
+    margin: -10px 0 0 0;
+    padding: 1px;
+    height: 20px;
+    background-color: rgb(64,64,64);
+}
+.child_div_1{
+    float:left;
+    padding-right:15px;
+}
+.noTitleStuff .ui-dialog-titlebar {display:none}
+/*    .ui-dialog-titlebar-close {
+    visibility: hidden;
+}*/

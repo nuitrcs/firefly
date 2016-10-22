@@ -1,0 +1,4 @@
+name	camX	camY	camZ	pivotX	pivotY	pivotZ	pointScale	dataMode	useSmoothingLength	colormapEnabled, colorMapIndex, colormapMin, colormapMax	KernelModeInd	RenderModeInd	rotDegree	rotAxisX	rotAxisY	rotAxisZ	logScale
+dim	0.0	0.0	0.0	47.0	17.0	62.0	0.01	0	False	False	0	0.0	1.0	0	0	3.7871892636241236	-0.031951304544078844	0.9949606695950427	-0.095038834677808	False	True	96.0
+Bright	0.0	0.0	0.0	47.0	17.0	62.0	0.01	0	False	False	0	0.0	1.0	0	0	3.7871892636241236	-0.031951304544078844	0.9949606695950427	-0.095038834677808	False	True	16.0
+Brighter	0.0	0.0	0.0	47.0	17.0	62.0	0.01	0	False	False	0	1.0	0.0	0	0	3.7871892636241236	-0.031951304544078844	0.9949606695950427	-0.095038834677808	False	True	9

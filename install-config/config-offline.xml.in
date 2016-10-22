@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Firefly</Name>
+    <Version>1.0</Version>
+    <Title>Firefly</Title>
+    <Publisher>The Firefly team</Publisher>
+    <StartMenuDir>Firefly</StartMenuDir>
+    <TargetDir>@@ApplicationsDir@@/firefly.app</TargetDir>
+    <ProductUrl>http://www.github.com/febret/firefly/</ProductUrl>
+    <InstallerApplicationIcon>icon</InstallerApplicationIcon>
+    <Logo>icon.png</Logo>
+    <CreateLocalRepository>True</CreateLocalRepository>
+    <MaintenanceToolName>UninstallFirefly</MaintenanceToolName>
+</Installer>

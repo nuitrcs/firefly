@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <title>Drag Sync</title>
+    <script src="controlKit.js"></script>
+    <script src="jquery-1.12.4.js"></script>
+    <script src="jquery-ui/jquery-ui.min.js"></script>
+
+
+    <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="fireflyUi.css">
+    <script src="porthole/res/porthole.js"></script>
+</head>
+
+<body>
+    <div id="colormapPreview" title="Colormap Preview" style="text-align:center;background-color: rgb(45,45,45); color: rgb(164,164,164);">
+        <span id="minColor">0</span> 
+        <img id="colorMapImg" src="colormaps/bu-og.png" alt="TestImage" style="width:200px;height:16px;">
+        <span id="maxColor">1</span> <BR>
+        Current Variable: <span id="cColorvariable">Smoothing Length</span>
+    </div>
+
+    <div id="helpBox" title="Help and Controls" style="font-size: 14;background-color:  rgb(45,45,45); color: rgb(164,164,164);">
+        <h2>Navigation</h2>
+        <ul>
+        <li><b>AD Keys:</b> fly left/right</li>
+        <li><b>WS Keys:</b> fly forward/backward</li>
+        <li><b>RF Keys:</b> fly up/down</li>
+        <li><b>Click and drag:</b> rotate view</li>
+        </ul>
+        <h2>Center Selection</h2>
+        Hold <b>CTRL</b> to enable pivot selection mode. Click on the object
+        you want to center rotation on. Use mouse wheel to scroll forward or
+        backward to move the center of rotation along the view ray. The object 
+        will turn greener the closer you are to center on it. When done, release
+        the <b>CTRL</b> button and click anywhere.
+        <h2>User Interface</h2>
+        <ul>
+        <li><b>H Key:</b> toggle this help screen</li>
+        <li><b>C Keys:</b> toggle log</li>
+        <li><b>M Keys:</b> toggle colormap</li>
+        </ul>
+        <h2>Console</h2>
+        The console is a full python interpreter. here are a few useful 
+        commands as a reference.
+        <ul>
+        <li><b>:q</b> quit the application</li>
+        <li><b>resetPivot()</b> set the center of rotation to the center of the model</li>
+        <li><b>dqDec = [value]</b> set progressive render quality. Try values such as 1,2,8,64</li>
+        </ul>
+    </div>
+    <div id="console" title="Console" style="font-size: 12;background-color: rgb(45,45,45); color: rgb(164,164,164);">
+        <span id="consoleText">Press H to open the help screen.</span>
+    </div>
+    <script src="./fireflyUi.js"/></script>
+
+</body>
+</html>
