@@ -37,7 +37,11 @@ pc1.setDimensions(x1, y1, z1)
 pc1.setColor(Color('blue'))
 pc1.setPointScale(0.01)
 parts = [pc0, pc1]
-    
+
+########################################################################
+# DEBUG
+assert False
+########################################################################
 
 dataModes = [
     'DataType', 
@@ -67,7 +71,7 @@ def setDataMode(mode):
         pc0.setData(d0)
         pc1.setVisible(False)
     elif(dm == "Density Color"):
-        pc0.setVisible(True)
+        pc.setVisible(True)
         pc0.setProgram(prog_default)
         pc0.setData(d0)
         pc1.setVisible(False)

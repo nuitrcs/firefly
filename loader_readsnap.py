@@ -5,7 +5,7 @@ import numpy as np
 # then register the loaded numpy arrays with their right dimension
 # names, so the Dataset class can access them.
 l = NumpyLoader()
-res = readsnap(datasetPath, snapshotNumber, 0)
+res = readsnap(datasetPath, snapshotNumber, 2)
 print res
 l.addDimension('Coordinates', res['p'])
 l.addDimension('Velocities', res['v'])
@@ -52,6 +52,11 @@ dataModes = [
    # 'Masses',
    # 'Accurate',
     ]
+
+########################################################################
+# DEBUG
+assert False
+########################################################################
     
 def setDataMode(mode):
     global dataMode
@@ -61,7 +66,7 @@ def setDataMode(mode):
         pc0.setData(None)
         pc0.setVisible(True)
         pc0.setProgram(prog_fixedColor)
-        pc0.setColor(Color(0.2, 0.2, 1, 0.1))
+        pc0.setColor(Color(0.1, 0.2, 1, 0.1))
 
     elif(dm == 'Masses'):
         pc0.setVisible(True)

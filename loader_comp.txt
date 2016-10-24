@@ -1,0 +1,118 @@
+1,2c1,25
+< l = FireLoader()
+< l.open(datasetPath)
+---
+> from readsnap import *
+> import numpy as np
+> 
+> # Read data from the hdf5 file using the readnsap script,
+> # then register the loaded numpy arrays with their right dimension
+> # names, so the Dataset class can access them.
+> l = NumpyLoader()
+> res = readsnap(datasetPath, snapshotNumber, 0)
+> print res
+> l.addDimension('Coordinates', res['p'])
+> l.addDimension('Velocities', res['v'])
+> l.addDimension('Mass', res['m'])
+> 
+> ########################################################################
+> # DEBUG
+> # Get galaxy sizes and mass
+> # DEBUG
+> #r = (res['m']/(2*np.pi*res['rho']))**(1./3.)
+> r = 1.
+> # DEBUG
+> #w = 2*res['rho']*r
+> w = 2.
+> l.addDimension('Radius', r)
+> l.addDimension('Weight', w)
+> ########################################################################
+11,12c34
+< sl0 = ds0.addDimension('SmoothingLength', DimensionType.Float, 0, 'SmoothingLength')
+< d0 = ds0.addDimension('Density', DimensionType.Float, 0, 'Density')
+---
+> m0 = ds0.addDimension('Mass', DimensionType.Float, 0, 'm')
+15a38
+> r0 = ds0.addDimension('Radius', DimensionType.Float, 0, 'r')
+23c46
+< pc0.setColor(Color('red'))
+---
+> pc0.setColor(Color('blue'))
+25,40c48
+< 
+< # PartType1
+< ds1 = Dataset.create('PartType2')
+< ds1.setLoader(l)
+< 
+< x1 = ds1.addDimension('Coordinates', DimensionType.Float, 0, 'x')
+< y1 = ds1.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+< z1 = ds1.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+< 
+< pc1 = PointCloud.create('pc1')
+< pc1.setOptions(pointCloudLoadOptions)
+< pc1.setDimensions(x1, y1, z1)
+< pc1.setColor(Color('blue'))
+< pc1.setPointScale(0.01)
+< parts = [pc0, pc1]
+<     
+---
+> parts = [pc0]
+44,49c52,54
+<     'Density',
+<     'Density Color',
+<     'SmoothingLength',
+<     'VelocityVectors',
+<     'Masses',
+<     'InternalEnergy']
+---
+>    # 'Masses',
+>    # 'Accurate',
+>     ]
+60,83c65
+<         pc1.setVisible(True)
+<         pc1.setData(None)
+<         pc1.setProgram(prog_fixedColor)
+<         pc1.setColor(Color(1, 1, 0.2, 0.1))
+<     elif(dm == 'Density'):
+<         pc0.setVisible(True)
+<         pc0.setProgram(prog_channel)
+<         pc0.setData(d0)
+<         pc1.setVisible(False)
+<     elif(dm == "Density Color"):
+<         pc0.setVisible(True)
+<         pc0.setProgram(prog_default)
+<         pc0.setData(d0)
+<         pc1.setVisible(False)
+<     elif(dm == 'SmoothingLength'):
+<         pc0.setVisible(True)
+<         pc0.setProgram(prog_channel)
+<         pc0.setData(sl0)
+<         pc1.setVisible(False)
+<     elif(dm == 'VelocityVectors'):
+<         pc0.setVisible(True)
+<         pc0.setProgram(prog_vector)
+<         pc0.setVectorData(vx0,vy0,vz0)
+<         pc1.setVisible(False)
+---
+> 
+88,89c70
+<         pc1.setVisible(False)
+<     elif(dm == 'InternalEnergy'):
+---
+>     elif(dm == 'Accurate'):
+91,93c72,73
+<         pc0.setProgram(prog_vector)
+<         pc0.setData(e0)
+<         pc1.setVisible(False)
+---
+>         pc0.setProgram(prog_channel)
+>         pc0.setData(r0)
+96c76,80
+< setDataMode(0)
+\ No newline at end of file
+---
+> setDataMode(0)
+> 
+> # Announce completion.
+> print 'loader done.'
+> print ''
