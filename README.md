@@ -90,7 +90,7 @@ These are the full instructions for building and running on windows, assuming yo
 > copy firefly\modules\firefly\default_init.py firefly /Y
 ```
 
-To run firefly, double click on choose_firefly.bat (find in in the same dir as omega.bat) and type orun in the opened console.
+To run firefly, double click on choose_firefly.bat (find it in the same dir as omega.bat) and type orun in the opened console.
 
 If you want to package this version of firefly type:
 ```
