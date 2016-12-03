@@ -83,7 +83,7 @@ omegalib/master/build/bin>./orun <path-to-data-config.py> -i
 ```
 
 ### Building on Windows ###
-These are the full instructions for building and running on windows, assuming you downloaded omega.bat from here: https://uic-evl.github.io/omegalib/omega.bat and you are in aterminal in the directory where you downloaded it
+These are the full instructions for building and running on windows, assuming you downloaded omega.bat from here: https://uic-evl.github.io/omegalib/omega.bat and you are in a terminal in the directory where you downloaded it
 ```
 > omega get firefly:master nuitrcs/firefly
 > omega choose firefly
