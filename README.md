@@ -70,17 +70,27 @@ omegalib> chmod +x omega
 
 Then download and build firefly:
 ```
-omegalib> ./omega get master febret/firefly
+omegalib> ./omega get firefly:master nuitrcs/firefly
 ```
-This will download and build firefly and all the required dependencies in a directory called master.
+This will download and build firefly and all the required dependencies in a directory called firefly.
 
-You can try running firefly using omegalib's `orun`:
+You will need to copy `firefly/modules/firefly/default_init.py`inside `firefly`, overwriting the existing default_init.py
+
+You can then try running firefly using omegalib's `orun`:
 ```
-omegalib> cd master/build/bin
+omegalib> cd firefly/build/bin
 omegalib/master/build/bin>./orun <path-to-data-config.py> -i
-[after the omegalib window has opened]
->:r firefly/firefly.py
 ```
+
+### Building on Windows ###
+These are the full instructions for building and running on windows, assuming you downloaded omega.bat from here: https://uic-evl.github.io/omegalib/omega.bat and you are in aterminal in the directory where you downloaded it
+```
+> omega get firefly:master nuitrcs/firefly
+> omega choose firefly
+> copy firefly\modules\firefly\default_init.py firefly /Y
+```
+
+To run firefly, double click on choose_firefly.bat (find in in the same dir as omega.bat) and type orun in the opened console.
 
 If you want to package this version of firefly type:
 ```
