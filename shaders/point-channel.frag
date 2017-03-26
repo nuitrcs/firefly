@@ -25,6 +25,7 @@ void main (void)
 #if(DATA_MODE == 0)
     float data = 0;
 #endif   
+
 #if (KERNEL_MODE == 1)
     fragmentColor = vec4(data, 0, 0, 1.0) * pow(z, 2);
 #else

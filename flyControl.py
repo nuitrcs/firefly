@@ -160,6 +160,7 @@ def resetPivot():
     print("Pivot position: " + str(pivotPosition))
  
 def setCamPos(x,y,z):
+    print "-----"
     global camera, cameraPosition
     oldPos = camera.getPosition()
     cameraPosition = Vector3(float(x),float(y),float(z))
@@ -169,9 +170,10 @@ def setCamPos(x,y,z):
     #camera.setPosition(Vector3(float(x),float(y),float(z)))
 
 def setCamOrientation(w,ix,iy,iz):
+    print "------"
     global cameraOrientation
     newQuat = Quaternion.new_rotate_axis(w,ix,iy,iz)
-    # print "Setting New Camera Orientation" ,newQuat
+    print "Setting New Camera Orientation" ,newQuat
     cameraOrientation = newQuat
     camera.setOrientation(cameraOrientation)
 

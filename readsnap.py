@@ -87,6 +87,7 @@ def readsnap(sdir,snum,ptype,
     vel=np.copy(pos)
     ids=np.zeros([npartTotal[ptype]],dtype=long)
     mass=np.zeros([npartTotal[ptype]],dtype=float)
+    size=np.zeros([npartTotal[ptype]],dtype=float)
     if (ptype==0):
         ugas=np.copy(mass)
         rho=np.copy(mass)
@@ -125,7 +126,7 @@ def readsnap(sdir,snum,ptype,
             bname = ''
             
         
-        # now do the actual reading
+    # now do the actual reading
         
 	# CAFG: there can be an error here when particles of a certain
 	# type (e.g., stars) are only in a subset of all files that
@@ -173,6 +174,7 @@ def readsnap(sdir,snum,ptype,
     boxsize *= hinv*ascale
     mass *= hinv
     vel *= np.sqrt(ascale) # remember gadget's weird velocity units!
+    #size = mass / density
     if (ptype==0):
         rho *= (hinv/((ascale*hinv)**3))
         hsml *= hinv*ascale
@@ -188,18 +190,18 @@ def readsnap(sdir,snum,ptype,
 
     file.close();
     if (ptype==0):
-       ret_dict = {'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'u':ugas,'rho':rho,'h':hsml,'ne':nume,'nh':numh,'sfr':sfr}
+       ret_dict = {'size': size,'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'u':ugas,'rho':rho,'h':hsml,'ne':nume,'nh':numh,'sfr':sfr}
        if flag_metals>0:
          ret_dict['z'] = metal
        return ret_dict
     if (ptype==4):
-        ret_dict = {'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'age':stellage}
+        ret_dict = {'size':size,'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'age':stellage}
         if flag_metals>0:
           ret_dict['z'] = metal
         return ret_dict
     if (ptype==5) and (skip_bh==0):
-        return {'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'mbh':bhmass,'mdot':bhmdot}
-    return {'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids}
+        return {'size':size, 'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids,'mbh':bhmass,'mdot':bhmdot}
+    return {'size':size, 'hubble':hubble,'boxsize':boxsize,'time':time,'redshift':redshift,'flag_sfr':flag_sfr,'flag_feedbacktp':flag_feedbacktp,'flag_cooling':flag_cooling,'omega_matter':omega_matter,'omega_lambda':omega_lambda,'flag_stellarage':flag_stellarage,'flag_metals':flag_metals,'k':1,'p':pos,'v':vel,'m':mass,'id':ids}
 
 
 def check_if_filename_exists(sdir,snum,snapshot_name='snapshot',extension='.hdf5',four_char=0):
@@ -457,3 +459,24 @@ def load_gadget_binary_particledat(f, header, ptype, skip_bh=0):
         'Masses':mm, 'Metallicity':zmet, 'StellarFormationTime':star_age, 'BH_Mass':bh_mass, \
         'BH_Mdot':bh_mdot, 'InternalEnergy':gas_u, 'Density':gas_rho, 'SmoothingLength':gas_hsml, \
         'ElectronAbundance':gas_ne, 'NeutralHydrogenAbundance':gas_nhi, 'StarFormationRate':gas_SFR}
+
+def setCenterOfMassView(pos, mass):
+    global cameraPosition
+    print "setCenterOfMassView--------------------------------------"
+    #global pivotPoint, cameraPosition, cameraOrientation
+    center = np.average(pos,0,np.ravel(mass))
+    pivotPoint = Vector3(center[0],center[1],center[2])
+    std = np.std(pos,0)
+    zZoom = std[2] * 3
+    print zZoom
+    cameraPosition = Vector3(center[0],center[1],center[2] - zZoom)
+    print cameraPosition
+    cameraOrientation = Quaternion()
+    return cameraPosition, pivotPoint, cameraOrientation
+
+def setDefaultRanges(val):
+    center = np.average(np.ravel(val))
+    std = np.std(np.ravel(val))
+    minB = center - (std * 1.5)
+    maxB = center + (std * 1.5)
+    return minB, maxB

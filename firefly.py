@@ -34,5 +34,10 @@ else:
     orun('preset.py')
 
     setDataMode(0)
+    setColormap(0)
+    print cameraPosition.x
+    print cameraPosition[0]
+    setCamPos(cameraPosition.x,cameraPosition.y,cameraPosition.z)
+    
     setPointScale(pointScale)
     focus()
