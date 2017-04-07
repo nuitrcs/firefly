@@ -34,13 +34,13 @@ void main(void)
 #endif
 
 #if (SIZE_MODE == 1)
-    float radius =  pointScale * 2.0 * attrib_size[0]; // * pointScale;
+    float radius =  pointScale * attrib_size[0]; // * pointScale;
     //float v = 4.188 * pow(radius * 0.5, 3);
     //#if (DATA_MODE == 1)
     //    data = attrib_data[0] / v;
     //#endif
 #else
-    float radius =  pointScale * 2.0;
+    float radius =  pointScale;
     #if (DATA_MODE == 1)
         data = attrib_data[0];
     #endif

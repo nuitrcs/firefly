@@ -145,8 +145,8 @@ controlData = {
     selectedDataMode: null,
     useSmoothingLength: false,
     useLog: false,
-    pointScale: 0.05,
-    pointScaleRange: [0.001, 0.05],
+    pointScale: 1.0,
+    pointScaleRange: [0.001, 30.0],
     colormap: null,
     enableColormapper: false,
     colormapPaths: null,
@@ -491,7 +491,7 @@ function postLoadUpdate(sDMode, uSL,uL,pS,eCM,sCM, cmMin,cmMax, x,y,z,corX,corY,
     console.log("kernelMode ", kM)
     controlData.selectedKernelMode = controlData.kernelMode[ kM ]
     controlData.progScan = progScan
-    control.decValue = dC
+    //control.decValue = dC
     $("#cColorvariable").html(controlData.selectedDataMode)
     $('#minColor').html(controlData.colormapMin)
     $('#maxColor').html(controlData.colormapMax)

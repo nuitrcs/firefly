@@ -467,7 +467,7 @@ def setCenterOfMassView(pos, mass):
     center = np.average(pos,0,np.ravel(mass))
     pivotPoint = Vector3(center[0],center[1],center[2])
     std = np.std(pos,0)
-    zZoom = std[2] * 3
+    zZoom = std[2] * 100
     print zZoom
     cameraPosition = Vector3(center[0],center[1],center[2] - zZoom)
     print cameraPosition
@@ -477,6 +477,6 @@ def setCenterOfMassView(pos, mass):
 def setDefaultRanges(val):
     center = np.average(np.ravel(val))
     std = np.std(np.ravel(val))
-    minB = center - (std * 1.5)
-    maxB = center + (std * 1.5)
+    minB = center - (std * 2)
+    maxB = center + (std * 2)
     return minB, maxB

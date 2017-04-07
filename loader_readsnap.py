@@ -1,5 +1,8 @@
 from readsnap import *
-from readsnap_test import *
+#from readsnap_test import *
+from np_tools import *
+import numpy as np
+global colormapMin,colormapMax
 # Read data from the hdf5 file using the readnsap script,
 # then register the loaded numpy arrays with their right dimension
 # names, so the Dataset class can access them.
@@ -7,22 +10,29 @@ l = NumpyLoader()
 res = readsnap(datasetBase, snapshotNumber, 0)
 #res = testReadSnap()
 
-radius = ((res['m'] / res['rho'])/(2 * numpy.pi) )^(1/3) 
+radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1/3))
 weight = 2 * radius * res['rho']
 
+print "initialized radius weight"
+print orientOnCoM
 if orientOnCoM:
     cameraPosition,pivotPoint,cameraOrientation = setCenterOfMassView(res['p'],res['m'])
 print cameraPosition
 
+print "adding dimensions"
+
 l.addDimension('Coordinates', res['p'])
 l.addDimension('Velocities', res['v'])
-l.addDimension('Mass', res['m'])
-Mlower, Mhigher = setDefaultRanges(res['m'])
+l.addDimension('Mass', weight)
+colormapMin, colormapMax = setDefaultRanges(res['m'])
 # l.addDimension('Time', res['time'])
-l.addDimension("Size", res['size'])
+l.addDimension("Size", radius)
 
 # print res['sl']
 # # PartType0
+
+print "starting part type 0"
+
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)
 
@@ -38,6 +48,8 @@ s0 = ds0.addDimension('Size', DimensionType.Float, 0, 'size')
 #m0 = ds0.addDimension('Masses', DimensionType.Float,0, 'm')
 #e0 = ds0.addDimension('InternalEnergy',DimensionType.Float,0,'e')
 
+print "point cloud"
+
 pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
 pc0.setDimensions(x0, y0, z0)
@@ -51,16 +63,19 @@ defaultMaxScale = 1e2
 dataModes = [
     'DataType', 
     'oldDataType',
-    'Masses']
-    
+    'Masses',
+    'MassesNoS']
+
+print "data mode"
+
 def setDataMode(mode):
     global dataMode
     dataMode = mode
     dm = dataModes[mode]
     if(dm == 'DataType'):
-        print "Datatype set"
+        print "Datatype set----"
         pc0.setData(None)
-        #pc0.setSize(s0)
+        pc0.setSize(s0)
         pc0.setVisible(True)
         # pc0.setProgram(prog_channel)
         pc0.setProgram(prog_fixedColor)
@@ -78,14 +93,24 @@ def setDataMode(mode):
         pc0.setSize(s0)
         pc0.setVisible(True)
         pc0.setProgram(prog_channel)
-        updateColormapBounds(Mlower, Mhigher )
+        updateColormapBounds(colormapMin, colormapMax )
+        enableSmoothingLength(False)
+        enableColormapper(True)
+    elif(dm == 'MassesNoS'):
+        print "Dimension set to masses no size"
+        pc0.setData(m0)        
+        # pc0.setData(None)
+        pc0.setSize(None)
+        pc0.setVisible(True)
+        pc0.setProgram(prog_channel)
+        updateColormapBounds(colormapMin, colormapMax )
 
-        enableSmoothingLength(True)
         enableSmoothingLength(False)
         enableColormapper(True)
         # pc0.setProgram(prog_mapper)
         # pc0.setProgram(prog_fixedColor)
         # pc0.setColor(Color(0.2, 0.2, 1, 0.1))
     redraw()
-    
+
+print "finished loader_readsnap"
 # setDataMode(0)

@@ -130,7 +130,7 @@ def onUpdate(frame, time, dt):
         # cange the pan speed multiplier depending on how far
     # we are from the object, so panning speed looks constant
     l = (cameraPosition - pivotPosition).magnitude()
-    panSpeedMultiplier = 0.1 + abs(l / 100)
+    panSpeedMultiplier = (0.01 + abs(l / 100))
 
 setEventFunction(onEvent)
 setUpdateFunction(onUpdate)

@@ -105,7 +105,7 @@ def enableSmoothingLength(enabled):
     print "setting smoothing length enabled to: " , enabled
     useSmoothingLength = enabled
     if(enabled):
-        pc0.setSize(sl0)
+        pc0.setSize(s0)
     else:
         pc0.setSize(None)
     redraw()
@@ -138,7 +138,7 @@ def setColormap(index):
     redraw()
 
 def updateColormapBounds(cmin, cmax):
-    print('bounds now are {0}    {1}'.format(cmin, cmax))
+    print('bounds now are min: {0}  max:  {1}'.format(cmin, cmax))
     global colormapMin
     global colormapMax
     colormapMin = cmin
@@ -187,7 +187,7 @@ def enableLogScale(enable):
     else:
         for p in programs: p.define('LOG_MODE', '0')
     global colormapMax, colormapMin
-    updateColormapBounds(colormapMax, colormapMin)
+    updateColormapBounds(colormapMin,colormapMax)
     redraw()
     
 def saveViewImage():

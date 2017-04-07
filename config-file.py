@@ -17,10 +17,10 @@ orientOnCoM = True
 
 # Scale to apply to the entire 3D dataset. Useful if the dataset is too large,
 # to simplify navigation
-scale = 1 #0.01
+scale = 1.0
 
 # change the last number to choose a different decimation level for data loading
-pointCloudLoadOptions = "50000 0:100000:10"
+pointCloudLoadOptions = "40000 0:100000:80"
 #pointCloudLoadOptions = "1 0:1:1"
 
 # This sets the dynamic quality rendering mode. Higher number = faster rendering but

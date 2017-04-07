@@ -84,8 +84,9 @@ def updatePythonInterface():
     # print "Updating Python Interface"
     global dataMode,useSmoothingLength,isLogScale,pointScale,colormapperEnabled,currentColorMapIndex
     global colormapMin,colormapMax,cameraPosition,pivotPosition, renderModeInd, kernelModeInd
+    print str(renderModeInd) + str(kernelModeInd) + str(boolToJs(isLogScale))
     ps.broadcastjs("postLoadUpdate({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15},{16},{17})"
-        .format(dataMode, boolToJs(useSmoothingLength), boolToJs(isLogScale), pointScale,boolToJs(colormapperEnabled),currentColorMapIndex,colormapMin,colormapMax,cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],renderModeInd,kernelModeInd,progressiveRender,dqDec), '')
+        .format(dataMode, boolToJs(useSmoothingLength), boolToJs(isLogScale), pointScale,boolToJs(colormapperEnabled),currentColorMapIndex,colormapMin,colormapMax,cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],renderModeInd,kernelModeInd,boolToJs(progressiveRender),dqDec), '')
 
 def boolToJs(pythonBool):
     if pythonBool == False:
