@@ -1,6 +1,6 @@
 # default scale applied to points
 pointScale = scale 
-isLogScale = False                
+isLogScale = True                
 
 # data mode. see loader.py
 dataMode = None                     

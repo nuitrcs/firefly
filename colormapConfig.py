@@ -7,8 +7,8 @@ colorMapLabels = [
     "Purple-Yellow"]
     
 colorMapNames = [
-    "colormaps/bk-gr.png",
-    "colormaps/bu-gr-wh-yl-rd.png",
-    "colormaps/bu-og.png",
     "colormaps/bu-wh-og.png",
+    "colormaps/bu-gr-wh-yl-rd.png",
+    "colormaps/bk-gr.png",
+    "colormaps/bu-og.png",
     "colormaps/pr-rd-yl.png"]

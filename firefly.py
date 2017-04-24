@@ -19,7 +19,7 @@ camera.setNearFarZ(1, 100000)
 #-------------------------------------------------------------------------------
 # Load the configuration file and loader script
 # If we don't have a config file, just open the firefly splash screen.
-if(datasetPath == None):
+if(datasetBase == None):
     orun('splash.py')
 else:
     # Load firefly components
@@ -39,5 +39,5 @@ else:
     setCamPos(cameraPosition.x,cameraPosition.y,cameraPosition.z)
     setPivotPoint(pivotPoint.x,pivotPoint.y,pivotPoint.z)
     
-    setPointScale(10.0)
+    setPointScale(pointScale)
     focus()

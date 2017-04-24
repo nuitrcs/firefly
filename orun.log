@@ -1,0 +1,168 @@
+
+!!! Service not found: MouseService
+!!! Service not found: KeyboardService
+!!! Service not found: ViewRayService
+Initializing mission control server on port 22500
+Running default_init.py
+[orun :: PYTHON ERROR] !!! Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+NameError: name '_onAppStart' is not defined
+
+>> omegalib 16.0
+>> to get a list of quick commands type ':?'
+Running config-file.py
+Running firefly/firefly.py
+Running colormapConfig.py
+Running render.py
+Running flyControl.py
+Running appstate.py
+Running firefly/loader_readsnap.py
+here's the prefix:  C:/Users/defaultuser0/omegalib/firefly/etc/mtools/../..//modules/python
+['C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\modules', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\bin', '.\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\firefly', 'C:\\Python27\\Lib\\site-packages', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\python27.zip', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\DLLs', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\plat-win', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\lib-tk', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\site-packages']
+System H5PY info:
+Summary of the h5py configuration
+---------------------------------
+
+h5py    2.6.0
+HDF5    1.8.17
+Python  2.7.11 (v2.7.11:6d1b6a68f775, Dec  5 2015, 20:40:30) [MSC v.1500 64 bit (AMD64)]
+sys.platform    win32
+sys.maxsize     9223372036854775807
+numpy   1.11.2
+
+loading base: C:/Users/defaultuser0/omegalib/snapshots number: 50
+Trying to open C:/Users/defaultuser0/omegalib/snapshots/snapshot_050.hdf5
+initialized radius weight
+True
+Vector3(21.40, 18.77, 20.98)
+adding dimensions
+[NumpyLoader::addDimension] numRecords=<1066668>
+[NumpyLoader::addDimension] numRecords=<1066668>
+[NumpyLoader::addDimension] numRecords=<1066668>
+7.78065599297e-07: 1
+[NumpyLoader::addDimension] numRecords=<1066668>
+Average point size: 0.0864395448244
+starting part type 0
+point cloud
+[BinaryPointsLoader] Total Points: <1066668>   Points per batch: <50000>
+data mode
+finished loader_readsnap
+Running scene.py
+Running fireflyUi.py
+Running preset.py
+Porthole server thread started
+Dimension set to masses
+bounds now are min: 7.78065599297e-07  max:  1
+setting smoothing length enabled to:  False
+setting colormapper enabler to:  True
+Setting log scale to:  True
+bounds now are min: 7.78065599297e-07  max:  1
+setting colormap to  0
+Setting Kernel Mode to:  1
+-----
+camera position set to: Vector3(21.40, 18.77, 20.98)
+setting pivot point to to x: 0.471883763514  y:  -2.16171886575  z:  0.0573575688662
+point scale set to 1.0
+!!! [v10.1 DEPRECATION WARNING] Renderer::createTexture - use GpuContext::createTexture instead
+Loaded field Coordinates 0 50000
+Loaded field Coordinates 0 50000
+Loaded field Coordinates 0 50000
+Loaded field Mass 0 50000
+Loaded field Coordinates 50000 50000
+Loaded field Coordinates 50000 50000
+Loaded field Coordinates 50000 50000
+Loaded field Mass 50000 50000
+Loaded field Coordinates 100000 50000
+Loaded field Coordinates 100000 50000
+Loaded field Coordinates 100000 50000
+Loaded field Mass 100000 50000
+Loaded field Coordinates 150000 50000
+Loaded field Coordinates 150000 50000
+Loaded field Coordinates 150000 50000
+Loaded field Mass 150000 50000
+Loaded field Coordinates 200000 50000
+Loaded field Coordinates 200000 50000
+Loaded field Coordinates 200000 50000
+Loaded field Mass 200000 50000
+Loaded field Coordinates 250000 50000
+Loaded field Coordinates 250000 50000
+Loaded field Coordinates 250000 50000
+Loaded field Mass 250000 50000
+Loaded field Coordinates 300000 50000
+Loaded field Coordinates 300000 50000
+Loaded field Coordinates 300000 50000
+Loaded field Mass 300000 50000
+Loaded field Coordinates 350000 50000
+Loaded field Coordinates 350000 50000
+Loaded field Coordinates 350000 50000
+Loaded field Mass 350000 50000
+Loaded field Coordinates 400000 50000
+Loaded field Coordinates 400000 50000
+Loaded field Coordinates 400000 50000
+Loaded field Mass 400000 50000
+Loaded field Coordinates 450000 50000
+Loaded field Coordinates 450000 50000
+Loaded field Coordinates 450000 50000
+Loaded field Mass 450000 50000
+Loaded field Coordinates 500000 50000
+Loaded field Coordinates 500000 50000
+Loaded field Coordinates 500000 50000
+Loaded field Mass 500000 50000
+Loaded field Coordinates 550000 50000
+Loaded field Coordinates 550000 50000
+Loaded field Coordinates 550000 50000
+Loaded field Mass 550000 50000
+Loaded field Coordinates 600000 50000
+Loaded field Coordinates 600000 50000
+Loaded field Coordinates 600000 50000
+Loaded field Mass 600000 50000
+Loaded field Coordinates 650000 50000
+Loaded field Coordinates 650000 50000
+Loaded field Coordinates 650000 50000
+Loaded field Mass 650000 50000
+Loaded field Coordinates 700000 50000
+Loaded field Coordinates 700000 50000
+Loaded field Coordinates 700000 50000
+Loaded field Mass 700000 50000
+Loaded field Coordinates 750000 50000
+Loaded field Coordinates 750000 50000
+Loaded field Coordinates 750000 50000
+Loaded field Mass 750000 50000
+Loaded field Coordinates 800000 50000
+Loaded field Coordinates 800000 50000
+Loaded field Coordinates 800000 50000
+Loaded field Mass 800000 50000
+Loaded field Coordinates 850000 50000
+Loaded field Coordinates 850000 50000
+Loaded field Coordinates 850000 50000
+Loaded field Mass 850000 50000
+Loaded field Coordinates 900000 50000
+Loaded field Coordinates 900000 50000
+Loaded field Coordinates 900000 50000
+Loaded field Mass 900000 50000
+Loaded field Coordinates 950000 50000
+Loaded field Coordinates 950000 50000
+Loaded field Coordinates 950000 50000
+Loaded field Mass 950000 50000
+Loaded field Coordinates 1000000 50000
+Loaded field Coordinates 1000000 50000
+Loaded field Coordinates 1000000 50000
+Loaded field Mass 1000000 50000
+Loaded field Coordinates 1050000 16668
+Loaded field Coordinates 1050000 16668
+Loaded field Coordinates 1050000 16668
+Loaded field Mass 1050000 16668
+Porthole GUI client connected: 2976:192.168.56.1:LAPTOP-7802O2CK
+File:  ./fireflyPresets.txt  found, loaded saved data
+01true
+started porthole connected function
+======------Initializing Preset Panel------======
+previous files found
+======------Initializing Control Panel------======
+01true
+Porthole GUI client disconnected: 2976:192.168.56.1:LAPTOP-7802O2CK
+===================== ReferenceType object leaks follow:
+class omega::Texture: 4
+class omega::DrawInterface: 1
+class NumpyLoader: 1
+class omega::LeakPrinter: 1
