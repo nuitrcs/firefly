@@ -2,20 +2,13 @@
 # UI
 filterModes = [
     'None',
-    'Density',
-    'SmoothingLength'
+    'Masses',
 ]
 
-kernelModes = [
-    'Uniform',
-    'Smooth'
-]
-
-renderModes = [
-    'Standard',
-    'Faded',
-    'Band5'    
-]
+try:
+    imagePath
+except NameError:
+    imagePath = "./"
 
 # Omium is the web renderer. we use it to render the user interface
 o = Omium.getInstance()
@@ -61,7 +54,7 @@ def onClientConnected():
     ps.broadcastjs('initializeControls({0}, {1}, {2}, {3}, {4}, {5})'
         .format(dataModes, colorMapLabels, colorMapNames, filterModes, kernelModes, renderModes), '')
     o.setZoom(-1)
-    updatePythonInterface()
+    updateJavaScriptInterface()
 
 # handle input events
 def onEvent():
@@ -209,3 +202,18 @@ def cls():
 def requestUpdatePos():
     global cameraPosition
     ps.broadcastjs('updateCameraPos('+str(cameraPosition[0])+','+str(cameraPosition[1])+','+str(cameraPosition[2])+')','')
+
+
+def updateJavaScriptInterface():
+    # print "Updating Python Interface"
+    global dataMode,useSmoothingLength,isLogScale,pointScale,colormapperEnabled,currentColorMapIndex
+    global colormapMin,colormapMax,cameraPosition,pivotPosition, renderModeInd, kernelModeInd
+    print str(renderModeInd) + str(kernelModeInd) + str(boolToJs(isLogScale))
+    ps.broadcastjs("postLoadUpdate({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15},{16},{17})"
+        .format(dataMode, boolToJs(useSmoothingLength), boolToJs(isLogScale), pointScale,boolToJs(colormapperEnabled),currentColorMapIndex,colormapMin,colormapMax,cameraPosition[0],cameraPosition[1],cameraPosition[2],pivotPosition[0],pivotPosition[1],pivotPosition[2],renderModeInd,kernelModeInd,boolToJs(progressiveRender),dqDec), '')
+
+def boolToJs(pythonBool):
+    if pythonBool == False:
+        return "false"
+    else:
+        return "true"

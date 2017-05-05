@@ -2,8 +2,21 @@ from omega import *
 from euclid import *
 from math import *
 
-cameraPosition = Vector3(0,0,0)
-cameraOrientation = Quaternion()
+try:
+    cameraPosition
+except NameError:
+    cameraPosition = Vector3(0,0,0)
+
+try:
+    cameraOrientation
+except NameError:
+    cameraOrientation = Quaternion()
+
+try:
+    pivotPoint
+except NameError:
+    pivotPoint = Vector3(0,0,0)
+
 pivotRayOrigin = Vector3(0, 0, 0)
 pivotRayDirection = Vector3(0,0,-1)
 pivotDistance = -62
@@ -26,6 +39,7 @@ def focus():
     global cameraOrientation
     camera.lookAt(pivotPosition, Vector3(0,1,0))
     cameraOrientation = camera.getOrientation()
+    redraw()
 
 def onEvent():
     global startPos
@@ -185,11 +199,11 @@ def setPivotPoint(x,y,z):
     print "setting pivot point to to x:" , x ," y: ", y , " z: ", z
     pivotPosition = Vector3(float(x),float(y),float(z))
 
-def lookAtPivot():
-    print "looking at pivot point"
-    global camera, pivotPosition
-    camera.lookAt(pivotPosition,Vector3(0,1,0))
-    redraw()
+# def lookAtPivot():
+#     print "looking at pivot point"
+#     global camera, pivotPosition
+#     camera.lookAt(pivotPosition,Vector3(0,1,0))
+    
 
 def requestUpdatePos():
     global cameraPosition

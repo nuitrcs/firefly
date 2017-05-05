@@ -433,7 +433,7 @@ function initializeControls(modes, colormaps, colormapFiles, filterModes, kernel
                     console.log("Applying center of Rotation Pos")
                     {{py lookAtPivot()}}
                 }, {})
-    {{py updatePythonInterface()}}
+    {{py updateJavaScriptInterface()}}
 }  
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,20 @@
 # default scale applied to points
-pointScale = scale 
+try:
+	scale
+	pointScale = scale 
+except NameError:
+	pointScale = 1.0
+	scale = 1.0
+
+try:
+	orientOnCoM
+except NameError:
+	orientOnCoM = False
+
 isLogScale = True                
 
 # data mode. see loader.py
-dataMode = None                     
+dataMode = 0                     
 
 # filter mode. Used to exclude a data range from rendering
 filterMode = None                   
@@ -14,18 +25,25 @@ filterMax = 1
 colormapperEnabled = False
 colormapMin = 0
 colormapMax = 1
+currentColorMapIndex = 0
 
 # True when we are choosing a center of rotation. see flyControl.py
 pivotSelectionMode = False
 
-filterStart = 0.0
-filterEnd = 1.0
-currentColorMapIndex = 0
+
 # Initialize an array with false
-isLogArray = [False] * 10
 # rendering options. kernelMode controls how every single point is rendered.
 # renderMode controls how the full image is rendered on screen.
-kernelMode = 0
-renderMode = 0
+
+kernelModes = [
+    'Uniform',
+    'Smooth'
+]
+
+renderModes = [
+    'Standard',
+    'Faded',
+    'Band5'    
+]
 kernelModeInd = 0
 renderModeInd = 0

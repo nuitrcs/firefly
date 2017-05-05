@@ -8,7 +8,7 @@ def setCenterOfMassView(pos, mass):
     center = np.average(pos,0,np.ravel(mass))
     pivotPoint = Vector3(center[0],center[1],center[2])
     std = np.std(pos,0)
-    zZoom = std[2] * 8
+    zZoom = std[2] * 2
     #print zZoom
     cameraPosition = Vector3(center[0] + zZoom,center[1] + zZoom ,center[2] + zZoom)
     #print cameraPosition2

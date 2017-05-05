@@ -16,7 +16,7 @@ Running colormapConfig.py
 Running render.py
 Running flyControl.py
 Running appstate.py
-Running firefly/loader_readsnap.py
+Running C:/Users/defaultuser0/omegalib/loader_readsnap.py
 here's the prefix:  C:/Users/defaultuser0/omegalib/firefly/etc/mtools/../..//modules/python
 ['C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\modules', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\bin', '.\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\firefly', 'C:\\Python27\\Lib\\site-packages', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\python27.zip', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\DLLs', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\plat-win', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\lib-tk', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\site-packages']
 System H5PY info:
@@ -34,7 +34,7 @@ loading base: C:/Users/defaultuser0/omegalib/snapshots number: 50
 Trying to open C:/Users/defaultuser0/omegalib/snapshots/snapshot_050.hdf5
 initialized radius weight
 True
-Vector3(21.40, 18.77, 20.98)
+Vector3(5.70, 3.07, 5.29)
 adding dimensions
 [NumpyLoader::addDimension] numRecords=<1066668>
 [NumpyLoader::addDimension] numRecords=<1066668>
@@ -51,6 +51,8 @@ Running scene.py
 Running fireflyUi.py
 Running preset.py
 Porthole server thread started
+preset.py:108: SyntaxWarning: name 'presets' is used prior to global declaration
+  global presets, file
 Dimension set to masses
 bounds now are min: 7.78065599297e-07  max:  1
 setting smoothing length enabled to:  False
@@ -58,9 +60,9 @@ setting colormapper enabler to:  True
 Setting log scale to:  True
 bounds now are min: 7.78065599297e-07  max:  1
 setting colormap to  0
-Setting Kernel Mode to:  1
+Setting Kernel Mode to:  0
 -----
-camera position set to: Vector3(21.40, 18.77, 20.98)
+camera position set to: Vector3(5.70, 3.07, 5.29)
 setting pivot point to to x: 0.471883763514  y:  -2.16171886575  z:  0.0573575688662
 point scale set to 1.0
 !!! [v10.1 DEPRECATION WARNING] Renderer::createTexture - use GpuContext::createTexture instead
@@ -152,17 +154,17 @@ Loaded field Coordinates 1050000 16668
 Loaded field Coordinates 1050000 16668
 Loaded field Coordinates 1050000 16668
 Loaded field Mass 1050000 16668
-Porthole GUI client connected: 2976:192.168.56.1:LAPTOP-7802O2CK
+Porthole GUI client connected: 11812:10.105.102.13:LAPTOP-7802O2CK
 File:  ./fireflyPresets.txt  found, loaded saved data
-01true
+00true
 started porthole connected function
 ======------Initializing Preset Panel------======
 previous files found
 ======------Initializing Control Panel------======
-01true
-Porthole GUI client disconnected: 2976:192.168.56.1:LAPTOP-7802O2CK
+00true
+Porthole GUI client disconnected: 11812:10.105.102.13:LAPTOP-7802O2CK
 ===================== ReferenceType object leaks follow:
-class omega::Texture: 4
 class omega::DrawInterface: 1
 class NumpyLoader: 1
+class omega::Texture: 4
 class omega::LeakPrinter: 1

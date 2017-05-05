@@ -28,16 +28,15 @@ else:
     orun('flyControl.py')
     orun('appstate.py')
     orun(loaderScript)
-    # orun('loader.py')
+
     orun('scene.py')
     orun('fireflyUi.py')
     orun('preset.py')
 
-    setDataMode(0)
-    setColormap(0)
-    setKernelMode(1)
+    setDataMode(dataMode)
+    setColormap(currentColorMapIndex)
+    setKernelMode(kernelModeInd)
     setCamPos(cameraPosition.x,cameraPosition.y,cameraPosition.z)
     setPivotPoint(pivotPoint.x,pivotPoint.y,pivotPoint.z)
-    
     setPointScale(pointScale)
     focus()

@@ -18,7 +18,7 @@ radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
 weight = 2 * radius * res['rho']
 
 print "initialized radius weight"
-print orientOnCoM
+
 if orientOnCoM:
     cameraPosition,pivotPoint,cameraOrientation = setCenterOfMassView(res['p'],res['m'])
 print cameraPosition
@@ -70,6 +70,7 @@ dataModes = [
     'DataType', 
     'oldDataType',
     'MassesNoS']
+
 
 print "data mode"
 
