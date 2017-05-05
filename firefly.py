@@ -19,7 +19,7 @@ camera.setNearFarZ(1, 100000)
 #-------------------------------------------------------------------------------
 # Load the configuration file and loader script
 # If we don't have a config file, just open the firefly splash screen.
-if(datasetBase == None):
+if(datasetBase == None and datasetPath == None):
     orun('splash.py')
 else:
     # Load firefly components
