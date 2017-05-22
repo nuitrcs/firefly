@@ -79,7 +79,7 @@ kernelModeInd = 1
 # 0:    Standard
 # 1:    Faded
 # 2:    Band5    
-renderModeInd = 2
+renderModeInd = 1
 
 # --- Variable Paths ---
 
