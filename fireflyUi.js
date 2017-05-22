@@ -146,7 +146,7 @@ controlData = {
     useSmoothingLength: false,
     useLog: false,
     pointScale: 1.0,
-    pointScaleRange: [0.001, 15.0],
+    pointScaleRange: [0.001, 3.0],
     colormap: null,
     enableColormapper: false,
     colormapPaths: null,

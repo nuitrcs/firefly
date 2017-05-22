@@ -36,6 +36,7 @@ else:
     setDataMode(dataMode)
     setColormap(currentColorMapIndex)
     setKernelMode(kernelModeInd)
+    setRenderMode(renderModeInd)
     setCamPos(cameraPosition.x,cameraPosition.y,cameraPosition.z)
     setPivotPoint(pivotPoint.x,pivotPoint.y,pivotPoint.z)
     setPointScale(pointScale)

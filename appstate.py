@@ -1,3 +1,5 @@
+import math
+
 # default scale applied to points
 try:
 	scale
@@ -10,6 +12,16 @@ try:
 	orientOnCoM
 except NameError:
 	orientOnCoM = False
+
+try:
+	pivotAtCoM
+except NameError:
+	pivotAtCoM = False
+
+try:
+	distanceFromCoM
+except NameError:
+	distanceFromCoM = 2.0
 
 isLogScale = True                
 
@@ -45,5 +57,15 @@ renderModes = [
     'Faded',
     'Band5'    
 ]
-kernelModeInd = 0
-renderModeInd = 0
+try:
+	kernelModeInd
+	kernelModeInd = max(min(1,kernelModeInd),0)
+except NameError:
+	kernelModeInd = 0
+
+try:
+	renderModeInd
+	renderModeInd = max(min(2,renderModeInd),0)
+except NameError:
+	renderModeInd = 0
+

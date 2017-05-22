@@ -2,19 +2,20 @@ import numpy as np
 import math
 from euclid import *
 
-def setCenterOfMassView(pos, mass):
-    global cameraPosition
+def setCenterOfMassView(pos, mass,distanceRatio):
+    # global cameraPosition
     #global pivotPoint, cameraPosition, cameraOrientation
     center = np.average(pos,0,np.ravel(mass))
-    pivotPoint = Vector3(center[0],center[1],center[2])
+    pivPoint = Vector3(center[0],center[1],center[2])
     std = np.std(pos,0)
-    zZoom = std[2] * 2
+    zZoom = std[2] * distanceRatio
+    print "Dist ratio: " + str(distanceRatio) + " :zZoom: " + str(zZoom)
     #print zZoom
-    cameraPosition = Vector3(center[0] + zZoom,center[1] + zZoom ,center[2] + zZoom)
-    #print cameraPosition2
-    cameraOrientation = Quaternion()
+    camPos = Vector3(center[0] + zZoom,center[1] + zZoom ,center[2] + zZoom)
+    print camPos
+    camOrientation = Quaternion()
     #print cameraOrientation
-    return cameraPosition, pivotPoint, cameraOrientation
+    return camPos, pivPoint, camOrientation
 
 def setDefaultRanges(val):
     center = np.average(np.ravel(val))

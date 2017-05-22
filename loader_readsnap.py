@@ -1,6 +1,5 @@
 import os, sys
 os.system("which python")
-print "here's the prefix: ", sys.exec_prefix
 from readsnap import *
 #from readsnap_test import *
 from np_tools import *
@@ -17,13 +16,14 @@ res = readsnap(datasetBase, snapshotNumber, 0)
 radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
 weight = 2 * radius * res['rho']
 
-print "initialized radius weight"
+comPos, comPivot, comOrientation = setCenterOfMassView(res['p'],res['m'],distanceFromCoM)
 
 if orientOnCoM:
-    cameraPosition,pivotPoint,cameraOrientation = setCenterOfMassView(res['p'],res['m'])
-print cameraPosition
+    cameraPosition = comPos
+    cameraOrientation = comOrientation
 
-print "adding dimensions"
+if pivotAtCoM:
+    pivotPoint = comPivot
 
 l.addDimension('Coordinates', res['p'])
 l.addDimension('Velocities', res['v'])
@@ -33,10 +33,6 @@ colormapMin, colormapMax = setDefaultRanges(res['m'])
 l.addDimension("Size", radius)
 
 setDefaultPointScale(radius)
-# print res['sl']
-# # PartType0
-
-print "starting part type 0"
 
 ds0 = Dataset.create('PartType0')
 ds0.setLoader(l)
@@ -52,8 +48,6 @@ s0 = ds0.addDimension('Size', DimensionType.Float, 0, 'size')
 
 #m0 = ds0.addDimension('Masses', DimensionType.Float,0, 'm')
 #e0 = ds0.addDimension('InternalEnergy',DimensionType.Float,0,'e')
-
-print "point cloud"
 
 pc0 = PointCloud.create('pc0')
 pc0.setOptions(pointCloudLoadOptions)
@@ -71,15 +65,11 @@ dataModes = [
     'oldDataType',
     'MassesNoS']
 
-
-print "data mode"
-
 def setDataMode(mode):
     global dataMode
     dataMode = mode
     dm = dataModes[mode]
     if(dm == 'DataType'):
-        print "Datatype set----"
         pc0.setData(None)
         pc0.setSize(s0)
         pc0.setVisible(True)
@@ -93,7 +83,6 @@ def setDataMode(mode):
         pc0.setProgram(prog_fixedColor)
         pc0.setColor(Color(0.2, 0.2, 1, 0.1))
     elif(dm == 'Masses'):
-        print "Dimension set to masses"
         pc0.setData(m0)        
         # pc0.setData(None)
         pc0.setSize(s0)
@@ -104,7 +93,6 @@ def setDataMode(mode):
         enableColormapper(True)
         enableLogScale(True)
     elif(dm == 'MassesNoS'):
-        print "Dimension set to masses no size"
         pc0.setData(m0)        
         # pc0.setData(None)
         pc0.setSize(None)
@@ -118,6 +106,4 @@ def setDataMode(mode):
         # pc0.setProgram(prog_fixedColor)
         # pc0.setColor(Color(0.2, 0.2, 1, 0.1))
     redraw()
-
-print "finished loader_readsnap"
 # setDataMode(0)
