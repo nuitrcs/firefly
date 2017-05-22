@@ -1,4 +1,5 @@
 # This file lists available colormaps and colormap names.
+
 colorMapLabels = [
     "Black-Green",
     "Full Spectrum",
@@ -7,8 +8,8 @@ colorMapLabels = [
     "Purple-Yellow"]
     
 colorMapNames = [
-    "colormaps/bu-wh-og.png",
-    "colormaps/bu-gr-wh-yl-rd.png",
     "colormaps/bk-gr.png",
+    "colormaps/bu-gr-wh-yl-rd.png",
     "colormaps/bu-og.png",
+    "colormaps/bu-wh-og.png",
     "colormaps/pr-rd-yl.png"]
