@@ -36,7 +36,7 @@ dqDec = 4
 # This is the name of the script we want to use to load the file. Different simulation
 # snapshots might be outputting different DataParts / columns. You can have a different
 # loader script for each simulation output config. Should be in the form of a string.
-loaderScript = 'C:/Users/defaultuser0/omegalib/loader_readsnap.py'
+loaderScript = 'C:/Users/defaultuser0/omegalib/firefly/modules/firefly/loader_readsnap.py'
 
 #============================Optional Variables===================
 

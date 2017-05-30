@@ -23,7 +23,11 @@ if(datasetBase == None and datasetPath == None):
     orun('splash.py')
 else:
     # Load firefly components
-    orun('colormapConfig.py')
+    try:
+        orun('colormapConfig.py')
+    except:
+        print "error detected"
+        
     orun('render.py')
     orun('flyControl.py')
     orun('appstate.py')

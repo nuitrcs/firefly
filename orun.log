@@ -16,8 +16,7 @@ Running colormapConfig.py
 Running render.py
 Running flyControl.py
 Running appstate.py
-Running C:/Users/defaultuser0/omegalib/loader_readsnap.py
-here's the prefix:  C:/Users/defaultuser0/omegalib/firefly/etc/mtools/../..//modules/python
+Running C:/Users/defaultuser0/omegalib/firefly/modules/firefly/loader_readsnap.py
 ['C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\modules', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\etc\\mtools\\..\\..\\\\bin', '.\\', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\firefly', 'C:\\Python27\\Lib\\site-packages', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release\\python27.zip', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\DLLs', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\plat-win', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\lib-tk', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\build\\bin\\release', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python', 'C:\\Users\\defaultuser0\\omegalib\\firefly\\modules\\python\\lib\\site-packages']
 System H5PY info:
 Summary of the h5py configuration
@@ -37,26 +36,21 @@ Vector3(21.40, 18.77, 20.98)
 [NumpyLoader::addDimension] numRecords=<1066668>
 [NumpyLoader::addDimension] numRecords=<1066668>
 [NumpyLoader::addDimension] numRecords=<1066668>
-7.78065599297e-07: 1
-[NumpyLoader::addDimension] numRecords=<1066668>
 Average point size: 0.0864395448244
-starting part type 0
-point cloud
+[NumpyLoader::addDimension] numRecords=<1066668>
+-0.000567681030771: 1
 [BinaryPointsLoader] Total Points: <1066668>   Points per batch: <50000>
-data mode
-finished loader_readsnap
 Running scene.py
 Running fireflyUi.py
 Running preset.py
 Porthole server thread started
 preset.py:108: SyntaxWarning: name 'presets' is used prior to global declaration
   global presets, file
-Dimension set to masses
-bounds now are min: 7.78065599297e-07  max:  1
+bounds now are min: -0.000567681030771  max:  1
 setting smoothing length enabled to:  False
 setting colormapper enabler to:  True
 Setting log scale to:  True
-bounds now are min: 7.78065599297e-07  max:  1
+bounds now are min: -0.000567681030771  max:  1
 setting colormap to  0
 Setting Kernel Mode to:  1
 Setting Render Mode to:  1
@@ -153,17 +147,43 @@ Loaded field Coordinates 1050000 16668
 Loaded field Coordinates 1050000 16668
 Loaded field Coordinates 1050000 16668
 Loaded field Mass 1050000 16668
-Porthole GUI client connected: 10692:10.105.99.65:LAPTOP-7802O2CK
+Porthole GUI client connected: 10928:10.105.115.109:LAPTOP-7802O2CK
 File:  ./fireflyPresets.txt  found, loaded saved data
 started porthole connected function
 ======------Initializing Preset Panel------======
 previous files found
 ======------Initializing Control Panel------======
-Setting Kernel Mode to:  0
+Loaded field Size 0 50000
+Loaded field Size 50000 50000
+Loaded field Size 100000 50000
+Loaded field Size 150000 50000
+Loaded field Size 200000 50000
+Loaded field Size 250000 50000
+Loaded field Size 300000 50000
+Loaded field Size 350000 50000
+Loaded field Size 400000 50000
+Loaded field Size 450000 50000
+Loaded field Size 500000 50000
+Loaded field Size 550000 50000
+Loaded field Size 600000 50000
+Loaded field Size 650000 50000
+Loaded field Size 700000 50000
+Loaded field Size 750000 50000
+Loaded field Size 800000 50000
+Loaded field Size 850000 50000
+Loaded field Size 900000 50000
+Loaded field Size 950000 50000
+Loaded field Size 1000000 50000
+Loaded field Size 1050000 16668
 Setting Render Mode to:  0
-Porthole GUI client disconnected: 10692:10.105.99.65:LAPTOP-7802O2CK
+bounds now are min: -0.000567681030771  max:  1
+setting smoothing length enabled to:  False
+setting colormapper enabler to:  True
+Setting log scale to:  True
+bounds now are min: -0.000567681030771  max:  1
+Porthole GUI client disconnected: 10928:10.105.115.109:LAPTOP-7802O2CK
 ===================== ReferenceType object leaks follow:
-class NumpyLoader: 1
 class omega::DrawInterface: 1
-class omega::LeakPrinter: 1
+class NumpyLoader: 1
 class omega::Texture: 4
+class omega::LeakPrinter: 1
