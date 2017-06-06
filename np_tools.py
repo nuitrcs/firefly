@@ -17,13 +17,18 @@ def setCenterOfMassView(pos, mass,distanceRatio):
     #print cameraOrientation
     return camPos, pivPoint, camOrientation
 
-def setDefaultRanges(val):
-    center = np.average(np.ravel(val))
-    std = np.std(np.ravel(val))
-    minB = center - (std * 1)
-    maxB = 1
-    print str(minB) + ": " + str(maxB)
-    return minB, maxB
+def setDefaultRanges(val,logflag=1):
+    if logflag:
+	assert (val > 0).all()
+	val=np.log10(val)
+
+    center = np.mean(val)
+    std = np.std(val)
+
+    minB,maxB = center-5*std,center+5*std
+    if logflag:
+	minB,maxB=10**minB,10**maxB
+    return max(minB,1e-8),min(maxB,100)
 
 def setDefaultDec(val):
     pass
