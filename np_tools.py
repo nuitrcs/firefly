@@ -2,7 +2,7 @@ import numpy as np
 import math
 from euclid import *
 
-def setCenterOfMassView(pos, mass,distanceRatio):
+def setCenterOfMassView(pos, mass, distanceRatio):
     # global cameraPosition
     #global pivotPoint, cameraPosition, cameraOrientation
     center = np.average(pos,0,np.ravel(mass))
