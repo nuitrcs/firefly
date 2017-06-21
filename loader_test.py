@@ -69,8 +69,8 @@ pc4.setColor(Color('blue'))
 pc4.setPointScale(pointScale)
 #for easy iteration
 #parts = [pc0,pc4]
-pc0=pc4
-parts = [pc0]
+#pc0=pc4
+parts = [pc0,pc4]
 
 #default will be the first that appears in the list
 dataModes = ['Point']
@@ -84,15 +84,20 @@ def setDataMode(mode):
     global dataMode 
     dataMode = mode
     dm = dataModes[mode]
-	
+
     if dm =='Point':
-	#removes the capability to use a colormap
-	pc0.setData(None)	
-	#what does this do?
-	pc0.setSize(None)
-	pc0.setVisible(True)
-	pc0.setProgram(prog_fixedColor)
-	
+
+        # Loop over each point cloud object
+        # If we don't loop over every object, and do something with it, we crash.
+        for pci in parts:
+
+          #removes the capability to use a colormap
+          pci.setData(None)	
+          #what does this do?
+          pci.setSize(None)
+          pci.setVisible(True)
+          pci.setProgram(prog_fixedColor)
+
 	enableColormapper(False)
 	enableLogScale(False)
 	
