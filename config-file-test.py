@@ -1,17 +1,8 @@
 # use this code to load multipart files
 # datasetBase = 'C:/Users/defaultuser0/omegalib/firefly/modules/firefly'
 
-datasetBase ='/Users/agurvich/research/snaps/Control_G4_20'
-snapshotNumber = 50 
-
-if 1:
-    datasetBase ='/Users/agurvich/research/snaps/latte_iso'
-    snapshotNumber = 0
-else:
-    datasetBase = '/Users/agurvich/research/snaps/m11.9a'
-    snapshotNumber = 440
-
-
+datasetBase =''
+snapshotNumber = 0
 
 # Initial pivot point when rotating the galaxy
 # pivotPosition = Vector3(0,0,0)
@@ -23,7 +14,6 @@ else:
 #scale = 1.0
 
 # change the last number to choose a different decimation level for data loading
-pointCloudLoadOptions = "50000 0:100000:20"
 pointCloudLoadOptions = "50000 0:100000:1"
 
 #pointCloudLoadOptions = "1 0:1:1"
@@ -37,8 +27,7 @@ dqDec = 4
 # loader script for each simulation output config.
 
 
-#loaderScript = 'firefly/loader_readsnap.py'
-loaderScript = 'firefly/loader_readsnap_temp.py'
+loaderScript = 'firefly/loader_test.py'
 
 
 

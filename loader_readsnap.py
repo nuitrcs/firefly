@@ -133,5 +133,3 @@ def setDataMode(mode):
 	#potential legacy option
 	enableSmoothingLength(False)
     redraw()
-    
-
