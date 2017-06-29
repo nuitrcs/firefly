@@ -3,12 +3,14 @@
 
 
 
+
 if 1:
     datasetBase ='/Users/agurvich/research/snaps/latte_iso'
     snapshotNumber = 0
 else:
     datasetBase = '/Users/agurvich/research/snaps/m11.9a'
     snapshotNumber = 440
+
 
 datasetBase ='/Users/agurvich/research/snaps/Control_G4_20'
 snapshotNumber = 50 

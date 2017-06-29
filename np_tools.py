@@ -19,16 +19,20 @@ def setCenterOfMassView(pos, mass, distanceRatio):
 
 def setDefaultRanges(val,logflag=1):
     if logflag:
-	assert (val > 0).all()
-	val=np.log10(val)
-
+	try:
+	    assert (val > 0).all()
+	    val=np.log10(val)
+	except AssertionError:
+	    print 'Log scale colorbounds but some values are 0, excising them'
+	    val=np.log10(val[val>0])
     center = np.mean(val)
     std = np.std(val)
 
     minB,maxB = center-5*std,center+5*std
     if logflag:
 	minB,maxB=10**minB,10**maxB
-    return max(minB,1e-8),min(maxB,100)
+    colormapMin,colormapMax = max(minB,1e-8),min(maxB,100)
+    return colormapMin,colormapMax
 
 def setDefaultDec(val):
     pass

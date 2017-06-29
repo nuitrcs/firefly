@@ -13,8 +13,6 @@ def verifyLoader(loader):
     except NameError:
 	raise Exception("Invalid Loader")
 
-
-
 def addDimensionToPC(self,key,value):
     self.dataset.l.addDimension(key,value)
     dim = self.dataset.addDimension(key,DimensionType.Float,0,key.lower()+'_dsdim')
@@ -24,6 +22,7 @@ def addDimensionToPC(self,key,value):
 	self.dims=[dim]
 	dim.__class__.__repr__=lambda self: self.label
     return dim
+
 
 class Loader(object):
     """Loader class that organizes required parts of loader script 
@@ -93,6 +92,7 @@ class Loader(object):
 	    assert 'p' in keys
 	    assert 'v' in keys
 	except AssertionError:
+	    print keys
 	    raise Exception("You need to specify the 3d positions using the 'p' key")
 
 	l.addDimension('Coordinates',res['p'])
@@ -112,25 +112,33 @@ class Loader(object):
 
 	if 'rho' in keys:	
 	    radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
-	    weight = 2 * radius * res['rho']
-	    self.orientCamera(res,weight,radius)
-	    global gas_sd
-	    pc.gas_sd = pc.addDimensionToPC('SurfaceDensity',weight)
-	    pc.gas_r = pc.addDimensionToPC('ParticleRadius',radius)
+	    pc.gas_sd = 2 * radius * res['rho']
+	    self.orientCamera(res,pc.gas_sd,radius)
+	    pc.gas_sd_dim = pc.addDimensionToPC('SurfaceDensity',pc.gas_sd)
+	    pc.gas_r_dim = pc.addDimensionToPC('ParticleRadius',radius)
+	
+	    #metal surface density 
+	    pc.gas_met_sd = 2 * radius * res['rho']*res['z'][:,0]
+	    pc.gas_met_sd_dim = pc.addDimensionToPC('MetalSurfaceDensity',pc.gas_met_sd)
+	    
+	    #sfr
+	    pc.gas_sfr = res['sfr']
+	    pc.gas_sfr_dim = pc.addDimensionToPC('GasSFR',pc.gas_sfr)
+	    
 	    pc.is_gas_particles = True
+    
 	else:
 	    shape = res['m'].shape
 
 	    #track dummy arrays just in case
-	    pc.gas_sd = pc.addDimensionToPC('SurfaceDensityDummy',np.zeros(shape=shape))
-	    pc.gas_r = pc.addDimensionToPC('ParticleRadiusDummy',np.ones(shape=shape))
+	    pc.gas_sd_dim = pc.addDimensionToPC('SurfaceDensityDummy',np.zeros(shape=shape))
+	    pc.gas_r_dim = pc.addDimensionToPC('ParticleRadiusDummy',np.ones(shape=shape))
 	    pc.is_gas_particles = False
 
 	if lowres:
 	    pointCloudLoadOptions = "50000 0:100000:100"
 	else:
-	    pointCloudLoadOptions = "50000 0:100000:100"
-	    #pointCloudLoadOptions = "50000 0:100000:1"
+	    pointCloudLoadOptions = "50000 0:100000:20"
 	    
 	pc.setOptions(pointCloudLoadOptions)
 
@@ -150,7 +158,7 @@ class Loader(object):
 	    out from list above"""
 	global dataMode,dataModes
 	#default will be the first that appears in the list
-	dataModes = ['Point','Surface Density']
+	dataModes = ['Point','Surface Density','Metal Surface Density','SFR']
 	
 	#why are these lines here?
 	## stores index in global variable
@@ -161,57 +169,80 @@ class Loader(object):
 	#go through each possible 
 	## should consider replacing dataModes with a list of functions
 	## that takes parts as an argument...
+
+	if dm not in ['SFR']:  
+	    # certain datamodes look better if you change the decimation
+	    #SFR is one of them, want to reset it in case you were just in 
+	    #one of them. 
+	    setDecimationValue(10)
+	    pass
+	    
+
 	if dm =='Surface Density':
-	    for pci in xrange(len(parts)):
-		#assumes gas particles are at 0th index
-		#ideally this is changed later to refer 
-		#to an attribute or something...
-		pc = parts[pci]
+	    for pci,pc in enumerate(parts):
 		if pc.is_gas_particles:
-		    print 'plotting gas'
-		    #this specifies will determine the
-		    #color, it should be the weight
+		    pc.setProgram(prog_channel)
 		    pc.setSize(None)
 		    pc.setVisible(True)
-		    pc.setData(pc.gas_sd)
-		    #what determines the point cloud will 
-		    #appear as, prog_channel is filtered through
-		    #colormap according to its weight
-		    #prog_fixedColor is whatever you set with setColor
-		    pc.setProgram(prog_channel)
-
+		    pc.setData(pc.gas_sd_dim)
+		    #update colormap bounds to 5 sigma in either logspace or not
+		    updateColormapBounds(*np_tools.setDefaultRanges(pc.gas_sd))
 		else:
-		    print 'plotting dm'
-		    ## not sure what this needs to not crash
-
 		    #pc.setData(None)
 		    #pc.setSize(None)
 		    #pc.setProgram(prog_channel)
-
 		    pc.setVisible(False)
 
-
-	    updateColormapBounds(colormapMin,colormapMax)	
-	    
-	    #can change control panel options for convenience
-	    #more options available on wiki fireflyUi.py
 	    enableLogScale(True)
 	    enableColormapper(True)
 	    
 	elif dm =='Point':
-	    # Loop over each point cloud object
-	    # If we don't loop over every object, and do something with it, we crash.
 	    for pci,pc in enumerate(parts):
-
-	      #removes the capability to use a colormap
+	      pc.setProgram(prog_fixedColor)
 	      pc.setData(None)	
-	      #what does this do?
 	      pc.setSize(None)
 	      pc.setVisible(True)
-	      pc.setProgram(prog_fixedColor)
 
 	    enableColormapper(False)
 	    enableLogScale(False)
+	elif dm =='Metal Surface Density':
+	    for pci,pc in enumerate(parts):
+		if pc.is_gas_particles:
+		    pc.setProgram(prog_channel)
+		    pc.setSize(None)
+		    pc.setVisible(True)
+		    pc.setData(pc.gas_met_sd_dim)
+
+		    #update colormap bounds to 5 sigma in either logspace or not
+		    updateColormapBounds(*np_tools.setDefaultRanges(pc.gas_met_sd))
+
+		else:
+		    #pc.setData(None)
+		    #pc.setSize(None)
+		    #pc.setProgram(prog_channel)
+		    pc.setVisible(False)
+
+	    enableLogScale(True)
+	    enableColormapper(True)
+	elif dm =='SFR':
+	    for pci,pc in enumerate(parts):
+		if pc.is_gas_particles:
+		    pc.setProgram(prog_channel)
+		    pc.setSize(None)
+		    pc.setVisible(True)
+		    pc.setData(pc.gas_sfr_dim)
+
+
+		    #update colormap bounds to 5 sigma in either logspace or not
+		    updateColormapBounds(*np_tools.setDefaultRanges(pc.gas_sfr))
+		else:
+		    #pc.setData(None)
+		    #pc.setSize(None)
+		    #pc.setProgram(prog_channel)
+		    pc.setVisible(False)
+	    enableLogScale(True)
+	    enableColormapper(True)
+	    setDecimationValue(1)
 	    
 	redraw()
     
@@ -234,14 +265,13 @@ class Loader(object):
 	    colormapMax - 
 	    PointScale - 
 	"""
-	global colormapMin,colormapMax
 	global cameraPosition,pivotPoint,cameraOrientation
 	#orient camera pivot and position on center of mass
 	if orientOnCoM:
 	    cameraPosition,pivotPoint,cameraOrientation=np_tools.setCenterOfMassView(res['p'],res['m'],distanceFromCoM) 
 
 	#2 sigma of the log of the array 
-	colormapMin,colormapMax = np_tools.setDefaultRanges(weight)
+
 
 	#sets global variable PointScale -> 1
 	#but could in principle be some function of the radii
