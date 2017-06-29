@@ -13,6 +13,18 @@ def verifyLoader(loader):
     except NameError:
 	raise Exception("Invalid Loader")
 
+
+
+def addDimensionToPC(self,key,value):
+    self.dataset.l.addDimension(key,value)
+    dim = self.dataset.addDimension(key,DimensionType.Float,0,key.lower()+'_dsdim')
+    try:
+	self.dims+=[dim]
+    except AttributeError:
+	self.dims=[dim]
+	dim.__class__.__repr__=lambda self: self.label
+    return dim
+
 class Loader(object):
     """Loader class that organizes required parts of loader script 
 	for verification. Standardizes class format for any additional loader classes."""
@@ -38,7 +50,7 @@ class Loader(object):
 	#we have a function of exactly this format, how convenient (/sarcasm)!
 	return readsnap(self.snapdir,self.snapnum,ptype)
 
-    def getPointcloud(self,res,keys,color):
+    def getPointcloud(self,res,keys,color,lowres=0):
 	"""
 	Creates a pointcloud object out of a particle dictionary, res. 
 	Input:
@@ -57,27 +69,34 @@ class Loader(object):
 
 	l = NumpyLoader()
 
+	#every dataset is called parttype0
+	ds = Dataset.create('PartType0')
+	#tell dataset where to get its info from
+	ds.setLoader(l)
+	
+	ds.l = l
+
+	#wrapper point cloud that adds a method above
+	pc = PointCloud.create('pc%s'%color)
+
+	pc.res = res
+	pc.loader = self
+    	pc.dataset = ds
+
+
+	#make it a bound method...
+	pc.addDimensionToPC=addDimensionToPC.__get__(pc,pc.__class__)
+
 	#assert that whatever you're loading has spatial coordinates 
+	#and spatial velocities?
 	try:
 	    assert 'p' in keys
+	    assert 'v' in keys
 	except AssertionError:
 	    raise Exception("You need to specify the 3d positions using the 'p' key")
 
 	l.addDimension('Coordinates',res['p'])
-	l.addDimension('Velocities',res['v'])
-
-	if 'rho' in keys:
-	    radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
-	    weight = 2 * radius * res['rho']
-	    self.orientCamera(res,weight,radius)
-	    l.addDimension('SurfaceDensity',weight)
-	    l.addDimension("ParticleRadius",radius)
-	    
-
-	ds = Dataset.create('PartType%s'%color)
-	#tell dataset where to get its info from
-	ds.setLoader(l)
-
+	l.addDimension('Velocities',res['v'])   
 
 	# 1-> array to get, 2-> should almost always be float, 
 	# 3-> index for vector variables (0 if single dimensional)
@@ -88,13 +107,31 @@ class Loader(object):
 	vx = ds.addDimension('Velocities', DimensionType.Float, 0, 'vx')
 	vy = ds.addDimension('Velocities', DimensionType.Float, 1, 'vy')
 	vz = ds.addDimension('Velocities', DimensionType.Float, 2, 'vz')
-
+	
+	pc.x_dim = x
 
 	if 'rho' in keys:	
-	    self.gas_sd = ds.addDimension('SurfaceDensity', DimensionType.Float, 0, 'sfcden')
-	    self.gas_r = ds.addDimension('ParticleRadius', DimensionType.Float, 0, 'radius')
+	    radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
+	    weight = 2 * radius * res['rho']
+	    self.orientCamera(res,weight,radius)
+	    global gas_sd
+	    pc.gas_sd = pc.addDimensionToPC('SurfaceDensity',weight)
+	    pc.gas_r = pc.addDimensionToPC('ParticleRadius',radius)
+	    pc.is_gas_particles = True
+	else:
+	    shape = res['m'].shape
 
-	pc = PointCloud.create('pc%s'%color)
+	    #track dummy arrays just in case
+	    pc.gas_sd = pc.addDimensionToPC('SurfaceDensityDummy',np.zeros(shape=shape))
+	    pc.gas_r = pc.addDimensionToPC('ParticleRadiusDummy',np.ones(shape=shape))
+	    pc.is_gas_particles = False
+
+	if lowres:
+	    pointCloudLoadOptions = "50000 0:100000:100"
+	else:
+	    pointCloudLoadOptions = "50000 0:100000:100"
+	    #pointCloudLoadOptions = "50000 0:100000:1"
+	    
 	pc.setOptions(pointCloudLoadOptions)
 
 	#this is very different usage of dimension from above, this
@@ -113,7 +150,7 @@ class Loader(object):
 	    out from list above"""
 	global dataMode,dataModes
 	#default will be the first that appears in the list
-	dataModes = ['Surface Density','Point']
+	dataModes = ['Point','Surface Density']
 	
 	#why are these lines here?
 	## stores index in global variable
@@ -125,30 +162,34 @@ class Loader(object):
 	## should consider replacing dataModes with a list of functions
 	## that takes parts as an argument...
 	if dm =='Surface Density':
-	    for pci,pc in enumerate(parts):
+	    for pci in xrange(len(parts)):
 		#assumes gas particles are at 0th index
 		#ideally this is changed later to refer 
 		#to an attribute or something...
-		if pci == 0:
+		pc = parts[pci]
+		if pc.is_gas_particles:
+		    print 'plotting gas'
 		    #this specifies will determine the
 		    #color, it should be the weight
-		    pc.setData(self.gas_sd)
-
-		    pc.setSize(self.gas_r)
+		    pc.setSize(None)
 		    pc.setVisible(True)
+		    pc.setData(pc.gas_sd)
 		    #what determines the point cloud will 
 		    #appear as, prog_channel is filtered through
 		    #colormap according to its weight
 		    #prog_fixedColor is whatever you set with setColor
 		    pc.setProgram(prog_channel)
-		    #colormapMin,colormapMax=1e-8,1e2
+
 		else:
+		    print 'plotting dm'
 		    ## not sure what this needs to not crash
-		    pc.setData(None)	
-		    #what does this do?
-		    pc.setSize(None)
+
+		    #pc.setData(None)
+		    #pc.setSize(None)
+		    #pc.setProgram(prog_channel)
+
 		    pc.setVisible(False)
-		    pc.setProgram(prog_fixedColor)
+
 
 	    updateColormapBounds(colormapMin,colormapMax)	
 	    
@@ -173,7 +214,7 @@ class Loader(object):
 	    enableLogScale(False)
 	    
 	redraw()
-
+    
     def orientCamera(self,res,weight,radius):
 	""" 
 	Initializes the camera pointing towards the center of mass of the given
@@ -194,6 +235,7 @@ class Loader(object):
 	    PointScale - 
 	"""
 	global colormapMin,colormapMax
+	global cameraPosition,pivotPoint,cameraOrientation
 	#orient camera pivot and position on center of mass
 	if orientOnCoM:
 	    cameraPosition,pivotPoint,cameraOrientation=np_tools.setCenterOfMassView(res['p'],res['m'],distanceFromCoM) 
@@ -218,13 +260,13 @@ loader = Loader(datasetBase,snapshotNumber)
 parts=[]
 colors = ['red','yellow','blue']
 
-
-for i,ptype in enumerate([0,1,4][:1]):
+for i,ptype in enumerate([0,1,4][:3]):
     res = loader.importParticleData(ptype)
     ## strictly this should be a list *only* of the keys that we care about
     #	that way we can loop over them to be a bit more general in the future. 
+    keys=['p','v']
     keys=res.keys()
-    pc = loader.getPointcloud(res,keys,colors[i])
+    pc = loader.getPointcloud(res,keys,colors[i],lowres=ptype==1)
 
 
     #for easy iteration
@@ -233,5 +275,4 @@ for i,ptype in enumerate([0,1,4][:1]):
 #hacky way to pass setDataMode wherever it needs to be... 
 global setDataMode
 setDataMode=loader.setDataMode
-
 

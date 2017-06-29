@@ -37,11 +37,20 @@ else:
     orun('fireflyUi.py')
     orun('preset.py')
 
+
     setDataMode(dataMode)
+    print 'set data mode'
     setColormap(currentColorMapIndex)
+    print 'set color map'
     setKernelMode(kernelModeInd)
+    print 'set kernel mode'
     setRenderMode(renderModeInd)
+    print 'set render mode'
     setCamPos(cameraPosition.x,cameraPosition.y,cameraPosition.z)
+    print 'set cam pos'
     setPivotPoint(pivotPoint.x,pivotPoint.y,pivotPoint.z)
+    print 'set pivot point'
     setPointScale(pointScale)
+    print 'set point scale'
     focus()
+    print 'focused'
