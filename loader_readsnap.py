@@ -101,14 +101,13 @@ class Loader(object):
 	# 1-> array to get, 2-> should almost always be float, 
 	# 3-> index for vector variables (0 if single dimensional)
 	# 4->potentially another arbitrary label that is legacy
-	x = ds.addDimension('Coordinates', DimensionType.Float,0,'x')
-	y = ds.addDimension('Coordinates', DimensionType.Float, 1, 'y')
-	z = ds.addDimension('Coordinates', DimensionType.Float, 2, 'z')
-	vx = ds.addDimension('Velocities', DimensionType.Float, 0, 'vx')
-	vy = ds.addDimension('Velocities', DimensionType.Float, 1, 'vy')
-	vz = ds.addDimension('Velocities', DimensionType.Float, 2, 'vz')
+	pc.x_dim = ds.addDimension('Coordinates', DimensionType.Float,0,'x')
+	pc.y_dim = ds.addDimension('Coordinates', DimensionType.Float, 1, 'y')
+	pc.z_dim = ds.addDimension('Coordinates', DimensionType.Float, 2, 'z')
+	pc.vx_dim = ds.addDimension('Velocities', DimensionType.Float, 0, 'vx')
+	pc.vy_dim = ds.addDimension('Velocities', DimensionType.Float, 1, 'vy')
+	pc.vz_dim = ds.addDimension('Velocities', DimensionType.Float, 2, 'vz')
 	
-	pc.x_dim = x
 
 	if 'rho' in keys:	
 	    radius = np.power(((res['m'] / res['rho'])/(2 * np.pi) ),(1.0/3.0))
@@ -144,7 +143,7 @@ class Loader(object):
 
 	#this is very different usage of dimension from above, this
 	#sets x,y,z coordinates in sim
-	pc.setDimensions(x,y,z)
+	pc.setDimensions(pc.x_dim,pc.y_dim,pc.z_dim)
 	
 	#can also take an RGBA string, used if no adv cmap
 	pc.setColor(Color(color))
@@ -158,7 +157,7 @@ class Loader(object):
 	    out from list above"""
 	global dataMode,dataModes
 	#default will be the first that appears in the list
-	dataModes = ['Point','Surface Density','Metal Surface Density','SFR']
+	dataModes = ['Point','Surface Density','Metal Surface Density','SFR','Velocities']
 	
 	#why are these lines here?
 	## stores index in global variable
@@ -243,6 +242,14 @@ class Loader(object):
 	    enableLogScale(True)
 	    enableColormapper(True)
 	    setDecimationValue(1)
+	elif dm =='Gas Velocities':
+	    for pci,pc in enumerate(parts):
+		if pc.is_gas_particles:
+		    pc.setVisible(True)
+		    pc.setProgram(prog_vector)
+		    pc.setVectorData(pc.vx_dim,pc.vy_dim,pc.vz_dim)
+		else:
+		    pc.setVisible(False)
 	    
 	redraw()
     
