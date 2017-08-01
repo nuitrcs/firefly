@@ -1,10 +1,13 @@
-# use this code to load multipart files
+### use this code to load multipart files
+
+# # use this code to load multipart files
+# datasetBase = '/Volumes/Windows/dev/snapdir_440/'
+# files = []
+# for i in range(0, 4):
+#     files.append(datasetBase + 'snapshot_440.' + str(i) + '.hdf5')
+# datasetPath = ';'.join(files)
+
 # datasetBase = 'C:/Users/defaultuser0/omegalib/firefly/modules/firefly'
-
-
-
-
-
 
 if 1:
     datasetBase ='/Users/agurvich/research/snaps/latte_iso'
@@ -16,11 +19,6 @@ if 1:
 else:
     datasetBase = '/Users/agurvich/research/snaps/m11.9a'
     snapshotNumber = 440
-
-
-
-
-
 
 # Initial pivot point when rotating the galaxy
 # pivotPosition = Vector3(0,0,0)

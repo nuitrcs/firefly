@@ -1,4 +1,6 @@
 # This file lists available colormaps and colormap names.
+#### this can be merged with something-- it shouldn't be its own file
+#### I think...
 
 colorMapLabels = [
     "Black-Green",

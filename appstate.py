@@ -1,5 +1,11 @@
 import math
 
+### Initialize a firefly instance, inefficiently. This can be shored
+### up if we instead have default variables set in __init__ of a 
+### firefly class
+
+### Initialize Global Variables if not already set
+
 # default scale applied to points
 try:
 	scale

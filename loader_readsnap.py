@@ -157,7 +157,7 @@ class Loader(object):
 	    out from list above"""
 	global dataMode,dataModes
 	#default will be the first that appears in the list
-	dataModes = ['Point','Surface Density','Metal Surface Density','SFR','Velocities']
+	dataModes = ['Point','Surface Density','Metal Surface Density','SFR','Gas Velocities']
 	
 	#why are these lines here?
 	## stores index in global variable

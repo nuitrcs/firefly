@@ -2,6 +2,9 @@ from omega import *
 from euclid import *
 from math import *
 
+### initializes more global variables... this should be centralized
+### (at the very least) and put as attributes of a class instead imho
+
 try:
     cameraPosition
 except NameError:
